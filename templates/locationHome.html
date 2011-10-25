@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html> 
+<html> 
+ 
+<head> 
+	<meta charset="utf-8"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+	<title>Milkshake.fm</title>
+	
+	<link rel="stylesheet" href="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.css') }}" type="text/css" /> 
+	<script src="{{ url_for('static', filename='scripts/jquery-1.6.2.js') }}"></script> 
+	<script src="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.js') }}"></script>
+
+	<!-- Apple -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<link rel="apple-touch-startup-image" sizes="640x920" href="{{ url_for('static', filename='images/startup-retina.png') }}">
+	<link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/startup.png') }}">
+	
+	<!-- Touch icons -->
+	<!-- For iPhone 4 with high-resolution Retina display: -->
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for('static', filename='images/apple-touch-icon-114x114-precomposed.png') }}">
+	<!-- For first-generation iPad: -->
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ url_for('static', filename='images/apple-touch-icon-72x72-precomposed.png') }}">
+	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+	<link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/apple-touch-icon-precomposed.png') }}">
+  
+  
+  	<script type="text/javascript">
+  		$(document).ready(function() {
+  			//$.ajax(
+  				//get the playlist info for this location
+  				//bind it to the playlist UI
+  			//);
+  		})
+  	</script>
+</head>
+<body>
+ 
+	<div data-role="page" id="homePage"> 
+ 
+	<div data-role="header">
+		<div style="text-align:center;"> 
+			<img src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" />
+			<div>
+				Build a playlist for {{ locationName }} ( {{ locationId }} )!
+			</div>
+		</div>
+	</div> 
+ 
+	<div data-role="content">
+		<div class="content-primary">
+		<ul data-role="listview" id="playlist">
+			<li><a href="index.html"><span class="ui-li-count">9</span>Lady Gaga - Bad Romance</a></li>
+			<li><a href="index.html"><span class="ui-li-count">6</span>Bob Marley - Buffalo Soldier</a></li>
+			<li><a href="index.html"><span class="ui-li-count">1</span>Bob Dylan - All Along the Watchtower</a></li>
+			<li><a href="index.html"><span class="ui-li-count">0</span>The Beatles - Norweigan Wood</a></li>
+		</ul>
+		</div>
+	</div>
+</div> 
+ 
+</body>
+</html>
