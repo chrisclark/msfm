@@ -1,16 +1,20 @@
-import requests
-import urllib
-from flask import json
-
+from track import Track, Tracklist
 import config
-import musicObjects as mo
+import urllib
+import common
 
-def search(query):
-    reqUrl = 'http://api.soundcloud.com/tracks.json?client_id=%s&filter=streamable&limit=10&' % (config.soundCloudClientId) + urllib.urlencode({'q': query})
-    r = requests.get(reqUrl)
-    ctnt = r.content
-    r = json.loads(ctnt)
-    pl = mo.playlist()
-    for t in r:
-        pl.addTrack(mo.track(t["id"], t["user"]["username"], t["title"], t["duration"]/1000, t["stream_url"] + '?client_id=' + config.soundCloudClientId))
-    return pl
+class MusicLibrary:
+    @staticmethod
+    def search(query):
+        reqUrl = 'http://api.soundcloud.com/tracks.json?client_id=%s&filter=streamable&limit=10&'\
+                  % (config.soundCloudClientId) + urllib.urlencode({'q': query})
+                  
+        r = common.getJson(reqUrl)
+        pl = Tracklist()
+        for t in r:
+            pl.addTrack(Track(t["id"],
+                              t["user"]["username"],
+                              t["title"],
+                              t["duration"]/1000,
+                              t["stream_url"] + '?client_id=' + config.soundCloudClientId))
+        return pl

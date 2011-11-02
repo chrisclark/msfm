@@ -1,9 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from db import db_session, init_db
 import sys
-import config
-import musicLibrary as ml
+
 from location import Location
+from track import Track
+from musicLibrary import MusicLibrary
+import config
 
 app = Flask(__name__)
 app.debug = config.debugMode
@@ -31,25 +33,31 @@ def initdb(pwd):
 
 ##########  API Routes ##########
 
-@app.route('/<locationName>')
-def index(locationName):
-    l = Location(name=locationName)
+@app.route('/<location_name>')
+def index(location_name):
+    l = Location(name=location_name)
     return render_template(
                            'locationHome.html',
-                           locationName=l.name,
-                           locationId=l.id)
+                           location_name=l.name,
+                           location_id=l.id)
 
-@app.route('/playlist/<int:locationId>')
-def getPlaylist(locationId):
-    return ml.search("test").toJson()
+@app.route('/playlist/<int:location_id>')
+def getPlaylist(location_id):
+    return MusicLibrary.search("test").toJson()
 
 @app.route('/search/<query>')
 def getSearch(query):
-    return ml.search(query).toJson()
+    return MusicLibrary.search(query).toJson()
 
-@app.route('/addSong', methods=['POST'])
-def pickSong():
+@app.route('/track/<track_id>')
+def getTrack(track_id):
+    return Track(track_id, load=True).toJson()
+
+@app.route('/addTrack', methods=['POST'])
+def addTrack():
+    tid = request.form["track_id"]
     pass
+
 
 ##########  SpecialHandlers ##########  
 @app.errorhandler(500)

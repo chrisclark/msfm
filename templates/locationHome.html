@@ -5,11 +5,12 @@
 	<meta charset="utf-8"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 		
-	<title>Milkshake.fm</title>
+	<title>Milkshake.fm - We, the DJ</title>
 	
 	<link rel="stylesheet" href="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.css') }}" type="text/css" /> 
 	<script src="{{ url_for('static', filename='scripts/jquery-1.6.2.js') }}"></script> 
 	<script src="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.js') }}"></script>
+	<script src="{{ url_for('static', filename='scripts/client.js') }}"></script> 
 
 	<!-- Apple -->
 	<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -25,40 +26,70 @@
 	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
 	<link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/apple-touch-icon-precomposed.png') }}">
   
-  
-  	<script type="text/javascript">
-  		$(document).ready(function() {
-  			//$.ajax(
-  				//get the playlist info for this location
-  				//bind it to the playlist UI
-  			//);
-  		})
-  	</script>
 </head>
 <body>
  
 	<div data-role="page" id="homePage"> 
  
-	<div data-role="header">
-		<div style="text-align:center;"> 
-			<img src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" />
-			<div>
-				Build a playlist for {{ locationName }} ( {{ locationId }} )!
+		<div data-role="header">
+			<div style="text-align:center;"> 
+				<img src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" />
+				<div>
+					Build a playlist for {{ location_name }} ({{ location_id }})!
+				</div>
+			</div>
+		</div> 
+	 
+		<div data-role="content">
+			<div class="content-primary">
+				<ul data-role="listview" id="playlist">
+					<li><a href="index.html"><span class="ui-li-count">9</span>Lady Gaga - Bad Romance</a></li>
+					<li><a href="index.html"><span class="ui-li-count">6</span>Bob Marley - Buffalo Soldier</a></li>
+					<li><a href="index.html"><span class="ui-li-count">1</span>Bob Dylan - All Along the Watchtower</a></li>
+					<li><a href="index.html"><span class="ui-li-count">0</span>The Beatles - Norweigan Wood</a></li>
+				</ul>
 			</div>
 		</div>
-	</div> 
- 
-	<div data-role="content">
-		<div class="content-primary">
-		<ul data-role="listview" id="playlist">
-			<li><a href="index.html"><span class="ui-li-count">9</span>Lady Gaga - Bad Romance</a></li>
-			<li><a href="index.html"><span class="ui-li-count">6</span>Bob Marley - Buffalo Soldier</a></li>
-			<li><a href="index.html"><span class="ui-li-count">1</span>Bob Dylan - All Along the Watchtower</a></li>
-			<li><a href="index.html"><span class="ui-li-count">0</span>The Beatles - Norweigan Wood</a></li>
-		</ul>
+		<div>
+			<a href="#search" data-role="button">Add Song</a>
 		</div>
 	</div>
-</div> 
+	
+	<div data-role="page" id="search">
+		<div data-role="header">
+			<div style="text-align:center;"> 
+				<img src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" />
+				<div>
+					Build a playlist for {{ location_name }} ({{ location_id }})!
+				</div>
+			</div>
+		</div> 
+		<div data-role="content">
+			<label for="search-basic">Search for a song:</label>
+			<input type="search" name="search" id="trackSearch" value="" />
+			<button id="btnSubmitSearch" name="Search">Search</button>
+		</div> 
+		<div>
+			<ul data-role="listview" id="searchListing">
+			</ul>
+		</div>
+	</div>
+ 
+ 	<div data-role="page" id="trackDetail">
+ 		<div data-role="header">
+			<div style="text-align:center;"> 
+				<img src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" />
+				<div>
+					Build a playlist for {{ location_name }} ({{ location_id }})!
+				</div>
+			</div>
+		</div>
+		<div data-role="content">
+			<ul data-role="listview" id="trackDetails">
+			</ul>
+		</div>
+		<button id="btnAddTrack" name="Add">Add Track</button>
+ 	</div>
  
 </body>
 </html>
