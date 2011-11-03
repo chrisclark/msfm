@@ -8,9 +8,16 @@
 	<title>Milkshake.fm - We, the DJ</title>
 	
 	<link rel="stylesheet" href="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.css') }}" type="text/css" /> 
-	<script src="{{ url_for('static', filename='scripts/jquery-1.6.2.js') }}"></script> 
-	<script src="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.js') }}"></script>
-	<script src="{{ url_for('static', filename='scripts/client.js') }}"></script> 
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-1.6.2.js') }}"></script> 
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/client.js') }}"></script>
+	
+	<!-- Zen Player -->
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.rotate.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.grab.js') }}"></script> 
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.jplayer.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/zen.js') }}"></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/zen.css') }}">
 
 	<!-- Apple -->
 	<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -87,6 +94,19 @@
 		<div data-role="content">
 			<ul data-role="listview" id="trackDetails">
 			</ul>
+		</div>
+		<div style="margin-top: 10px; width: 100%; text-align:center;">
+			<div id="zen">
+				<span class="player"></span>
+				<span class="circle"></span>
+				<span class="progress"></span>
+				<span class="buffer"></span>
+				<span class="drag"></span>
+				<div class="button">
+					<span class="icon play"></span>
+					<span class="icon pause"></span>
+				</div>
+			</div>
 		</div>
 		<button id="btnAddTrack" name="Add">Add Track</button>
  	</div>

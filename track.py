@@ -20,7 +20,7 @@ class Track:
             self.artist = t["user"]["username"]
             self.title = t["title"]
             self.length = t["duration"]/1000
-            self.url = t["stream_url"]
+            self.url = t["stream_url"] + '?client_id=' + config.soundCloudClientId
     def toJson(self):
         return json.dumps(self, default=common.serializeTrack)
     

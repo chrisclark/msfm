@@ -27,6 +27,9 @@ $('#trackDetail').live('pageshow', function(event){
 		$("#trackDetails").append("<li>Title: " + track.title + '</li>');
 		$("#trackDetails").append("<li>Length: " + track.length + " seconds </li>");
 		$("#trackDetails").listview("refresh");
+		
+		var player = $("#zen .player");
+		player.jPlayer("setMedia", {mp3: track.url});
 	});
 	$("#btnAddTrack").click(function(){
 		$.ajax({
@@ -37,6 +40,7 @@ $('#trackDetail').live('pageshow', function(event){
 	});
 });
 
+//binds each button element in the <li> search results to the track details page
 $('.trackButton').live('click', function() {
 	var track_id = $(this).jqmData('id');
 	$('#trackDetail').jqmData('track_id', track_id);
