@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> 
+<!DOCTYPE html> 
 <html> 
  
 <head> 
@@ -33,6 +33,9 @@
 	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
 	<link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/apple-touch-icon-precomposed.png') }}">
   
+  	<script type="text/javascript">
+  		location_id = {{ location_id }};
+  	</script>
 </head>
 <body>
  
@@ -42,7 +45,7 @@
 			<div style="text-align:center;"> 
 				<img src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" />
 				<div>
-					Build a playlist for {{ location_name }} ({{ location_id }})!
+					Build a playlist for {{ location_name }}!
 				</div>
 			</div>
 		</div> 

@@ -1,25 +1,24 @@
-from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
-from sqlalchemy.orm import relationship, backref
-from db import db_session, Base
+from playlistitem import PlaylistItem
+from db import db_session
+from track import Track
+from flask import json
 
-class Playlist(Base):
-    __tablename__ = 'playlists'
+class Playlist:
     
-    id = Column(Integer, Sequence('location_id_seq'), primary_key=True)
-    location_id = Column(Integer, ForeignKey('locations.id'))
-    
-    def __init__(self, id=None):
-        if id:
-            self.id = id
-            self.loadById()
-            
-    def loadById(self):
-        pass
-    
-    def copyFrom(self, src):
-        #might have to change if we get more complex properties
-        self.__dict__ = src.__dict__.copy()
-    
-    def __repr__(self):
-        return "<Playlist(id: '%s',location_id: '%s')>" % (str(self.id), str(self.location_id))
-        
+    def __init__(self, loc_id):
+        self.location_id = loc_id
+        self.queue = []
+        for pli, t in db_session.query(PlaylistItem, Track).\
+                            filter(PlaylistItem.location_id == loc_id).\
+                            filter(Track.id == PlaylistItem.track_id):
+            self.queue.append(dict({'artist': t.artist,
+                                    'score': pli.score,
+                                    'title': t.title,
+                                    'length': t.length_seconds,
+                                    'url': t.url,
+                                    'track_id': t.id,
+                                    'track_provider_id': t.provider_id
+                                    }))
+
+    def to_json(self):
+        return json.dumps(self.queue)

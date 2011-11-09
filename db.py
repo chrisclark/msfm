@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 import config
 
-msfmEngine = create_engine(config.connectionString)
+msfmEngine = create_engine(config.connection_string)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=msfmEngine))
@@ -15,4 +15,7 @@ def init_db():
     # they will be registered properly on the metadata.  Otherwise
     # you will have to import them first before calling init_db()
     import location
+    import track
+    import user
+    import playlistitem
     Base.metadata.create_all(bind=msfmEngine)

@@ -10,6 +10,49 @@ import config
 app = Flask(__name__)
 app.debug = config.debugMode
 
+##########  API Routes ##########
+
+@app.route('/venue/<location_name>')
+def venue(location_name):
+    l = Location(name=location_name)
+    return render_template(
+                           'venueHome.html',
+                           location_name=l.name,
+                           location_id=l.id)
+
+@app.route('/<location_name>')
+def index(location_name):
+    l = Location(name=location_name)
+    return render_template(
+                           'client.html',
+                           location_name=l.name,
+                           location_id=l.id)
+
+@app.route('/playlist/<int:location_id>')
+def getPlaylist(location_id):
+    l = Location(id=location_id)
+    return l.playlist.to_json()
+
+@app.route('/search/<query>')
+def getSearch(query):
+    return MusicLibrary.search(query).to_json()
+
+@app.route('/track_by_provider_id/<track_provider_id>')
+def getTrack(track_provider_id):
+    t = Track(provider_id=track_provider_id)
+    t.load_by_provider_id()
+    ret = t.to_json()
+    return ret
+
+@app.route('/add_track', methods=['POST'])
+def addTrack():
+    track_provider_id = request.form["track_provider_id"]
+    location_id = request.form["location_id"]
+    l = Location(name='', id=location_id)
+    t = Track(provider_id=track_provider_id)
+    t.load_by_provider_id()
+    l.add_track(t)
+
 ##########  Static and Special Cases ##########
 
 @app.route('/')
@@ -31,35 +74,8 @@ def initdb(pwd):
     else:
         return "bad bassword"
 
-##########  API Routes ##########
-
-@app.route('/<location_name>')
-def index(location_name):
-    l = Location(name=location_name)
-    return render_template(
-                           'locationHome.html',
-                           location_name=l.name,
-                           location_id=l.id)
-
-@app.route('/playlist/<int:location_id>')
-def getPlaylist(location_id):
-    return MusicLibrary.search("test").toJson()
-
-@app.route('/search/<query>')
-def getSearch(query):
-    return MusicLibrary.search(query).toJson()
-
-@app.route('/track/<track_id>')
-def getTrack(track_id):
-    return Track(track_id, load=True).toJson()
-
-@app.route('/addTrack', methods=['POST'])
-def addTrack():
-    tid = request.form["track_id"]
-    pass
-
-
 ##########  SpecialHandlers ##########  
+
 @app.errorhandler(500)
 def error500(e):
     return str(e)

@@ -1,34 +1,66 @@
 from flask import json
-import config
-import common
+from sqlalchemy import Column, Integer, String, Sequence
+from db import db_session, Base
 
-class Track:
+class Track(Base):
     "a single track of music"
-    def __init__(self, id, artist='', title='', length='', url='', load=False):
+    
+    __tablename__ = "tracks"
+    
+    id = Column(Integer, Sequence('location_id_seq'), primary_key=True)
+    provider_id = Column(String(256))
+    artist = Column(String(256))
+    title = Column(String(256))
+    length_seconds = Column(Integer)
+    url = Column(String(1024))
+    
+    def __init__(self, id=None, provider_id=None, artist=None, title=None, length_seconds=None, url=None):
         self.id = id
-        if not load:
-            self.artist = artist
-            self.title = title
-            self.length = length
-            self.url = url
-        else:
-            reqUrl = 'http://api.soundcloud.com/tracks/%s.json?client_id=%s'\
-                      % (id, config.soundCloudClientId)
-                      
-            t = common.getJson(reqUrl)
-            
-            self.artist = t["user"]["username"]
-            self.title = t["title"]
-            self.length = t["duration"]/1000
-            self.url = t["stream_url"] + '?client_id=' + config.soundCloudClientId
-    def toJson(self):
-        return json.dumps(self, default=common.serializeTrack)
+        self.provider_id = provider_id
+        self.artist = artist
+        self.title = title
+        self.length_seconds = length_seconds
+        self.url = url
+        
+    def load_by_provider_id(self):
+        if self.provider_id:
+            t = db_session.query(Track).filter_by(provider_id=self.provider_id).first()
+            if t:
+                self.copyFrom(t)
+            else:
+                self.copyFrom(MusicLibrary.get_track(self.provider_id))
+                
+            db_session.add(self)
+            db_session.commit()
+        
+    def load_by_id(self):
+        t = db_session.query(Track).filter_by(id=self.name).first()
+        if t:
+            self.copyFrom(t)
+
+    def to_json(self):
+        return json.dumps(self, default=Track._serialize)
+    
+    def copyFrom(self, src):
+        #might have to change if we get more complex properties
+        self.__dict__ = src.__dict__.copy()
+    
+    @staticmethod
+    def _serialize(track):
+        return {'artist': track.artist,
+                'title': track.title,
+                'length_seconds': track.length_seconds,
+                'id': track.id,
+                'url': track.url,
+                'provider_id': track.provider_id}
     
 class Tracklist:
     "a list of tracks"
     def __init__(self):
         self.queue = []
-    def addTrack(self, t):
+    def add_track(self, t):
         self.queue.append(t)
-    def toJson(self):
-        return json.dumps(self.queue, default=common.serializeTrack)
+    def to_json(self):
+        return json.dumps(self.queue, default=Track._serialize)
+
+from musicLibrary import MusicLibrary

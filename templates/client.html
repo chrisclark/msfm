@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html> 
+<html> 
+ 
+<head> 
+	<meta charset="utf-8"> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+	<title>Milkshake.fm - We, the DJ</title>
+	
+	<link rel="stylesheet" href="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.css') }}" type="text/css" /> 
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-1.6.2.js') }}"></script> 
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/client.js') }}"></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/client.css') }}">
+	
+	<!-- Zen Player -->
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.rotate.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.grab.js') }}"></script> 
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.jplayer.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/zen.js') }}"></script>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/zen.css') }}">
+
+	<!-- Apple -->
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<link rel="apple-touch-startup-image" sizes="640x920" href="{{ url_for('static', filename='images/startup-retina.png') }}">
+	<link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/startup.png') }}">
+	
+	<!-- Touch icons -->
+	<!-- For iPhone 4 with high-resolution Retina display: -->
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for('static', filename='images/apple-touch-icon-114x114-precomposed.png') }}">
+	<!-- For first-generation iPad: -->
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ url_for('static', filename='images/apple-touch-icon-72x72-precomposed.png') }}">
+	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+	<link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/apple-touch-icon-precomposed.png') }}">
+  
+  	<script type="text/javascript">
+  		location_id = {{ location_id }};
+  	</script>
+</head>
+<body>
+ 
+	<div data-role="page" id="homePage"> 
+ 
+		<div data-role="header">
+			<div style="text-align:center;"> 
+				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
+				<div>
+					Build a playlist for {{ location_name }}!
+				</div>
+			</div>
+		</div> 
+	  
+		<div data-role="content">
+			<div class="content-primary">
+				<ul data-role="listview" id="venuePlaylist">
+
+				</ul>
+			</div>
+		</div>
+		<div>
+			<a href="#search" data-role="button">Add Song</a>
+		</div>
+	</div>
+	
+	<div data-role="page" id="search">
+		<div data-role="header">
+			<div style="text-align:center;"> 
+				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
+				<div>
+					Build a playlist for {{ location_name }} ({{ location_id }})!
+				</div>
+			</div>
+		</div> 
+		<div data-role="content">
+			<label for="search-basic">Search for a song:</label>
+			<input type="search" name="search" id="trackSearch" value="" />
+			<button id="btnSubmitSearch" name="Search">Search</button>
+		</div> 
+		<div>
+			<ul data-role="listview" id="searchListing">
+			</ul>
+		</div>
+	</div>
+ 
+ 	<div data-role="page" id="trackDetail">
+ 		<div data-role="header">
+			<div style="text-align:center;"> 
+				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
+				<div>
+					Build a playlist for {{ location_name }} ({{ location_id }})!
+				</div>
+			</div>
+		</div>
+		<div data-role="content">
+			<ul data-role="listview" id="trackDetails">
+			</ul>
+		</div>
+		<div style="margin-top: 10px; width: 100%; text-align:center;">
+			<div id="zen">
+				<span class="player"></span>
+				<span class="circle"></span>
+				<span class="progress"></span>
+				<span class="buffer"></span>
+				<span class="drag"></span>
+				<div class="button">
+					<span class="icon play"></span>
+					<span class="icon pause"></span>
+				</div>
+			</div>
+		</div>
+		<button id="btnAddTrack" name="Add">Add Track</button>
+ 	</div>
+ 
+</body>
+</html>
