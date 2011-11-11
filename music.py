@@ -3,7 +3,6 @@ from db import db_session, init_db
 import sys
 
 from location import Location
-from track import Track
 from musicLibrary import MusicLibrary
 import config
 
@@ -37,21 +36,16 @@ def getPlaylist(location_id):
 def getSearch(query):
     return MusicLibrary.search(query).to_json()
 
-@app.route('/track_by_provider_id/<track_provider_id>')
-def getTrack(track_provider_id):
-    t = Track(provider_id=track_provider_id)
-    t.load_by_provider_id()
-    ret = t.to_json()
-    return ret
+@app.route('/track/<track_id>')
+def getTrack(track_id):
+    return MusicLibrary.get_track(id=track_id).to_json()
 
 @app.route('/add_track', methods=['POST'])
 def addTrack():
-    track_provider_id = request.form["track_provider_id"]
+    track_id = request.form["track_id"]
     location_id = request.form["location_id"]
     l = Location(name='', id=location_id)
-    t = Track(provider_id=track_provider_id)
-    t.load_by_provider_id()
-    l.add_track(t)
+    l.add_track(id=track_id)
 
 ##########  Static and Special Cases ##########
 

@@ -34,10 +34,8 @@ class Location(Base):
         else:
             self.copyFrom(l)
     
-    def add_track(self, t):
-        pli = PlaylistItem(track_id=t.id, location_id=self.id)
-        pli.save()
-        pass
+    def add_track(self, track_id):
+        PlaylistItem(track_id=track_id, location_id=self.id).save()
     
     def copyFrom(self, src):
         #might have to change if we get more complex properties

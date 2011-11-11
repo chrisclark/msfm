@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 import config
 
-msfmEngine = create_engine(config.connection_string)
+msfmEngine = create_engine(config.connection_string, convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=msfmEngine))

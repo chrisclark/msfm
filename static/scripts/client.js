@@ -8,8 +8,8 @@ loadPlaylist = function (event) {
 	$.getJSON("/playlist/" + location_id, function(data) {
 			var listing = [];
 			$.each(data, function(index, playlistitem) {
-				listing.push('<li class="trackButton" data-provider-id="'
-				+ playlistitem.track_provider_id
+				listing.push('<li class="trackButton" data-id="'
+				+ playlistitem.track_id
 				+ '"><a href="javascript:void(0);">'
 				+ '<span class="ui-li-count">'
 				+ playlistitem.score
@@ -26,8 +26,8 @@ loadPlaylist = function (event) {
 function bindTrackSearchResults(tracklist){
 	var listing = [];
 	$.each(tracklist, function(index, track) {
-		listing.push('<li class="trackButton" data-provider-id="'
-		+ track.provider_id
+		listing.push('<li class="trackButton" data-id="'
+		+ track.id
 		+ '"><a href="javascript:void(0);">'
 		+ track.artist
 		+ ' - '
@@ -41,17 +41,17 @@ $('#homePage').live('pageshow', loadPlaylist);
 
 //sets up the track details page
 $('#trackDetail').live('pageshow', function(event){
-	provider_id = $(this).jqmData('provider-id');
+	track_id = $(this).jqmData('id');
 	
 	//retrieve track details and then build the UI
-	$.getJSON("/track_by_provider_id/" + provider_id, buildTrackDetails);
+	$.getJSON("/track/" + track_id, buildTrackDetails);
 	
 	$("#btnAddTrack").click(function(){
 		$.ajax({
 			type: "POST",
 			url: "/add_track",
-			data: "track_provider_id="
-				+ provider_id
+			data: "track_id="
+				+ track_id
 				+ '&location_id='
 				+ location_id
 		});
@@ -69,12 +69,10 @@ buildTrackDetails = function(track){
 	player.jPlayer("setMedia", {mp3: track.url});
 }
 
-addTrackByProviderId = 
-
 //binds each button element in the <li> search results to the track details page
 $('.trackButton').live('click', function() {
-	var track_provider_id = $(this).jqmData('provider-id');
-	$('#trackDetail').jqmData('provider-id', track_provider_id);
+	var track_id = $(this).jqmData('id');
+	$('#trackDetail').jqmData('id', track_id);
 	$.mobile.changePage('#trackDetail');
 });
 

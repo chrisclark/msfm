@@ -11,7 +11,7 @@ class PlaylistItem(Base):
     id = Column(Integer, Sequence('location_id_seq'), primary_key=True)
     location_id = Column(Integer, ForeignKey('locations.id'))
     track_id = Column(Integer, ForeignKey('tracks.id'))
-    #added_by_user_id = Column(Integer, ForeignKey('users.id'))
+    added_by_user_id = Column(Integer, ForeignKey('users.id'))
     score = Column(Integer)
     done_playing = Boolean()
     
@@ -22,7 +22,7 @@ class PlaylistItem(Base):
         self.id = id
         self.location_id = location_id
         self.track_id = track_id
-        #self.added_by_user_id = added_by_user_id
+        self.added_by_user_id = added_by_user_id
         self.score = score
         self.done_playing = False
         

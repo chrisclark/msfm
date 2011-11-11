@@ -1,39 +1,31 @@
-from track import Track, Tracklist
-import urllib
-import common
+from track import Track
+from db import db_session
+from musicProvider import MusicProvider
+from playlist import Playlist
 
 class MusicLibrary:
     
-    _soundCloudClientId = '84926ddd328617c81cbbcfc03942dcb4'
+    @staticmethod
+    def get_track(id=None, provider_id=None):
+        ret = None
+        if id:
+            ret = db_session.query(Track).filter_by(id=id).first()
+        elif provider_id:
+            t = db_session.query(Track).filter_by(provider_id=provider_id).first()
+            if t:
+                ret = t
+            else:
+                ret = MusicProvider.get_track(provider_id)
+                db_session.add(ret)
+                db_session.commit()
+        return ret
     
     @staticmethod
     def search(query):
-        reqUrl = 'http://api.soundcloud.com/tracks.json?client_id=%s&filter=streamable&limit=10&'\
-                  % (MusicLibrary._soundCloudClientId) + urllib.urlencode({'q': query})
-                  
-        r = common.get_json(reqUrl)
-        pl = Tracklist()
-        for t in r:
-            pl.add_track(Track(provider_id=t["id"],
-                              artist=t["user"]["username"],
-                              title=t["title"],
-                              length_seconds=t["duration"]/1000,
-                              url=t["stream_url"] + '?client_id=' + MusicLibrary._soundCloudClientId))
-        return pl
-    
-    @staticmethod
-    def get_track(provider_id):
-        reqUrl = 'http://api.soundcloud.com/tracks/%s.json?client_id=%s'\
-                      % (provider_id, MusicLibrary._soundCloudClientId)
-                      
-        soundcloud_track_json = common.get_json(reqUrl)
-        
-        t = Track()
-        
-        t.provider_id = provider_id
-        t.artist = soundcloud_track_json["user"]["username"]
-        t.title = soundcloud_track_json["title"]
-        t.length_seconds = soundcloud_track_json["duration"]/1000
-        t.url = soundcloud_track_json["stream_url"] + '?client_id=' + MusicLibrary._soundCloudClientId
-        
-        return t
+        results_from_provider = MusicProvider.search(query)
+        search_results = Playlist()
+        for r in results_from_provider.queue:
+            #ensures each track gets saved to the database
+            t = MusicLibrary.get_track(provider_id = r[0].provider_id)
+            search_results.add_track(t)
+        return search_results
