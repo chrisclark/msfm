@@ -29,7 +29,7 @@ class PlaylistItem(Base):
     def save(self):
         db_session.add(self)
         db_session.commit()
-            
+        
     def copy_from(self, src):
         #might have to change if we get more complex properties
         self.__dict__ = src.__dict__.copy()

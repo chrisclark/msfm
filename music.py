@@ -45,7 +45,7 @@ def addTrack():
     track_id = request.form["track_id"]
     location_id = request.form["location_id"]
     l = Location(name='', id=location_id)
-    l.add_track(id=track_id)
+    l.add_track(track_id)
 
 ##########  Static and Special Cases ##########
 
@@ -77,6 +77,12 @@ def error500(e):
 @app.teardown_request
 def shutdown_session(exception=None):
     db_session.remove()
+
+import logging
+from logging import FileHandler
+file_handler = FileHandler('log.txt', mode='a', encoding=None, delay=False)
+file_handler.setLevel(logging.WARNING)
+app.logger.addHandler(file_handler)
 
 if __name__ == '__main__':
     app.run(host=config.host, port=config.port)

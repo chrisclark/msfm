@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Sequence, DateTime
-from db import db_session, Base
+from db import Base
 
 class User(Base):
     __tablename__ = 'users'
@@ -9,12 +9,10 @@ class User(Base):
     email = Column(String(60))
     facebook_id = Column(String(60))
     created = Column(DateTime)
-    real_name = Column(String(128))
     
     def __init__(self, id=None, username=None, email=None, facebook_id=None):
         self.id = id
         self.username = username
-        self.pwdhash = pwdhash
         self.email = email
         self.facebook_id = facebook_id
         

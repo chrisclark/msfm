@@ -26,7 +26,7 @@ class Playlist:
             t = i[0]
             pli = i[1]
             if pli:
-                score = i[0].score #works for now since this is the only property from pli that we use
+                score = pli.score #works for now since this is the only property from pli that we use
             serialize_me.append(dict({'artist': t.artist,
                                         'score': score,
                                         'title': t.title,

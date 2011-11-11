@@ -38,8 +38,40 @@
   		location_id = {{ location_id }};
   	</script>
 </head>
-<body>
- 
+<body>  
+ 	<div id="fb-root"></div>
+	<script>	
+		window.fbAsyncInit = function() {
+			FB.init({
+				appId      : '297440896947168', // App ID
+				//channelURL : '//WWW.YOUR_DOMAIN.COM/channel.html', // Channel File
+				status     : true, // check login status
+				cookie     : true, // enable cookies to allow the server to access the session
+				oauth      : true, // enable OAuth 2.0
+				xfbml      : true  // parse XFBML
+			});
+			
+			$('#btnFBLogout').click(function(){  
+				FB.logout();  
+			});
+			
+			$('#btnFBLogin').click(function(){
+				FB.login()
+			});
+			
+			FB.Event.subscribe('auth.statusChange', FBAuthChange);
+			FB.getLoginStatus(FBAuthChange);
+		};
+	
+		// Load the SDK Asynchronously
+		(function(d){
+			var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+			js = d.createElement('script'); js.id = id; js.async = true;
+			js.src = "//connect.facebook.net/en_US/all.js";
+			d.getElementsByTagName('head')[0].appendChild(js);
+		}(document));
+	   	  
+	</script>
 	<div data-role="page" id="homePage"> 
  
 		<div data-role="header">
@@ -61,6 +93,13 @@
 		<div>
 			<a href="#search" data-role="button">Add Song</a>
 		</div>
+		<div id="FBLogin" style="display: none;">
+			<a href="javascript:void(0);" id="btnFBLogin" data-role="button" data-icon="msfm-facebook">Log In with Facebook</a>
+		</div>
+		<div id="FBLogout" style="display: none;">	
+			<a href="javascript:void(0);" id="btnFBLogout" data-role="button">Log Out</a>
+		</div>
+		<input type="hidden" name="fbid" id="fbid" />
 	</div>
 	
 	<div data-role="page" id="search">
@@ -68,7 +107,7 @@
 			<div style="text-align:center;"> 
 				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
 				<div>
-					Build a playlist for {{ location_name }} ({{ location_id }})!
+					Build a playlist for {{ location_name }}
 				</div>
 			</div>
 		</div> 
@@ -88,7 +127,7 @@
 			<div style="text-align:center;"> 
 				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
 				<div>
-					Build a playlist for {{ location_name }} ({{ location_id }})!
+					Build a playlist for {{ location_name }}
 				</div>
 			</div>
 		</div>
@@ -109,7 +148,9 @@
 				</div>
 			</div>
 		</div>
-		<button id="btnAddTrack" name="Add">Add Track</button>
+		<div id="divAddTrack" style="display: none;">
+			<button id="btnAddTrack" name="Add">Add Track</button>
+		</div>
  	</div>
  
 </body>

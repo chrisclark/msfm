@@ -1,3 +1,24 @@
+function showLogin(){ $("#FBLogout").hide(); $("#FBLogin").show(); }  
+   	   
+function showLogout() { $("#FBLogout").show(); $("#FBLogin").hide(); }  
+
+FBAuthChange = function(response) {  
+	if (response.status == 'connected') { 
+		showLogout();
+		fbid = $("#fbid").val(response.authResponse.userID);
+		$.ajax({
+			type: "POST",
+			url: "/login",
+			data: "fbid="
+				+ fbid
+				+ '&location_id='
+				+ location_id
+		});
+	} else {
+		showLogin();
+	}
+}
+
 trackSearch = function() {
 	$.getJSON("/search/" + $("#trackSearch").val(), function(data) {
 		bindTrackSearchResults(data);
@@ -8,7 +29,7 @@ loadPlaylist = function (event) {
 	$.getJSON("/playlist/" + location_id, function(data) {
 			var listing = [];
 			$.each(data, function(index, playlistitem) {
-				listing.push('<li class="trackButton" data-id="'
+				listing.push('<li class="trackButton" data-show-add-button="False" data-id="'
 				+ playlistitem.track_id
 				+ '"><a href="javascript:void(0);">'
 				+ '<span class="ui-li-count">'
@@ -25,13 +46,13 @@ loadPlaylist = function (event) {
 
 function bindTrackSearchResults(tracklist){
 	var listing = [];
-	$.each(tracklist, function(index, track) {
-		listing.push('<li class="trackButton" data-id="'
-		+ track.id
+	$.each(tracklist, function(index, playlistitem) {
+		listing.push('<li class="trackButton" data-show-add-button="True" data-id="'
+		+ playlistitem.track_id
 		+ '"><a href="javascript:void(0);">'
-		+ track.artist
+		+ playlistitem.artist
 		+ ' - '
-		+ track.title
+		+ playlistitem.title
 		+ '</a></li>');
 	});
 	$('#searchListing').empty().append(listing.join('')).listview("refresh");
@@ -46,16 +67,20 @@ $('#trackDetail').live('pageshow', function(event){
 	//retrieve track details and then build the UI
 	$.getJSON("/track/" + track_id, buildTrackDetails);
 	
-	$("#btnAddTrack").click(function(){
-		$.ajax({
-			type: "POST",
-			url: "/add_track",
-			data: "track_id="
-				+ track_id
-				+ '&location_id='
-				+ location_id
-		});
-	});
+	if($(this).jqmData('show_add_button')) {
+		$("#divAddTrack").show();
+		$("#btnAddTrack").click(function(){
+			$.ajax({
+				type: "POST",
+				url: "/add_track",
+				data: "track_id="
+					+ track_id
+					+ '&location_id='
+					+ location_id
+			});
+		});	
+	}
+	
 });
 
 buildTrackDetails = function(track){
@@ -73,6 +98,10 @@ buildTrackDetails = function(track){
 $('.trackButton').live('click', function() {
 	var track_id = $(this).jqmData('id');
 	$('#trackDetail').jqmData('id', track_id);
+	
+	var show_add_button = $(this).jqmData('show-add-button');
+	$('#trackDetail').jqmData('show_add_button', show_add_button);
+	
 	$.mobile.changePage('#trackDetail');
 });
 

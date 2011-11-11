@@ -2,6 +2,7 @@ from track import Track
 from playlist import Playlist
 import urllib
 import common
+from flask import json
 
 class MusicProvider:
     _soundCloudClientId = '84926ddd328617c81cbbcfc03942dcb4'
@@ -12,6 +13,7 @@ class MusicProvider:
                   % (MusicProvider._soundCloudClientId) + urllib.urlencode({'q': query})
                   
         r = common.get_json(reqUrl)
+
         res = Playlist()
         for t in r:
             res.add_track(Track(provider_id=t["id"],
