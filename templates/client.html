@@ -150,8 +150,20 @@
 		</div>
 		<div id="divAddTrack" style="display: none;">
 			<button id="btnAddTrack" name="Add">Add Track</button>
+			<a id="lnkAddTrackDialog" href="#confirmAdd" data-rel="dialog" data-role="button" style="display: none;"></a>
 		</div>
  	</div>
- 
+ 	
+ 	<div data-role="page" id="confirmAdd">
+ 		<div data-role="header">
+			<h1>Milkshake.fm</h1>
+		</div>
+		<div data-role="content">
+			<h1>Song added!</h1>
+			<p>You've added the track to the location</p>
+			<a href="#homePage" data-role="button">Got it!</a>           
+		</div>
+	</div>
+ 	</div>
 </body>
 </html>

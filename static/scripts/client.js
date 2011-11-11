@@ -69,14 +69,16 @@ $('#trackDetail').live('pageshow', function(event){
 	
 	if($(this).jqmData('show_add_button')) {
 		$("#divAddTrack").show();
-		$("#btnAddTrack").click(function(){
+		$("#btnAddTrack").unbind('click.msfm');
+		$("#btnAddTrack").bind('click.msfm', function(){
 			$.ajax({
 				type: "POST",
 				url: "/add_track",
 				data: "track_id="
 					+ track_id
 					+ '&location_id='
-					+ location_id
+					+ location_id,
+				success: function(data){ $('#lnkAddTrackDialog').click();}
 			});
 		});	
 	}
