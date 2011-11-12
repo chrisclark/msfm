@@ -78,7 +78,7 @@
 			<div style="text-align:center;"> 
 				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
 				<div>
-					Build a playlist for {{ location_name }}!
+					You're picking music for {{ location_name }}
 				</div>
 			</div>
 		</div> 
@@ -107,7 +107,7 @@
 			<div style="text-align:center;"> 
 				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
 				<div>
-					Build a playlist for {{ location_name }}
+					You're picking music for {{ location_name }}
 				</div>
 			</div>
 		</div> 
@@ -122,17 +122,17 @@
 		</div>
 	</div>
  
- 	<div data-role="page" id="trackDetail">
+ 	<div data-role="page" id="addTrack">
  		<div data-role="header">
 			<div style="text-align:center;"> 
 				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
 				<div>
-					Build a playlist for {{ location_name }}
+					You're picking music for {{ location_name }}
 				</div>
 			</div>
 		</div>
 		<div data-role="content">
-			<ul data-role="listview" id="trackDetails">
+			<ul data-role="listview" id="addTrackDetails">
 			</ul>
 		</div>
 		<div style="margin-top: 10px; width: 100%; text-align:center;">
@@ -148,10 +148,8 @@
 				</div>
 			</div>
 		</div>
-		<div id="divAddTrack" style="display: none;">
-			<button id="btnAddTrack" name="Add">Add Track</button>
-			<a id="lnkAddTrackDialog" href="#confirmAdd" data-rel="dialog" data-role="button" style="display: none;"></a>
-		</div>
+		<button id="btnAddTrack" name="Add">Add Track</button>
+		<a id="lnkAddTrackDialog" href="#confirmAdd" data-rel="dialog" data-role="button" style="display: none;"></a>
  	</div>
  	
  	<div data-role="page" id="confirmAdd">
@@ -164,6 +162,23 @@
 			<a href="#homePage" data-role="button">Got it!</a>           
 		</div>
 	</div>
+ 	
+ 	<div data-role="page" id="playlistItemDetails">
+ 		<div data-role="header">
+			<div style="text-align:center;"> 
+				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
+				<div>
+					You're picking music for {{ location_name }}
+				</div>
+			</div>
+		</div>
+		<div data-role="content">
+			<ul data-role="listview" id="playlistItemDetailsTrackDetails">
+			</ul>
+		</div>
+		<a href="javascript:void(0);" id="lnkUpVote" data-role="button">Thumbs Up</a>
+		<a href="javascript:void(0);" id="lnkDownVote" data-role="button">Thumbs Down</a>
  	</div>
+ 	
 </body>
 </html>

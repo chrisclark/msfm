@@ -1,8 +1,9 @@
 function showLogin(){ $("#FBLogout").hide(); $("#FBLogin").show(); }  
-   	   
 function showLogout() { $("#FBLogout").show(); $("#FBLogin").hide(); }  
+function spinnerStart() { $.mobile.pageLoading(); }
+function spinnerStop() { $.mobile.pageLoading(true); }
 
-FBAuthChange = function(response) {  
+FBAuthChange = function(response) {
 	if (response.status == 'connected') { 
 		showLogout();
 		fbid = $("#fbid").val(response.authResponse.userID);
@@ -20,16 +21,19 @@ FBAuthChange = function(response) {
 }
 
 trackSearch = function() {
+	spinnerStart();
 	$.getJSON("/search/" + $("#trackSearch").val(), function(data) {
 		bindTrackSearchResults(data);
+		spinnerStop(true);
 	});
 }
 
-loadPlaylist = function (event) {
+bindPlaylist = function (event) {
+	spinnerStart()
 	$.getJSON("/playlist/" + location_id, function(data) {
 			var listing = [];
 			$.each(data, function(index, playlistitem) {
-				listing.push('<li class="trackButton" data-show-add-button="False" data-id="'
+				listing.push('<li class="playlistItemButton" data-id="'
 				+ playlistitem.track_id
 				+ '"><a href="javascript:void(0);">'
 				+ '<span class="ui-li-count">'
@@ -41,13 +45,24 @@ loadPlaylist = function (event) {
 				+ '</a></li>');
 			});
 			$('#venuePlaylist').empty().append(listing.join('')).listview("refresh");
+			spinnerStop();
 	});
 }
 
+$('#homePage').live('pageshow', bindPlaylist);
+
+//binds each button element in the <li> search results to the track details page
+$('.playlistItemButton').live('click', function() {
+	var track_id = $(this).jqmData('id');
+	$('#playlistItemDetails').jqmData('id', track_id);
+	$.mobile.changePage('#playlistItemDetails');
+});
+
 function bindTrackSearchResults(tracklist){
+	spinnerStart();
 	var listing = [];
 	$.each(tracklist, function(index, playlistitem) {
-		listing.push('<li class="trackButton" data-show-add-button="True" data-id="'
+		listing.push('<li class="trackButton" data-id="'
 		+ playlistitem.track_id
 		+ '"><a href="javascript:void(0);">'
 		+ playlistitem.artist
@@ -56,58 +71,64 @@ function bindTrackSearchResults(tracklist){
 		+ '</a></li>');
 	});
 	$('#searchListing').empty().append(listing.join('')).listview("refresh");
+	spinnerStop();
 }
 
-$('#homePage').live('pageshow', loadPlaylist);
-
-//sets up the track details page
-$('#trackDetail').live('pageshow', function(event){
-	track_id = $(this).jqmData('id');
-	
-	//retrieve track details and then build the UI
-	$.getJSON("/track/" + track_id, buildTrackDetails);
-	
-	if($(this).jqmData('show_add_button')) {
-		$("#divAddTrack").show();
-		$("#btnAddTrack").unbind('click.msfm');
-		$("#btnAddTrack").bind('click.msfm', function(){
-			$.ajax({
-				type: "POST",
-				url: "/add_track",
-				data: "track_id="
-					+ track_id
-					+ '&location_id='
-					+ location_id,
-				success: function(data){ $('#lnkAddTrackDialog').click();}
-			});
-		});	
-	}
-	
+$("#btnAddTrack").unbind('click.msfm');
+$("#btnAddTrack").live('click.msfm', function(){
+	spinnerStart();
+	$.ajax({
+		type: "POST",
+		url: "/add_track",
+		data: "track_id="
+			+ track_id
+			+ '&location_id='
+			+ location_id,
+		success: function(data){
+			spinnerStop();
+			$('#lnkAddTrackDialog').click();
+		}
+	});
 });
 
-buildTrackDetails = function(track){
-	$("#trackDetails").empty();
-	$("#trackDetails").append("<li>Artist: " + track.artist + '</li>');
-	$("#trackDetails").append("<li>Title: " + track.title + '</li>');
-	$("#trackDetails").append("<li>Length: " + track.length_seconds + " seconds </li>");
-	$("#trackDetails").listview("refresh");
-	
-	var player = $("#zen .player");
-	player.jPlayer("setMedia", {mp3: track.url});
+//sets up the track details page
+$('#addTrack').live('pageshow', function(event){
+	$.getJSON("/track/" + $(this).jqmData('id'),
+		function(data){
+			spinnerStart();
+			buildTrackDetails(data, '#addTrackDetails');
+			var player = $("#zen .player");
+			player.jPlayer("setMedia", {mp3: data.url});
+			spinnerStop();
+		}
+	);
+});
+
+$('#playlistItemDetails').live('pageshow', function(event){
+	$.getJSON("/track/" + $(this).jqmData('id'), function(data){
+		spinnerStart();
+		buildTrackDetails(data, '#playlistItemDetailsTrackDetails');
+		spinnerStop();
+	});
+});
+
+buildTrackDetails = function(track, selector){
+	$(selector).empty();
+	$(selector).append("<li>Artist: " + track.artist + '</li>');
+	$(selector).append("<li>Title: " + track.title + '</li>');
+	$(selector).append("<li>Length: " + track.length_seconds + " seconds </li>");
+	$(selector).listview("refresh");
 }
 
 //binds each button element in the <li> search results to the track details page
 $('.trackButton').live('click', function() {
 	var track_id = $(this).jqmData('id');
-	$('#trackDetail').jqmData('id', track_id);
-	
-	var show_add_button = $(this).jqmData('show-add-button');
-	$('#trackDetail').jqmData('show_add_button', show_add_button);
-	
-	$.mobile.changePage('#trackDetail');
+	$('#addTrack').jqmData('id', track_id);
+	$.mobile.changePage('#addTrack');
 });
 
 $(document).ready(function() {
-	$("#btnSubmitSearch").click(trackSearch);
-	loadPlaylist(location_id);
+	$("#btnSubmitSearch").unbind('click.msfm');
+	$("#btnSubmitSearch").bind('click.msfm', trackSearch);
+	bindPlaylist(location_id);
 });
