@@ -10,8 +10,9 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.css') }}" type="text/css" /> 
 	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-1.6.2.js') }}"></script> 
 	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.js') }}"></script>
+	<script type="text/javascript" src="/static/scripts/jsuri-1.1.0.min.js"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='scripts/client.js') }}"></script>
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/client.css') }}">
+	<link rel="stylesheet" href="/static/css/client.css">
 	
 	<!-- Zen Player -->
 	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.rotate.js') }}"></script>
@@ -34,9 +35,6 @@
 	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
 	<link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/apple-touch-icon-precomposed.png') }}">
   
-  	<script type="text/javascript">
-  		location_id = {{ location_id }};
-  	</script>
 </head>
 <body>  
  	<div id="fb-root"></div>
@@ -51,16 +49,13 @@
 				xfbml      : true  // parse XFBML
 			});
 			
-			$('#btnFBLogout').click(function(){  
-				FB.logout();  
-			});
-			
 			$('#btnFBLogin').click(function(){
 				FB.login()
 			});
 			
 			FB.Event.subscribe('auth.statusChange', FBAuthChange);
-			FB.getLoginStatus(FBAuthChange);
+			checkAuth();
+			$("#homePage").live('pageshow', checkAuth);
 		};
 	
 		// Load the SDK Asynchronously
@@ -73,44 +68,28 @@
 	   	  
 	</script>
 	<div data-role="page" id="homePage"> 
- 
-		<div data-role="header">
-			<div style="text-align:center;"> 
-				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
-				<div>
-					You're picking music for {{ location_name }}
-				</div>
-			</div>
-		</div> 
-	  
+		<div data-role="header" class="header"></div>
 		<div data-role="content">
 			<div class="content-primary">
 				<ul data-role="listview" id="venuePlaylist">
-
 				</ul>
 			</div>
 		</div>
 		<div>
 			<a href="#search" data-role="button">Add Song</a>
 		</div>
-		<div id="FBLogin" style="display: none;">
+	</div>
+	
+	<div data-role="page" id="login">
+		<div data-role="header" class="header"></div>
+		<div id="FBLogin">
 			<a href="javascript:void(0);" id="btnFBLogin" data-role="button" data-icon="msfm-facebook">Log In with Facebook</a>
-		</div>
-		<div id="FBLogout" style="display: none;">	
-			<a href="javascript:void(0);" id="btnFBLogout" data-role="button">Log Out</a>
 		</div>
 		<input type="hidden" name="fbid" id="fbid" />
 	</div>
 	
 	<div data-role="page" id="search">
-		<div data-role="header">
-			<div style="text-align:center;"> 
-				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
-				<div>
-					You're picking music for {{ location_name }}
-				</div>
-			</div>
-		</div> 
+		<div data-role="header" class="header"></div>
 		<div data-role="content">
 			<label for="search-basic">Search for a song:</label>
 			<input type="search" name="search" id="trackSearch" value="" />
@@ -123,14 +102,7 @@
 	</div>
  
  	<div data-role="page" id="addTrack">
- 		<div data-role="header">
-			<div style="text-align:center;"> 
-				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
-				<div>
-					You're picking music for {{ location_name }}
-				</div>
-			</div>
-		</div>
+ 		<div data-role="header" class="header"></div>
 		<div data-role="content">
 			<ul data-role="listview" id="addTrackDetails">
 			</ul>
@@ -164,14 +136,7 @@
 	</div>
  	
  	<div data-role="page" id="playlistItemDetails">
- 		<div data-role="header">
-			<div style="text-align:center;"> 
-				<a href="#homePage"> <img border=0 src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" /> </a>
-				<div>
-					You're picking music for {{ location_name }}
-				</div>
-			</div>
-		</div>
+ 		<div data-role="header" class="header"></div>
 		<div data-role="content">
 			<ul data-role="listview" id="playlistItemDetailsTrackDetails">
 			</ul>

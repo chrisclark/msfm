@@ -9,12 +9,16 @@ class Playlist:
     
     def __init__(self, loc_id=None):
         self.queue = []
-        if loc_id:
-            self.location_id = loc_id
-            for pli, t in db_session.query(PlaylistItem, Track).\
-                                filter(PlaylistItem.location_id == loc_id).\
+        self.loc_id = loc_id
+            
+    @staticmethod
+    def from_location_id(location_id):
+        pl = Playlist(location_id)
+        for pli, t in db_session.query(PlaylistItem, Track).\
+                                filter(PlaylistItem.location_id == location_id).\
                                 filter(Track.id == PlaylistItem.track_id):
-                self.add_track(t, pli)
+            pl.add_track(t, pli)
+        return pl
                 
     def add_track(self, t, pli=None):
         self.queue.append((t, pli))

@@ -1,11 +1,31 @@
-function showLogin(){ $("#FBLogout").hide(); $("#FBLogin").show(); }  
-function showLogout() { $("#FBLogout").show(); $("#FBLogin").hide(); }  
+var msfm = {
+	locationId: function() {
+		if (!this.location_id){
+			var uri = new jsUri(window.location);
+			this.location_id = uri.path().replace("/", "");
+		}
+		return this.location_id;
+	},
+	location_id: null,
+	
+};
+
+checkAuth = function() {
+	FB.getLoginStatus(FBAuthChange);
+}
+
 function spinnerStart() { $.mobile.pageLoading(); }
 function spinnerStop() { $.mobile.pageLoading(true); }
 
+loginComplete = function(loginResponse) {
+	var l = 2;
+	if (loginResponse) {
+		$.mobile.changePage("#homePage");
+	}
+}
+
 FBAuthChange = function(response) {
 	if (response.status == 'connected') { 
-		showLogout();
 		fbid = $("#fbid").val(response.authResponse.userID);
 		$.ajax({
 			type: "POST",
@@ -13,11 +33,19 @@ FBAuthChange = function(response) {
 			data: "fbid="
 				+ fbid
 				+ '&location_id='
-				+ location_id
+				+ msfm.locationId()
+				+ '&fbat='
+				+ response.authResponse.accessToken,
+			success: loginComplete
 		});
 	} else {
-		showLogin();
+		$.mobile.changePage("#login");
 	}
+}
+
+LoadHeaders = function() {
+	var header = '<div style="text-align:center;"><a href="#homePage"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 5px;" /> </a><div>You\'re picking music for XYZ</div></div>';
+	$(".header").html(header)
 }
 
 trackSearch = function() {
@@ -30,7 +58,7 @@ trackSearch = function() {
 
 bindPlaylist = function (event) {
 	spinnerStart()
-	$.getJSON("/playlist/" + location_id, function(data) {
+	$.getJSON("/playlist/" + msfm.locationId(), function(data) {
 			var listing = [];
 			$.each(data, function(index, playlistitem) {
 				listing.push('<li class="playlistItemButton" data-id="'
@@ -81,9 +109,9 @@ $("#btnAddTrack").live('click.msfm', function(){
 		type: "POST",
 		url: "/add_track",
 		data: "track_id="
-			+ track_id
+			+ $('#addTrack').jqmData('id')
 			+ '&location_id='
-			+ location_id,
+			+ msfm.locationId(),
 		success: function(data){
 			spinnerStop();
 			$('#lnkAddTrackDialog').click();
@@ -128,7 +156,8 @@ $('.trackButton').live('click', function() {
 });
 
 $(document).ready(function() {
+	LoadHeaders();
 	$("#btnSubmitSearch").unbind('click.msfm');
 	$("#btnSubmitSearch").bind('click.msfm', trackSearch);
-	bindPlaylist(location_id);
+	bindPlaylist(msfm.locationId());
 });

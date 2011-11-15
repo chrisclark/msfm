@@ -9,12 +9,15 @@ class User(Base):
     email = Column(String(60))
     facebook_id = Column(String(60))
     created = Column(DateTime)
+    facebook_access_token = Column(String(128))
+    last_login = Column(DateTime)
     
-    def __init__(self, id=None, username=None, email=None, facebook_id=None):
+    def __init__(self, id=None, username=None, email=None, facebook_id=None, facebook_access_token=None):
         self.id = id
         self.username = username
         self.email = email
         self.facebook_id = facebook_id
+        self.facebook_access_token = facebook_access_token
         
     def register(self):
         if self.id:
