@@ -36,3 +36,6 @@ class Track(Base):
                 'id': track.id,
                 'url': track.url,
                 'provider_id': track.provider_id}
+        
+    def __repr__(self):
+        return "<track(id: '%s',title: '%s')>" % (str(self.id), str(self.title))

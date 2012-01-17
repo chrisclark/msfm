@@ -8,11 +8,30 @@ var msfm = {
 	},
 	location_id: null,
 	
+	FBAuthChange: function(response) {
+		if (response.authResponse) { 
+			fbid = $("#fbid").val(response.authResponse.userID);
+			$.ajax({
+				type: "POST",
+				url: "/login",
+				data: "fbid="
+					+ fbid
+					+ '&location_id='
+					+ msfm.locationId()
+					+ '&fbat='
+					+ response.authResponse.accessToken,
+				success: loginComplete
+			});
+		} else {
+			$.mobile.changePage("#login");
+		}
+	},
+	
+	checkAuth: function() {
+		FB.getLoginStatus(this.FBAuthChange);
+	},
+	
 };
-
-checkAuth = function() {
-	FB.getLoginStatus(FBAuthChange);
-}
 
 function spinnerStart() { $.mobile.pageLoading(); }
 function spinnerStop() { $.mobile.pageLoading(true); }
@@ -24,27 +43,10 @@ loginComplete = function(loginResponse) {
 	}
 }
 
-FBAuthChange = function(response) {
-	if (response.status == 'connected') { 
-		fbid = $("#fbid").val(response.authResponse.userID);
-		$.ajax({
-			type: "POST",
-			url: "/login",
-			data: "fbid="
-				+ fbid
-				+ '&location_id='
-				+ msfm.locationId()
-				+ '&fbat='
-				+ response.authResponse.accessToken,
-			success: loginComplete
-		});
-	} else {
-		$.mobile.changePage("#login");
-	}
-}
+
 
 LoadHeaders = function() {
-	var header = '<div style="text-align:center;"><a href="#homePage"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 5px;" /> </a><div>You\'re picking music for XYZ</div></div>';
+	var header = '<div style="text-align:center;"><a href="#homePage" data-transition="slide" data-direction="reverse"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 5px;" /> </a><div>You\'re picking music for XYZ</div></div>';
 	$(".header").html(header)
 }
 
@@ -57,7 +59,6 @@ trackSearch = function() {
 }
 
 bindPlaylist = function (event) {
-	spinnerStart()
 	$.getJSON("/playlist/" + msfm.locationId(), function(data) {
 			var listing = [];
 			$.each(data, function(index, playlistitem) {
@@ -73,7 +74,6 @@ bindPlaylist = function (event) {
 				+ '</a></li>');
 			});
 			$('#venuePlaylist').empty().append(listing.join('')).listview("refresh");
-			spinnerStop();
 	});
 }
 
@@ -121,9 +121,9 @@ $("#btnAddTrack").live('click.msfm', function(){
 
 //sets up the track details page
 $('#addTrack').live('pageshow', function(event){
+	spinnerStart();
 	$.getJSON("/track/" + $(this).jqmData('id'),
 		function(data){
-			spinnerStart();
 			buildTrackDetails(data, '#addTrackDetails');
 			var player = $("#zen .player");
 			player.jPlayer("setMedia", {mp3: data.url});
@@ -157,7 +157,14 @@ $('.trackButton').live('click', function() {
 
 $(document).ready(function() {
 	LoadHeaders();
+	
 	$("#btnSubmitSearch").unbind('click.msfm');
 	$("#btnSubmitSearch").bind('click.msfm', trackSearch);
+	
+	$(document).live('pagebeforechange', function(event, data) {
+		spinnerStop();
+	});
+	
 	bindPlaylist(msfm.locationId());
+	
 });

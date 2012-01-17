@@ -53,9 +53,7 @@
 				FB.login()
 			});
 			
-			FB.Event.subscribe('auth.statusChange', FBAuthChange);
-			checkAuth();
-			$("#homePage").live('pageshow', checkAuth);
+			FB.Event.subscribe('auth.statusChange', msfm.FBAuthChange);
 		};
 	
 		// Load the SDK Asynchronously
