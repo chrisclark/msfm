@@ -99,6 +99,9 @@ function bindTrackSearchResults(tracklist){
 		+ playlistitem.artist
 		+ ' - '
 		+ playlistitem.title
+		+ ' ('
+		+ playlistitem.album
+		+ ')'
 		+ '</a></li>');
 	});
 	$('#searchListing').empty().append(listing.join('')).listview("refresh");
