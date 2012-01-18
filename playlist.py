@@ -34,7 +34,8 @@ class Playlist:
             serialize_me.append(dict({'artist': t.artist,
                                         'score': score,
                                         'title': t.title,
-                                        'length': t.length_seconds,
+                                        'album': t.album,
+                                        'length_friendly': t.length_friendly,
                                         'url': t.url,
                                         'track_id': t.id,
                                         'provider_id': t.provider_id

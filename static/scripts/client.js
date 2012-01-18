@@ -46,7 +46,7 @@ loginComplete = function(loginResponse) {
 
 
 LoadHeaders = function() {
-	var header = '<div style="text-align:center;"><a href="#homePage" data-transition="slide" data-direction="reverse"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 5px;" /> </a><div>You\'re picking music for XYZ</div></div>';
+	var header = '<div style="text-align:center;"><a href="#homePage" data-transition="slide" data-direction="reverse"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 5px;" /> </a><div>You\'re picking music for Mellow Mushroom</div></div>';
 	$(".header").html(header)
 }
 
@@ -71,6 +71,9 @@ bindPlaylist = function (event) {
 				+ playlistitem.artist
 				+ ' - '
 				+ playlistitem.title
+				+ ' ('
+				+ playlistitem.album
+				+')'
 				+ '</a></li>');
 			});
 			$('#venuePlaylist').empty().append(listing.join('')).listview("refresh");
@@ -144,7 +147,8 @@ buildTrackDetails = function(track, selector){
 	$(selector).empty();
 	$(selector).append("<li>Artist: " + track.artist + '</li>');
 	$(selector).append("<li>Title: " + track.title + '</li>');
-	$(selector).append("<li>Length: " + track.length_seconds + " seconds </li>");
+	$(selector).append("<li>Album: " + track.album + "</li>");
+	$(selector).append("<li>Length: " + track.length_friendly + "</li>");
 	$(selector).listview("refresh");
 }
 

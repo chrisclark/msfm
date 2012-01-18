@@ -12,9 +12,11 @@ class Track(Base):
     artist = Column(String(256))
     title = Column(String(256))
     length_seconds = Column(Integer)
+    length_friendly = Column(String(16))
     url = Column(String(1024))
+    album = Column(String(1024))
     
-    def __init__(self, id=None, provider_id=None, artist=None, title=None, length_seconds=None, url=None):
+    def __init__(self, id=None, provider_id=None, artist=None, title=None, length_seconds=None, length_friendly=None, url=None, album=None):
         self.id = id
         self.provider_id = provider_id
         self.artist = artist
@@ -33,8 +35,10 @@ class Track(Base):
         return {'artist': track.artist,
                 'title': track.title,
                 'length_seconds': track.length_seconds,
+                'length_friendly': track.length_friendly,
                 'id': track.id,
                 'url': track.url,
+                'album': track.album,
                 'provider_id': track.provider_id}
         
     def __repr__(self):

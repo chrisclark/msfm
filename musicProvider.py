@@ -33,8 +33,10 @@ class MusicProvider:
             res.add_track(Track(provider_id=t["MnetId"],
                               artist=t["Artist"]["Name"],
                               title=t["Title"],
-                              length_seconds=100,
-                              url=""))
+                              length_seconds=0,
+                              length_friendly=t["Duration"],
+                              url="",
+                              album=t["Album"]["Title"]))
             
         return res
     
@@ -62,8 +64,10 @@ class MusicProvider:
             t.provider_id = provider_id
             t.artist = track_json["Artist"]["Name"]
             t.title = track_json["Title"]
-            t.length_seconds = 100
+            t.length_seconds = 0
+            t.length_friendly = track_json["Duration"]
             t.url = ""
+            t.album = track_json["Album"]["Title"]
             
         except Exception:
             pass
