@@ -5,7 +5,7 @@
 	<meta charset="utf-8"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 		
-	<title>Milkshake.fm - We, the DJ (venue)</title>
+	<title>Milkshake.fm - We, the DJ - Admin panel</title>
 	
 	<link rel="stylesheet" href="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.css') }}" type="text/css" /> 
 	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-1.6.2.js') }}"></script> 
@@ -53,7 +53,8 @@
 				FB.login()
 			});
 			
-			FB.Event.subscribe('auth.statusChange', msfm.FBAuthChange);
+			//FB login is turned off for now
+			//FB.Event.subscribe('auth.statusChange', msfm.FBAuthChange);
 		};
 	
 		// Load the SDK Asynchronously
@@ -75,6 +76,7 @@
 		</div>
 		<div>
 			<a href="#search" data-role="button">Add Song</a>
+			<a href="javascript:void(0);" id="btnMarkPlayed" data-role="button">Mark Top Song as Played</a>
 		</div>
 	</div>
 	
@@ -129,7 +131,18 @@
 		<div data-role="content">
 			<h1>Song added!</h1>
 			<p>You've added the track to the location</p>
-			<a href="#homePage" data-role="button">Got it!</a>           
+			<a href="#homePage" data-role="button">Ok!</a>           
+		</div>
+	</div>
+	
+ 	<div data-role="page" id="confirmVote">
+ 		<div data-role="header">
+			<h1>Milkshake.fm</h1>
+		</div>
+		<div data-role="content">
+			<h1>Voted!</h1>
+			<p>Thanks!</p>
+			<a href="#homePage" data-role="button">Ok!</a>           
 		</div>
 	</div>
  	
@@ -139,8 +152,9 @@
 			<ul data-role="listview" id="playlistItemDetailsTrackDetails">
 			</ul>
 		</div>
-		<a href="javascript:void(0);" id="lnkUpVote" data-role="button">Thumbs Up</a>
-		<a href="javascript:void(0);" id="lnkDownVote" data-role="button">Thumbs Down</a>
+		<button id="btnUpVote" name="Thumbs Up">Thumbs Up</button>
+		<button id="btnDownVote" name="Thumbs Down">Thumbs Down</button>
+		<a href="#confirmVote" id="lnkConfirmVote" data-rel="dialog" data-role="button" style="display: none;"></a>
  	</div>
  	
 </body>

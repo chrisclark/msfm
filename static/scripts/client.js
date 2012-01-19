@@ -2,7 +2,7 @@ var msfm = {
 	locationId: function() {
 		if (!this.location_id){
 			var uri = new jsUri(window.location);
-			this.location_id = uri.path().replace("/", "");
+			this.location_id = uri.path().substr(uri.path().lastIndexOf("/") + 1, uri.path().length);
 		}
 		return this.location_id;
 	},
@@ -119,6 +119,20 @@ function bindTrackSearchResults(tracklist){
 	$('#searchListing').empty().append(listing.join('')).listview("refresh");
 	spinnerStop();
 }
+
+$("#btnMarkPlayed").unbind('click.msfm');
+$("#btnMarkPlayed").live('click.msfm', function() {
+	pli_id = $(".playlistItemButton").first().jqmData("playlist_item_id");
+	$.ajax({
+		type: "POST",
+		url: "/mark_played",
+		data: "id=" + pli_id,
+		success: function(data){
+			spinnerStop();
+			location.reload();
+		}
+	});
+});
 
 $("#btnAddTrack").unbind('click.msfm');
 $("#btnAddTrack").live('click.msfm', function(){

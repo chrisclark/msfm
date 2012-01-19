@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from db import db_session, init_db
 from flask import json
 import common
@@ -6,6 +6,7 @@ import sys
 
 from location import Location
 from musicLibrary import MusicLibrary
+from playlistitem import PlaylistItem
 from vote import Vote
 import config
 
@@ -69,10 +70,16 @@ def addTrack():
     l = Location.from_id(location_id)
     l.add_track(track_id)
     return ""
+
+@app.route('/mark_played', methods=['POST'])
+def markPlayed():
+    pli = db_session.query(PlaylistItem).filter(PlaylistItem.id == request.form["id"]).first()
+    pli.done_playing = True
+    pli.save()
     
 @app.route('/login', methods=['POST'])
 def login():
-    #session['username'] = request.form['username']
+    #session['user_id'] = request.form['fbid']
     return json.dumps(True)
     
 
