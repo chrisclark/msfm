@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Sequence, DateTime
 from db import Base
+from sqlalchemy.orm import relationship
 
 class User(Base):
     __tablename__ = 'users'
@@ -11,6 +12,9 @@ class User(Base):
     created = Column(DateTime)
     facebook_access_token = Column(String(128))
     last_login = Column(DateTime)
+    
+    votes = relationship("Vote")
+    playlist_items = relationship("PlaylistItem")
     
     def __init__(self, id=None, username=None, email=None, facebook_id=None, facebook_access_token=None):
         self.id = id

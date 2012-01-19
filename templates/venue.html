@@ -5,12 +5,14 @@
 	<meta charset="utf-8"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 		
-	<title>Milkshake.fm - We, the DJ</title>
+	<title>Milkshake.fm - We, the DJ (venue)</title>
 	
 	<link rel="stylesheet" href="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.css') }}" type="text/css" /> 
 	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-1.6.2.js') }}"></script> 
 	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.js') }}"></script>
+	<script type="text/javascript" src="/static/scripts/jsuri-1.1.0.min.js"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='scripts/client.js') }}"></script>
+	<link rel="stylesheet" href="/static/css/client.css">
 	
 	<!-- Zen Player -->
 	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.rotate.js') }}"></script>
@@ -33,30 +35,41 @@
 	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
 	<link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/apple-touch-icon-precomposed.png') }}">
   
-  	<script type="text/javascript">
-  		location_id = {{ location_id }};
-  	</script>
 </head>
-<body>
- 
+<body>  
+ 	<div id="fb-root"></div>
+	<script>	
+		window.fbAsyncInit = function() {
+			FB.init({
+				appId      : '297440896947168', // App ID
+				//channelURL : '//WWW.YOUR_DOMAIN.COM/channel.html', // Channel File
+				status     : true, // check login status
+				cookie     : true, // enable cookies to allow the server to access the session
+				oauth      : true, // enable OAuth 2.0
+				xfbml      : true  // parse XFBML
+			});
+			
+			$('#btnFBLogin').click(function(){
+				FB.login()
+			});
+			
+			FB.Event.subscribe('auth.statusChange', msfm.FBAuthChange);
+		};
+	
+		// Load the SDK Asynchronously
+		(function(d){
+			var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+			js = d.createElement('script'); js.id = id; js.async = true;
+			js.src = "//connect.facebook.net/en_US/all.js";
+			d.getElementsByTagName('head')[0].appendChild(js);
+		}(document));
+	   	  
+	</script>
 	<div data-role="page" id="homePage"> 
- 
-		<div data-role="header">
-			<div style="text-align:center;"> 
-				<img src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" />
-				<div>
-					Build a playlist for {{ location_name }}!
-				</div>
-			</div>
-		</div> 
-	 
+		<div data-role="header" class="header"></div>
 		<div data-role="content">
 			<div class="content-primary">
-				<ul data-role="listview" id="playlist">
-					<li><a href="index.html"><span class="ui-li-count">9</span>Lady Gaga - Bad Romance</a></li>
-					<li><a href="index.html"><span class="ui-li-count">6</span>Bob Marley - Buffalo Soldier</a></li>
-					<li><a href="index.html"><span class="ui-li-count">1</span>Bob Dylan - All Along the Watchtower</a></li>
-					<li><a href="index.html"><span class="ui-li-count">0</span>The Beatles - Norweigan Wood</a></li>
+				<ul data-role="listview" id="venuePlaylist">
 				</ul>
 			</div>
 		</div>
@@ -65,15 +78,16 @@
 		</div>
 	</div>
 	
+	<div data-role="page" id="login">
+		<div data-role="header" class="header"></div>
+		<div id="FBLogin">
+			<a href="javascript:void(0);" id="btnFBLogin" data-role="button" data-icon="msfm-facebook">Log In with Facebook</a>
+		</div>
+		<input type="hidden" name="fbid" id="fbid" />
+	</div>
+	
 	<div data-role="page" id="search">
-		<div data-role="header">
-			<div style="text-align:center;"> 
-				<img src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" />
-				<div>
-					Build a playlist for {{ location_name }} ({{ location_id }})!
-				</div>
-			</div>
-		</div> 
+		<div data-role="header" class="header"></div>
 		<div data-role="content">
 			<label for="search-basic">Search for a song:</label>
 			<input type="search" name="search" id="trackSearch" value="" />
@@ -85,20 +99,13 @@
 		</div>
 	</div>
  
- 	<div data-role="page" id="trackDetail">
- 		<div data-role="header">
-			<div style="text-align:center;"> 
-				<img src="{{ url_for('static', filename='images/logo.png') }}" width="300px" alt='logo' style="padding-top: 5px;" />
-				<div>
-					Build a playlist for {{ location_name }} ({{ location_id }})!
-				</div>
-			</div>
-		</div>
+ 	<div data-role="page" id="addTrack">
+ 		<div data-role="header" class="header"></div>
 		<div data-role="content">
-			<ul data-role="listview" id="trackDetails">
+			<ul data-role="listview" id="addTrackDetails">
 			</ul>
 		</div>
-		<div style="margin-top: 10px; width: 100%; text-align:center;">
+		<div style="margin-top: 10px; width: 100%; text-align:center; display: none;">
 			<div id="zen">
 				<span class="player"></span>
 				<span class="circle"></span>
@@ -112,7 +119,29 @@
 			</div>
 		</div>
 		<button id="btnAddTrack" name="Add">Add Track</button>
+		<a id="lnkAddTrackDialog" href="#confirmAdd" data-rel="dialog" data-role="button" style="display: none;"></a>
  	</div>
- 
+ 	
+ 	<div data-role="page" id="confirmAdd">
+ 		<div data-role="header">
+			<h1>Milkshake.fm</h1>
+		</div>
+		<div data-role="content">
+			<h1>Song added!</h1>
+			<p>You've added the track to the location</p>
+			<a href="#homePage" data-role="button">Got it!</a>           
+		</div>
+	</div>
+ 	
+ 	<div data-role="page" id="playlistItemDetails">
+ 		<div data-role="header" class="header"></div>
+		<div data-role="content">
+			<ul data-role="listview" id="playlistItemDetailsTrackDetails">
+			</ul>
+		</div>
+		<a href="javascript:void(0);" id="lnkUpVote" data-role="button">Thumbs Up</a>
+		<a href="javascript:void(0);" id="lnkDownVote" data-role="button">Thumbs Down</a>
+ 	</div>
+ 	
 </body>
 </html>

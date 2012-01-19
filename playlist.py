@@ -16,7 +16,8 @@ class Playlist:
         pl = Playlist(location_id)
         for pli, t in db_session.query(PlaylistItem, Track).\
                                 filter(PlaylistItem.location_id == location_id).\
-                                filter(Track.id == PlaylistItem.track_id):
+                                filter(Track.id == PlaylistItem.track_id).\
+                                filter(PlaylistItem.done_playing == False):             
             pl.add_track(t, pli)
         return pl
                 
@@ -30,14 +31,14 @@ class Playlist:
             t = i[0]
             pli = i[1]
             if pli:
-                score = pli.score #works for now since this is the only property from pli that we use
+                score = pli.score() #works for now since this is the only thing from pli that we use
             serialize_me.append(dict({'artist': t.artist,
-                                        'score': score,
                                         'title': t.title,
                                         'album': t.album,
                                         'length_friendly': t.length_friendly,
                                         'url': t.url,
                                         'track_id': t.id,
-                                        'provider_id': t.provider_id
+                                        'provider_id': t.provider_id,
+                                        'score': score
                                         }))
         return json.dumps(serialize_me)

@@ -129,7 +129,18 @@
 		<div data-role="content">
 			<h1>Song added!</h1>
 			<p>You've added the track to the location</p>
-			<a href="#homePage" data-role="button">Got it!</a>           
+			<a href="#homePage" data-role="button">Ok!</a>           
+		</div>
+	</div>
+	
+ 	<div data-role="page" id="confirmVote">
+ 		<div data-role="header">
+			<h1>Milkshake.fm</h1>
+		</div>
+		<div data-role="content">
+			<h1>Voted!</h1>
+			<p>Thanks!</p>
+			<a href="#homePage" data-role="button">Ok!</a>           
 		</div>
 	</div>
  	
@@ -139,8 +150,9 @@
 			<ul data-role="listview" id="playlistItemDetailsTrackDetails">
 			</ul>
 		</div>
-		<a href="javascript:void(0);" id="lnkUpVote" data-role="button">Thumbs Up</a>
-		<a href="javascript:void(0);" id="lnkDownVote" data-role="button">Thumbs Down</a>
+		<button id="btnUpVote" name="Thumbs Up">Thumbs Up</button>
+		<button id="btnDownVote" name="Thumbs Down">Thumbs Down</button>
+		<a href="#confirmVote" id="lnkConfirmVote" data-rel="dialog" data-role="button" style="display: none;"></a>
  	</div>
  	
 </body>

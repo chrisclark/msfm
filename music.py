@@ -5,6 +5,7 @@ import sys
 
 from location import Location
 from musicLibrary import MusicLibrary
+from vote import Vote
 import config
 
 app = Flask(__name__)
@@ -22,6 +23,18 @@ app.secret_key = config.secret_key
 @app.route('/<location_name>')
 def index(location_name):
     return render_template('client.html')
+
+@app.route('/venue/<location_name>')
+def venue(location_name):
+    return render_template('venue.html')
+
+@app.route('/vote', methods=['POST'])
+def voteup(playlist_item_id):
+    v = Vote(playlist_item_id=request.form["playlist_item_id"],\
+             user_id=session['user_id'],\
+             direction=request.form["direction"])
+    v.save()
+    return ""
 
 @app.route('/location_by_name/<location_name>')
 def get_location(location_name):

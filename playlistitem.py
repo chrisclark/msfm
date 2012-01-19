@@ -1,11 +1,11 @@
-from sqlalchemy import Column, Integer, Sequence, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, Sequence, ForeignKey, Boolean, func
 from sqlalchemy.orm import relationship, backref
 from db import db_session, Base
 from location import Location
+from vote import Vote
 from user import User
 
 class PlaylistItem(Base):
-    "the playlist stores the ranking information for a given location"
     
     __tablename__ = 'playlist_items'
     
@@ -13,21 +13,23 @@ class PlaylistItem(Base):
     location_id = Column(Integer, ForeignKey('locations.id'))
     track_id = Column(Integer, ForeignKey('tracks.id'))
     user_id = Column(Integer, ForeignKey('users.id'))
-    score = Column(Integer)
-    done_playing = Boolean()
+    done_playing = Column(Boolean)
     
     location = relationship("Location", primaryjoin=(location_id==Location.id), backref=backref('playlist_items', order_by=id))
-    track = relationship("Track")
-    user = relationship("User")
+    votes = relationship("Vote")
     
-    def __init__(self, id=None, location_id=None, track_id=None, user_id=None, score=0):
+    def __init__(self, id=None, location_id=None, track_id=None, user_id=None):
         self.id = id
         self.location_id = location_id
         self.track_id = track_id
         self.user_id = user_id
-        self.score = score
         self.done_playing = False
         
+    def score(self):
+        total = db_session.query(func.count(Vote.id)).filter(Vote.playlist_item_id == self.id).first()[0]
+        minus = db_session.query(func.count(Vote.id)).filter(Vote.playlist_item_id == self.id).filter(Vote.direction == False).first()[0]
+        return total - 2*(minus)
+    
     def save(self):
         db_session.add(self)
         db_session.commit()

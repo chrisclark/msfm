@@ -7,7 +7,7 @@ class Track(Base):
     
     __tablename__ = "tracks"
     
-    id = Column(Integer, Sequence('location_id_seq'), primary_key=True)
+    id = Column(Integer, Sequence('track_id_seq'), primary_key=True)
     provider_id = Column(String(256))
     artist = Column(String(256))
     title = Column(String(256))
