@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request
 from db import db_session, init_db
 from flask import json
+import common
 import sys
 
 from location import Location
@@ -29,9 +30,9 @@ def venue(location_name):
     return render_template('venue.html')
 
 @app.route('/vote', methods=['POST'])
-def voteup(playlist_item_id):
+def voteup():
     v = Vote(playlist_item_id=request.form["playlist_item_id"],\
-             user_id=session['user_id'],\
+             user_id=common.get_user_id(),\
              direction=request.form["direction"])
     v.save()
     return ""

@@ -30,8 +30,12 @@ class Playlist:
         for i in self.queue:
             t = i[0]
             pli = i[1]
-            if pli:
-                score = pli.score() #works for now since this is the only thing from pli that we use
+            
+            score = -1
+            playlist_item_id = -1
+            if pli: #kind of janky, but a playlist can consist of just tracks (search results) and have no plis
+                score = pli.score()
+                playlist_item_id = pli.id
             serialize_me.append(dict({'artist': t.artist,
                                         'title': t.title,
                                         'album': t.album,
@@ -39,6 +43,7 @@ class Playlist:
                                         'url': t.url,
                                         'track_id': t.id,
                                         'provider_id': t.provider_id,
+                                        'playlist_item_id': playlist_item_id,
                                         'score': score
                                         }))
         return json.dumps(serialize_me)

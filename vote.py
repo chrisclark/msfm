@@ -9,6 +9,9 @@ class Vote(Base):
     id = Column(Integer, Sequence('vote_id_seq'), primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     playlist_item_id = Column(Integer, ForeignKey('playlist_items.id'))
+    
+    #1 = upvote
+    #0 = downvote
     direction = Column(Boolean)
     
     def __init__(self, id=None, user_id=None, playlist_item_id=None, direction=None):

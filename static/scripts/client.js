@@ -65,7 +65,9 @@ bindPlaylist = function (event) {
 				listing.push('<li class="playlistItemButton" data-id="'
 				+ playlistitem.track_id
 				+ '" data-playlist_item_id="'
-				+ playlistitem.id
+				+ playlistitem.playlist_item_id
+				+ '" data-score="'
+				+ playlistitem.score
 				+ '"><a href="javascript:void(0);">'
 				+ '<span class="ui-li-count">'
 				+ playlistitem.score
@@ -78,7 +80,13 @@ bindPlaylist = function (event) {
 				+')'
 				+ '</a></li>');
 			});
-			$('#venuePlaylist').empty().append(listing.join('')).listview("refresh");
+			listing = listing.join('');
+			
+			final_items = $(listing).detach().sort(function(a, b){
+				return $(a).jqmData("score") < $(b).jqmData("score");
+			});
+			
+			$('#venuePlaylist').empty().append(final_items).listview("refresh");
 	});
 }
 
@@ -130,20 +138,26 @@ $("#btnAddTrack").live('click.msfm', function(){
 });
 
 $("#btnUpVote").unbind('click.msfm');
-$("#btnUpVote").live('click.msfm', function(){
+$("#btnUpVote").live('click.msfm', function(){ doVote(1); });
+
+$("#btnDownVote").unbind('click.msfm');
+$("#btnDownVote").live('click.msfm', function(){ doVote(0); });	
+
+function doVote(dir) {
 	spinnerStart();
 	$.ajax({
 		type: "POST",
 		url: "/vote",
 		data: "playlist_item_id="
 			+ $('#playlistItemDetails').jqmData('playlist_item_id')
-			+ '&direction=1',
+			+ '&direction='
+			+ dir,
 		success: function(data){
 			spinnerStop();
 			$('#lnkConfirmVote').click();
 		}
 	});
-});
+}
 
 //sets up the track details page
 $('#addTrack').live('pageshow', function(event){
