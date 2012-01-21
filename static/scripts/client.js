@@ -83,7 +83,7 @@ bindPlaylist = function (event) {
 			listing = listing.join('');
 			
 			final_items = $(listing).detach().sort(function(a, b){
-				return $(a).jqmData("score") < $(b).jqmData("score");
+				return $(b).jqmData("score") - $(a).jqmData("score");
 			});
 			
 			$('#venuePlaylist').empty().append(final_items).listview("refresh");
