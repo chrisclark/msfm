@@ -210,7 +210,8 @@ $('#playlistItemDetails').live('pageshow', function(event){
 	spinnerStart();
 	selector = '#playlistItemDetailsTrackDetails'
 	buildTrackDetails(data, selector);
-	$(selector).append("<li>Picked by: " + data.first_name + "</li>");
+	$(selector).append("<li>Picked by: " + data.first_name + " " + data.last_name.substr(0,1) + ".</li>");
+	$(selector).append("<li><img src='" + data.photo_url + "'></li>");
 	$(selector).listview("refresh");
 	spinnerStop();
 });
