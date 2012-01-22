@@ -79,7 +79,7 @@ def markPlayed():
     
 @app.route('/login', methods=['POST'])
 def login():
-    #session['user_id'] = request.form['fbid']
+    session['fbid'] = request.form['fbid']
     return json.dumps(True)
     
 

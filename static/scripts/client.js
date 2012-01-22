@@ -8,28 +8,27 @@ var msfm = {
 	},
 	location_id: null,
 	
-	FBAuthChange: function(response) {
-		if (response.authResponse) { 
-			fbid = $("#fbid").val(response.authResponse.userID);
-			$.ajax({
-				type: "POST",
-				url: "/login",
-				data: "fbid="
-					+ fbid
-					+ '&location_id='
-					+ msfm.locationId()
-					+ '&fbat='
-					+ response.authResponse.accessToken,
-				success: loginComplete
-			});
-		} else {
-			$.mobile.changePage("#login");
-		}
-	},
-	
-	checkAuth: function() {
-		FB.getLoginStatus(this.FBAuthChange);
-	},
+	doLogin: function(callbackFn) {
+		FB.login(function(response){
+			if(response.authResponse){
+				callbackFn();
+				fbid = response.authResponse.userID;
+				fbat = response.authResponse.accessToken;
+				$.ajax({
+					type: "POST",
+					url: "/login",
+					data: "fbid="
+						+ fbid
+						+ '&location_id='
+						+ msfm.locationId()
+						+ '&fbat='
+						+ fbat
+				});
+			} else {
+				alert("Please log in"); 
+			}
+		});
+	}
 	
 };
 
@@ -136,20 +135,36 @@ $("#btnMarkPlayed").live('click.msfm', function() {
 
 $("#btnAddTrack").unbind('click.msfm');
 $("#btnAddTrack").live('click.msfm', function(){
-	spinnerStart();
-	$.ajax({
-		type: "POST",
-		url: "/add_track",
-		data: "track_id="
-			+ $('#addTrack').jqmData('id')
-			+ '&location_id='
-			+ msfm.locationId(),
-		success: function(data){
-			spinnerStop();
-			$('#lnkAddTrackDialog').click();
+	track_id = $('#addTrack').jqmData('id');
+	FB.getLoginStatus(function(response) {
+		if (response.status === 'connected') {
+			doAddTrack(track_id);
+		} else {
+			$('#lnkShowLoginDialog').click();
 		}
 	});
 });
+
+$("#lnkFBLogin").unbind('click.msfm');
+$("#lnkFBLogin").live('click.msfm', function(){
+	msfm.doLogin(function(){$('#pleaseLogin').dialog('close');})
+});
+
+doAddTrack = function(track_id){
+	spinnerStart();
+		$.ajax({
+			type: "POST",
+			url: "/add_track",
+			data: "track_id="
+				+ track_id
+				+ '&location_id='
+				+ msfm.locationId(),
+			success: function(data){
+				spinnerStop();
+				$('#lnkAddTrackDialog').click();
+			}
+		});
+}
 
 $("#btnUpVote").unbind('click.msfm');
 $("#btnUpVote").live('click.msfm', function(){ doVote(1); });

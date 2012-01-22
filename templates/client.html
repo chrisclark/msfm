@@ -48,13 +48,7 @@
 				oauth      : true, // enable OAuth 2.0
 				xfbml      : true  // parse XFBML
 			});
-			
-			$('#btnFBLogin').click(function(){
-				FB.login()
-			});
-			
-			//FB login is turned off for now
-			//FB.Event.subscribe('auth.statusChange', msfm.FBAuthChange);
+
 		};
 	
 		// Load the SDK Asynchronously
@@ -66,6 +60,9 @@
 		}(document));
 	   	  
 	</script>
+	
+	<a id="lnkShowLoginDialog" href="#pleaseLogin" data-rel="dialog" data-role="button" style="display: none;"></a>
+	
 	<div data-role="page" id="homePage"> 
 		<div data-role="header" class="header"></div>
 		<div data-role="content">
@@ -77,14 +74,6 @@
 		<div>
 			<a href="#search" data-role="button">Add Song</a>
 		</div>
-	</div>
-	
-	<div data-role="page" id="login">
-		<div data-role="header" class="header"></div>
-		<div id="FBLogin">
-			<a href="javascript:void(0);" id="btnFBLogin" data-role="button" data-icon="msfm-facebook">Log In with Facebook</a>
-		</div>
-		<input type="hidden" name="fbid" id="fbid" />
 	</div>
 	
 	<div data-role="page" id="search">
@@ -129,8 +118,19 @@
 		</div>
 		<div data-role="content">
 			<h1>Song added!</h1>
-			<p>You've added the track to the location</p>
+			<p>You've added the track to the playlist.</p>
 			<a href="#homePage" data-role="button">Ok!</a>           
+		</div>
+	</div>
+	
+ 	<div data-role="page" id="pleaseLogin">
+ 		<div data-role="header">
+			<h1>Milkshake.fm</h1>
+		</div>
+		<div data-role="content">
+			<h1>Please log in</h1>
+			<p>Log in with Facebook to add this song.</p>
+			<a href="javascript:void(0);" data-role="button" id="lnkFBLogin">Log in</a>           
 		</div>
 	</div>
 	
