@@ -34,7 +34,7 @@ def venue(location_name):
 @app.route('/vote', methods=['POST'])
 def voteup():
     v = Vote(playlist_item_id=request.form["playlist_item_id"],\
-             user_id=common.get_user_id(),\
+             user_id=User.current().id,\
              direction=request.form["direction"])
     v.save()
     return ""
