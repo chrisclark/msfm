@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, Sequence, ForeignKey, Boolean
-from sqlalchemy.orm import relationship, backref
 from db import db_session, Base
 
 class Vote(Base):

@@ -7,6 +7,7 @@ import sys
 from location import Location
 from musicLibrary import MusicLibrary
 from playlistitem import PlaylistItem
+from user import User
 from vote import Vote
 import config
 
@@ -68,7 +69,7 @@ def addTrack():
     track_id = request.form["track_id"]
     location_id = request.form["location_id"]
     l = Location.from_id(location_id)
-    l.add_track(track_id)
+    l.add_track(track_id, User.current().id)
     return ""
 
 @app.route('/mark_played', methods=['POST'])
@@ -79,9 +80,18 @@ def markPlayed():
     
 @app.route('/login', methods=['POST'])
 def login():
-    session['fbid'] = request.form['fbid']
+    fbid = request.form["fbid"]
+    fbat = request.form["fbat"]
+    profile_info = common.get_json('http://graph.facebook.com/' + fbid)
+    u = User.from_fbid(request.form["fbid"])
+    if not u:
+        u = User(facebook_id=fbid,\
+                 facebook_access_token=fbat,\
+                 first_name=profile_info["first_name"],\
+                 last_name=profile_info["last_name"],\
+                 photo_url="http://graph.facebook.com/"+fbid+"/picture")
+    u.login()
     return json.dumps(True)
-    
 
 ##########  Static and Special Cases ##########
 
@@ -92,6 +102,17 @@ def home():
 @app.route('/favicon.ico')
 def favicon():
     return ''
+
+@app.route('/initdbwithdrop/<pwd>')
+def initdbwithdrop(pwd):
+    if pwd == config.adminpass:
+        try:
+            init_db(1)
+            return "success!"
+        except:
+            return sys.exc_info()[0]
+    else:
+        return "bad bassword"
 
 @app.route('/initdb/<pwd>')
 def initdb(pwd):

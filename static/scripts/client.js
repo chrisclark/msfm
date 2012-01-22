@@ -7,6 +7,7 @@ var msfm = {
 		return this.location_id;
 	},
 	location_id: null,
+	playlist: null,
 	
 	doLogin: function(callbackFn) {
 		FB.login(function(response){
@@ -42,8 +43,6 @@ loginComplete = function(loginResponse) {
 	}
 }
 
-
-
 LoadHeaders = function() {
 	var header = '<div style="text-align:center;"><a href="#homePage" data-transition="slide" data-direction="reverse"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 5px;" /> </a><div>You\'re picking music for Mellow Mushroom</div></div>';
 	$(".header").html(header)
@@ -59,6 +58,7 @@ trackSearch = function() {
 
 bindPlaylist = function (event) {
 	$.getJSON("/playlist/" + msfm.locationId(), function(data) {
+			msfm.playlist = data;
 			var listing = [];
 			$.each(data, function(index, playlistitem) {
 				listing.push('<li class="playlistItemButton" data-id="'
@@ -67,6 +67,8 @@ bindPlaylist = function (event) {
 				+ playlistitem.playlist_item_id
 				+ '" data-score="'
 				+ playlistitem.score
+				+ '" data-playlist_index="'
+				+ index
 				+ '"><a href="javascript:void(0);">'
 				+ '<span class="ui-li-count">'
 				+ playlistitem.score
@@ -95,8 +97,10 @@ $('#homePage').live('pageshow', bindPlaylist);
 $('.playlistItemButton').live('click', function() {
 	var track_id = $(this).jqmData('id');
 	var pli_id = $(this).jqmData('playlist_item_id');
+	var playlist_index = $(this).jqmData('playlist_index');
 	$('#playlistItemDetails').jqmData('id', track_id);
 	$('#playlistItemDetails').jqmData('playlist_item_id', pli_id);
+	$('#playlistItemDetails').jqmData('playlist_index', playlist_index);
 	$.mobile.changePage('#playlistItemDetails');
 });
 
@@ -202,11 +206,13 @@ $('#addTrack').live('pageshow', function(event){
 });
 
 $('#playlistItemDetails').live('pageshow', function(event){
-	$.getJSON("/track/" + $(this).jqmData('id'), function(data){
-		spinnerStart();
-		buildTrackDetails(data, '#playlistItemDetailsTrackDetails');
-		spinnerStop();
-	});
+	data = msfm.playlist[$(this).jqmData('playlist_index')]
+	spinnerStart();
+	selector = '#playlistItemDetailsTrackDetails'
+	buildTrackDetails(data, selector);
+	$(selector).append("<li>Picked by: " + data.first_name + "</li>");
+	$(selector).listview("refresh");
+	spinnerStop();
 });
 
 buildTrackDetails = function(track, selector){

@@ -32,8 +32,8 @@ class Location(Base):
         l = db_session.query(Location).filter_by(id=location_id).first()
         return l
     
-    def add_track(self, track_id):
-        PlaylistItem(track_id=track_id, location_id=self.id).save()
+    def add_track(self, track_id, user_id):
+        PlaylistItem(track_id=track_id, location_id=self.id, user_id=user_id).save()
     
     def copyFrom(self, src):
         #might have to change if we get more complex properties
