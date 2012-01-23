@@ -54,6 +54,13 @@ class User(Base):
             return User.from_id(session['user_id'])
         except:
             return None
+        
+    @staticmethod
+    def current_id():
+        uid = None
+        usr = User.current()
+        if usr: uid = usr.id
+        return uid 
     
     def save(self):
         db_session.add(self)

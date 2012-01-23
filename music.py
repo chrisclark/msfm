@@ -19,6 +19,7 @@ from logging import FileHandler
 file_handler = FileHandler('log.txt', mode='a', encoding=None, delay=False)
 file_handler.setLevel(logging.WARNING)
 app.logger.addHandler(file_handler)
+
 app.secret_key = config.secret_key
 
 ##########  API Routes ##########
@@ -32,9 +33,9 @@ def venue(location_name):
     return render_template('venue.html')
 
 @app.route('/vote', methods=['POST'])
-def voteup():
+def vote():
     v = Vote(playlist_item_id=request.form["playlist_item_id"],\
-             user_id=User.current().id,\
+             user_id=User.current_id(),\
              direction=request.form["direction"])
     v.save()
     return ""
@@ -69,7 +70,7 @@ def addTrack():
     track_id = request.form["track_id"]
     location_id = request.form["location_id"]
     l = Location.from_id(location_id)
-    l.add_track(track_id, User.current().id)
+    l.add_track(track_id, User.current_id())
     return ""
 
 @app.route('/mark_played', methods=['POST'])
@@ -82,9 +83,9 @@ def markPlayed():
 def login():
     fbid = request.form["fbid"]
     fbat = request.form["fbat"]
-    profile_info = common.get_json('http://graph.facebook.com/' + fbid)
-    u = User.from_fbid(request.form["fbid"])
+    u = User.from_fbid(fbid)
     if not u:
+        profile_info = common.get_json('http://graph.facebook.com/' + fbid)
         u = User(facebook_id=fbid,\
                  facebook_access_token=fbat,\
                  first_name=profile_info["first_name"],\

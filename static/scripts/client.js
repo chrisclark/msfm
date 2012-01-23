@@ -142,6 +142,7 @@ $("#btnAddTrack").live('click.msfm', function(){
 	track_id = $('#addTrack').jqmData('id');
 	FB.getLoginStatus(function(response) {
 		if (response.status === 'connected') {
+			msfm.doLogin(function(){});
 			doAddTrack(track_id);
 		} else {
 			$('#lnkShowLoginDialog').click();
