@@ -12,7 +12,6 @@ var msfm = {
 	doLogin: function(callbackFn) {
 		FB.login(function(response){
 			if(response.authResponse){
-				callbackFn();
 				fbid = response.authResponse.userID;
 				fbat = response.authResponse.accessToken;
 				$.ajax({
@@ -23,8 +22,10 @@ var msfm = {
 						+ '&location_id='
 						+ msfm.locationId()
 						+ '&fbat='
-						+ fbat
+						+ fbat,
+					success: callbackFn
 				});
+				
 			} else {
 				alert("Please log in"); 
 			}
@@ -142,8 +143,9 @@ $("#btnAddTrack").live('click.msfm', function(){
 	track_id = $('#addTrack').jqmData('id');
 	FB.getLoginStatus(function(response) {
 		if (response.status === 'connected') {
-			msfm.doLogin(function(){});
-			doAddTrack(track_id);
+			msfm.doLogin(function(){
+				doAddTrack(track_id);
+			});
 		} else {
 			$('#lnkShowLoginDialog').click();
 		}
