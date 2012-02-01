@@ -34,8 +34,8 @@ var msfm = {
 	
 };
 
-function spinnerStart() { $.mobile.pageLoading(); }
-function spinnerStop() { $.mobile.pageLoading(true); }
+function spinnerStart() { $.mobile.showPageLoadingMsg(); }
+function spinnerStop() { $.mobile.hidePageLoadingMsg(); }
 
 loginComplete = function(loginResponse) {
 	var l = 2;

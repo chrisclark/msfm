@@ -3,6 +3,7 @@ from user import User
 from db import db_session
 from track import Track
 from flask import json
+import common
 
 class Playlist:
     
@@ -28,41 +29,24 @@ class Playlist:
 
     def to_json(self):
         serialize_me = []
-        score = 0
+        
         for i in self.queue:
             t = i[0]
             pli = i[1]
             u = i[2]
             
+            dic = common.strip_private(t.__dict__)
+            
             #kind of janky, but a playlist can consist of just
             #tracks (search results) and have no plis or users
-            score = -1
-            playlist_item_id = -1
             if pli:
-                score = pli.score()
-                playlist_item_id = pli.id
-            last_name = ""
-            first_name = ""
-            photo_url = ""
-            user_id = -1
+                dic["score"] = pli.score()
+                dic["playlist_item_id"] = pli.id
             if u:
-                last_name = u.last_name
-                first_name = u.first_name
-                photo_url = u.photo_url 
-                user_id = u.id
+                dic["last_name"] = u.last_name
+                dic["first_name"] = u.first_name
+                dic["photo_url"] = u.photo_url 
+                dic["user_id"] = u.id
             
-            serialize_me.append(dict({'artist': t.artist,
-                                        'title': t.title,
-                                        'album': t.album,
-                                        'length_friendly': t.length_friendly,
-                                        'url': t.url,
-                                        'track_id': t.id,
-                                        'provider_id': t.provider_id,
-                                        'playlist_item_id': playlist_item_id,
-                                        'score': score,
-                                        'last_name': last_name,
-                                        'first_name': first_name,
-                                        'photo_url': photo_url,
-                                        'user_id': user_id
-                                        }))
+            serialize_me.append(dic)
         return json.dumps(serialize_me)

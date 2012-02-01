@@ -72,9 +72,5 @@ class User(Base):
         self.save()
         session["user_id"] = self.id
         
-    def copyFrom(self, src):
-        #might have to change if we get more complex properties
-        self.__dict__ = src.__dict__.copy()
-    
     def __repr__(self):
         return "<User('%s','%s', '%s')>" % (str(self.id), self.username, self.facebook_id)

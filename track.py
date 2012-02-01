@@ -1,6 +1,7 @@
 from flask import json
 from sqlalchemy import Column, Integer, String, Sequence
 from db import db_session, Base
+import common
 
 class Track(Base):
     "a single track of music"
@@ -22,24 +23,12 @@ class Track(Base):
         self.artist = artist
         self.title = title
         self.length_seconds = length_seconds
+        self.length_friendly = length_friendly
         self.url = url
+        self.album = album
 
     def to_json(self):
-        return json.dumps(self, default=self._serialize)
+        return json.dumps(common.strip_private(self.__dict__))
     
-    def copyFrom(self, src):
-        #might have to change if we get more complex properties
-        self.__dict__ = src.__dict__.copy()
-    
-    def _serialize(self, track):
-        return {'artist': track.artist,
-                'title': track.title,
-                'length_seconds': track.length_seconds,
-                'length_friendly': track.length_friendly,
-                'id': track.id,
-                'url': track.url,
-                'album': track.album,
-                'provider_id': track.provider_id}
-        
     def __repr__(self):
         return "<track(id: '%s',title: '%s')>" % (str(self.id), str(self.title))

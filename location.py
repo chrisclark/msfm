@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Sequence
+from sqlalchemy.sql import func
 from db import db_session, Base
 
 class Location(Base):
@@ -33,11 +34,11 @@ class Location(Base):
         return l
     
     def add_track(self, track_id, user_id):
-        PlaylistItem(track_id=track_id, location_id=self.id, user_id=user_id).save()
+        if self._numTracksFromUser(user_id) >= 3:
+            PlaylistItem(track_id=track_id, location_id=self.id, user_id=user_id).save()
     
-    def copyFrom(self, src):
-        #might have to change if we get more complex properties
-        self.__dict__ = src.__dict__.copy()
+    def _numTracksFromUser(self, user_id):
+        return db_session.query(func.count(PlaylistItem)).filter_by(user_id=user_id)
     
     def __repr__(self):
         return "<Location('%s','%s')>" % (self.name, str(self.id))
