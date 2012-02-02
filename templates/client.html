@@ -109,17 +109,16 @@
 			</div>
 		</div>
 		<button id="btnAddTrack" name="Add">Add Track</button>
-		<a id="lnkAddTrackDialog" href="#confirmAdd" data-rel="dialog" data-role="button" style="display: none;"></a>
  	</div>
  	
- 	<div data-role="page" id="confirmAdd">
+ 	<div data-role="dialog" id="diagNotification">
  		<div data-role="header">
 			<h1>Milkshake.fm</h1>
 		</div>
 		<div data-role="content">
-			<h1>Song added!</h1>
-			<p>You've added the track to the playlist.</p>
-			<a href="#homePage" data-role="button">Ok!</a>           
+			<h1 id="diagTitle"></h1>
+			<p id="diagText"></p>
+			<a href="#homePage" data-role="button" id="diagConfirm"><span></span></a>           
 		</div>
 	</div>
 	
@@ -133,17 +132,6 @@
 			<a href="javascript:void(0);" data-role="button" id="lnkFBLogin">Log in</a>           
 		</div>
 	</div>
-	
- 	<div data-role="page" id="confirmVote">
- 		<div data-role="header">
-			<h1>Milkshake.fm</h1>
-		</div>
-		<div data-role="content">
-			<h1>Voted!</h1>
-			<p>Thanks!</p>
-			<a href="#homePage" data-role="button">Ok!</a>           
-		</div>
-	</div>
  	
  	<div data-role="page" id="playlistItemDetails">
  		<div data-role="header" class="header"></div>
@@ -153,7 +141,6 @@
 		</div>
 		<button id="btnUpVote" name="Thumbs Up">Thumbs Up</button>
 		<button id="btnDownVote" name="Thumbs Down">Thumbs Down</button>
-		<a href="#confirmVote" id="lnkConfirmVote" data-rel="dialog" data-role="button" style="display: none;"></a>
  	</div>
  	
 </body>

@@ -8,7 +8,13 @@ var msfm = {
 	},
 	location_id: null,
 	playlist: null,
-	
+	renderDialog: function(title, msg, btnText){
+		$("#diagTitle", '#diagNotification').html(title);
+		$("#diagText", '#diagNotification').html(msg);
+		$("#diagConfirm span", '#diagNotification').first().html(btnText);
+		spinnerStop();
+		$.mobile.changePage('#diagNotification', {transition: 'pop', reverse: false, changeHash: false});
+	},
 	doLogin: function(callbackFn) {
 		FB.login(function(response){
 			if(response.authResponse){
@@ -63,7 +69,7 @@ bindPlaylist = function (event) {
 			var listing = [];
 			$.each(data, function(index, playlistitem) {
 				listing.push('<li class="playlistItemButton" data-id="'
-				+ playlistitem.track_id
+				+ playlistitem.id
 				+ '" data-playlist_item_id="'
 				+ playlistitem.playlist_item_id
 				+ '" data-score="'
@@ -110,7 +116,7 @@ function bindTrackSearchResults(tracklist){
 	var listing = [];
 	$.each(tracklist, function(index, playlistitem) {
 		listing.push('<li class="trackButton" data-id="'
-		+ playlistitem.track_id
+		+ playlistitem.id
 		+ '"><a href="javascript:void(0);">'
 		+ playlistitem.artist
 		+ ' - '
@@ -166,9 +172,14 @@ doAddTrack = function(track_id){
 				+ track_id
 				+ '&location_id='
 				+ msfm.locationId(),
-			success: function(data){
-				spinnerStop();
-				$('#lnkAddTrackDialog').click();
+			complete: function(xhr){
+				if(xhr.status != 200){
+					msfm.renderDialog("Whoops!", xhr.responseText, "Home");
+				}
+			},
+			success: function(data, textStatus, xhr){
+				doAddTrack();
+				renderDialog("Sweet!","Added your track", "OK!");
 			}
 		});
 }
@@ -189,8 +200,7 @@ function doVote(dir) {
 			+ '&direction='
 			+ dir,
 		success: function(data){
-			spinnerStop();
-			$('#lnkConfirmVote').click();
+			msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!");
 		}
 	});
 }
@@ -224,7 +234,7 @@ $('#playlistItemDetails').live('pageshow', function(event){
 buildTrackDetails = function(track, selector){
 	$(selector).empty();
 	$(selector).append("<li>Artist: " + track.artist + '</li>');
-	$(selector).append("<li>Title: " + track.title + '</li>');
+	$(selector).append("<li>Song Title: " + track.title + '</li>');
 	$(selector).append("<li>Album: " + track.album + "</li>");
 	$(selector).append("<li>Length: " + track.length_friendly + "</li>");
 	$(selector).listview("refresh");
@@ -246,7 +256,5 @@ $(document).ready(function() {
 	$(document).live('pagebeforechange', function(event, data) {
 		spinnerStop();
 	});
-	
-	bindPlaylist(msfm.locationId());
 	
 });

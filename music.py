@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from db import db_session, init_db
 from flask import json
 import common
@@ -11,6 +11,8 @@ from user import User
 from vote import Vote
 import config
 
+from functools import wraps
+
 app = Flask(__name__)
 app.debug = config.debugMode
 
@@ -22,10 +24,18 @@ app.logger.addHandler(file_handler)
 
 app.secret_key = config.secret_key
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if User.current() is None:
+            return common.buildDialogResponse("Please log in.", 401)
+        return f(*args, **kwargs)
+    return decorated_function
+
 ##########  API Routes ##########
 
-@app.route('/<location_name>')
-def index(location_name):
+@app.route('/<location_id>')
+def index(location_id):
     return render_template('client.html')
 
 @app.route('/venue/<location_name>')
@@ -66,12 +76,12 @@ def getTrack(track_id):
     return MusicLibrary.get_track(id=track_id).to_json()
 
 @app.route('/add_track', methods=['POST'])
+@login_required
 def addTrack():
     track_id = request.form["track_id"]
     location_id = request.form["location_id"]
     l = Location.from_id(location_id)
-    l.add_track(track_id, User.current_id())
-    return ""
+    return l.add_track(track_id, User.current_id())
 
 @app.route('/mark_played', methods=['POST'])
 def markPlayed():
@@ -98,7 +108,7 @@ def login():
 
 @app.route('/')
 def home():
-    return "Homepage"
+    return redirect(url_for("index", location_id="1"))
 
 @app.route('/favicon.ico')
 def favicon():

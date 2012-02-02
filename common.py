@@ -1,5 +1,5 @@
 import requests
-from flask import json, Flask, render_template
+from flask import json, make_response
 
 def get_json(url):
     r = requests.get(url)
@@ -16,7 +16,6 @@ def copyObj(src, dest):
     if type(src)==type(dest):
             dest.__dict__ = src.__dict__.copy()
             
-def validationError(msg):
-    resp = Flask.make_response(render_template('error.html'), 404)
-    resp.headers['X-Error'] = msg
+def buildDialogResponse(msg, code):
+    resp = make_response(json.dumps(msg), code)
     return resp

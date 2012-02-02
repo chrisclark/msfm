@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Sequence
 from sqlalchemy.sql import func
 from db import db_session, Base
+import common
 
 class Location(Base):
     __tablename__ = 'locations'
@@ -34,11 +35,14 @@ class Location(Base):
         return l
     
     def add_track(self, track_id, user_id):
-        if self._numTracksFromUser(user_id) >= 3:
+        if self._numTracksFromUser(user_id) <= 2:
             PlaylistItem(track_id=track_id, location_id=self.id, user_id=user_id).save()
+            return common.buildDialogResponse("Song added!", 200)
+        else:
+            return common.buildDialogResponse("You can only add 2 songs at a time.", 409)
     
     def _numTracksFromUser(self, user_id):
-        return db_session.query(func.count(PlaylistItem)).filter_by(user_id=user_id)
+        return db_session.query(PlaylistItem).filter_by(user_id=user_id).filter_by(PlaylistItem.done_playing == False).count()
     
     def __repr__(self):
         return "<Location('%s','%s')>" % (self.name, str(self.id))
