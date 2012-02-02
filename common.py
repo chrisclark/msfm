@@ -17,5 +17,6 @@ def copyObj(src, dest):
         dest.__dict__ = src.__dict__.copy()
             
 def buildDialogResponse(msg, code):
-    resp = make_response(json.dumps(msg), code)
+    d = {"msg": msg}
+    resp = make_response(json.dumps(d), code)
     return resp

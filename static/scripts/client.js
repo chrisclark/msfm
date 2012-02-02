@@ -168,23 +168,22 @@ $("#lnkFBLogin").live('click.msfm', function(){
 
 doAddTrack = function(track_id){
 	spinnerStart();
-		$.ajax({
-			type: "POST",
-			url: "/add_track",
-			data: "track_id="
-				+ track_id
-				+ '&location_id='
-				+ msfm.locationId(),
-			complete: function(xhr){
-				if(xhr.status != 200){
-					msfm.renderDialog("Whoops!", xhr.responseText, "Home");
-				}
-			},
-			success: function(data, textStatus, xhr){
-				doAddTrack();
-				renderDialog("Sweet!","Added your track", "OK!");
+	$.ajax({
+		type: "POST",
+		url: "/add_track",
+		data: "track_id="
+			+ track_id
+			+ '&location_id='
+			+ msfm.locationId(),
+		complete: function(xhr){
+			if(xhr.status != 200){
+				msfm.renderDialog("Whoops!", jQuery.parseJSON(xhr.responseText).msg, "Home");
 			}
-		});
+		},
+		success: function(data, textStatus, xhr){
+			msfm.renderDialog("Sweet!","Added your track", "OK!");
+		}
+	});
 }
 
 $("#btnUpVote").unbind('click.msfm');
