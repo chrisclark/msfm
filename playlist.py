@@ -26,7 +26,7 @@ class Playlist:
                 
     def add_track(self, t, pli=None, u=None):
         if t.id == None: #only add tracks that are in the DB
-            MusicLibrary.get_track(provider_id=t.provider_id)
+            t.id = MusicLibrary.get_track(provider_id=t.provider_id).id
         self.queue.append((t, pli, u))
 
     def to_json(self):
