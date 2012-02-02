@@ -41,8 +41,8 @@ class Location(Base):
         else:
             return common.buildDialogResponse("You can only add 2 songs at a time.", 409)
     
-    def _numTracksFromUser(self, user_id):
-        return db_session.query(PlaylistItem).filter_by(user_id=user_id).filter_by(PlaylistItem.done_playing == False).count()
+    def _numTracksFromUser(self, uid):
+        return db_session.query(PlaylistItem).filter_by(PlaylistItem.user_id == uid).filter_by(PlaylistItem.done_playing == False).count()
     
     def __repr__(self):
         return "<Location('%s','%s')>" % (self.name, str(self.id))
