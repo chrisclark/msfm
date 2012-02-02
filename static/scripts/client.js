@@ -64,38 +64,41 @@ trackSearch = function() {
 }
 
 bindPlaylist = function (event) {
-	$.getJSON("/playlist/" + msfm.locationId(), function(data) {
-			msfm.playlist = data;
-			var listing = [];
-			$.each(data, function(index, playlistitem) {
-				listing.push('<li class="playlistItemButton" data-id="'
-				+ playlistitem.id
-				+ '" data-playlist_item_id="'
-				+ playlistitem.playlist_item_id
-				+ '" data-score="'
-				+ playlistitem.score
-				+ '" data-playlist_index="'
-				+ index
-				+ '"><a href="javascript:void(0);">'
-				+ '<span class="ui-li-count">'
-				+ playlistitem.score
-				+ '</span>'
-				+ playlistitem.artist
-				+ ' - '
-				+ playlistitem.title
-				+ ' ('
-				+ playlistitem.album
-				+')'
-				+ '</a></li>');
-			});
-			listing = listing.join('');
-			
-			final_items = $(listing).detach().sort(function(a, b){
-				return $(b).jqmData("score") - $(a).jqmData("score");
-			});
-			
-			$('#venuePlaylist').empty().append(final_items).listview("refresh");
-	});
+	if($.mobile.activePage[0].id == "homePage"){ //then bind and start auto-refreshing
+		$.getJSON("/playlist/" + msfm.locationId(), function(data) {
+				msfm.playlist = data;
+				var listing = [];
+				$.each(data, function(index, playlistitem) {
+					listing.push('<li class="playlistItemButton" data-id="'
+					+ playlistitem.id
+					+ '" data-playlist_item_id="'
+					+ playlistitem.playlist_item_id
+					+ '" data-score="'
+					+ playlistitem.score
+					+ '" data-playlist_index="'
+					+ index
+					+ '"><a href="javascript:void(0);">'
+					+ '<span class="ui-li-count">'
+					+ playlistitem.score
+					+ '</span>'
+					+ playlistitem.artist
+					+ ' - '
+					+ playlistitem.title
+					+ ' ('
+					+ playlistitem.album
+					+')'
+					+ '</a></li>');
+				});
+				listing = listing.join('');
+				
+				final_items = $(listing).detach().sort(function(a, b){
+					return $(b).jqmData("score") - $(a).jqmData("score");
+				});
+				
+				$('#venuePlaylist').empty().append(final_items).listview("refresh");
+				window.setTimeout("bindPlaylist();", 3000);
+		});
+	}
 }
 
 $('#homePage').live('pageshow', bindPlaylist);
