@@ -48,5 +48,4 @@ class MusicProvider:
             
         except Exception:
             pass
-        
         return t

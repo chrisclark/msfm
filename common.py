@@ -14,7 +14,7 @@ def strip_private(dic):
 
 def copyObj(src, dest):
     if type(src)==type(dest):
-            dest.__dict__ = src.__dict__.copy()
+        dest.__dict__ = src.__dict__.copy()
             
 def buildDialogResponse(msg, code):
     resp = make_response(json.dumps(msg), code)

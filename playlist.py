@@ -25,6 +25,8 @@ class Playlist:
         return pl
                 
     def add_track(self, t, pli=None, u=None):
+        if t.id == None: #only add tracks that are in the DB
+            MusicLibrary.get_track(provider_id=t.provider_id)
         self.queue.append((t, pli, u))
 
     def to_json(self):
@@ -50,3 +52,5 @@ class Playlist:
             
             serialize_me.append(dic)
         return json.dumps(serialize_me)
+    
+from musicLibrary import MusicLibrary
