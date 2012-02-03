@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, Sequence
-from sqlalchemy.sql import func
+from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
 from db import db_session, Base
+from datetime import datetime
 import common
 
 class Location(Base):
@@ -9,20 +9,29 @@ class Location(Base):
     id = Column(Integer, Sequence('location_id_seq'), primary_key=True)
     name = Column(String(128))
     description = Column(String(1024))
-    playlist = None
+    #need the use_alter here because otherwise we get a circular reference b/t this and playlist_items
+    #use_alter defers the creation of this primary key
+    currently_playing = Column(Integer, ForeignKey('playlist_items.id', use_alter=True, name="fk_locations_currently_playing_pli_id"))
     
-    def __init__(self, name=None, id=None):
+    _playlist = None
+    
+    def __init__(self, name=None, id=None, currently_playing=None):
         self.id = id
         self.name = name
-        if self.id:
-            self.load_playlist()
+        self.currently_playing = currently_playing
         
     def save(self):
         db_session.add(self)
         db_session.commit() #this also refreshes self with the updated ID
     
-    def load_playlist(self):
-        self.playlist = Playlist.from_location_id(self.id)
+    def playlist(self):
+        if self._playlist == None:
+            self._playlist = Playlist.from_location_id(self.id)
+        return self._playlist
+        
+    def mark_playing(self, playlist_item_id):
+        self.currently_playing = playlist_item_id
+        self.save()
     
     @staticmethod
     def from_name(location_name):
@@ -36,10 +45,10 @@ class Location(Base):
     
     def add_track(self, track_id, user_id):
         if self._numTracksFromUser(user_id) <= 2:
-            PlaylistItem(track_id=track_id, location_id=self.id, user_id=user_id).save()
+            PlaylistItem(track_id=track_id, location_id=self.id, user_id=user_id, date_added=str(datetime.now())).save()
             return common.buildDialogResponse("Song added!", 200)
         else:
-            return common.buildDialogResponse("You can only add 2 songs at a time.", 409)
+            return common.buildDialogResponse("You can only add 3 songs at a time.", 409)
     
     def _numTracksFromUser(self, uid):
         return db_session.query(PlaylistItem).filter_by(user_id=uid).filter_by(done_playing=False).count()

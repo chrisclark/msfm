@@ -36,6 +36,10 @@ def login_required(f):
 
 @app.route('/<location_id>')
 def index(location_id):
+    l = Location.from_id(location_id)
+    if not l:
+        l = Location(name="whatever")
+        l.save()
     return render_template('client.html')
 
 @app.route('/venue/<location_name>')
@@ -50,22 +54,10 @@ def vote():
     v.save()
     return ""
 
-@app.route('/location_by_name/<location_name>')
-def get_location(location_name):
-    l = Location.from_name(location_name)
-    if not l:
-        l = Location(name=location_name)
-        l.save()
-    return str(l.id)
-
 @app.route('/playlist/<int:location_id>')
 def getPlaylist(location_id):
     l = Location.from_id(location_id)
-    if not l:
-        l = Location(name='whatever')
-        l.save()
-    l.load_playlist()
-    return l.playlist.to_json()
+    return l.playlist().to_json()
 
 @app.route('/search/<query>')
 def getSearch(query):
@@ -88,6 +80,12 @@ def markPlayed():
     pli = db_session.query(PlaylistItem).filter(PlaylistItem.id == request.form["id"]).first()
     pli.done_playing = True
     pli.save()
+    
+@app.route('/mark_playing', methods=['POST'])
+def markPlaying():
+    l = Location.from_id(request.form["location_id"])
+    l.currently_playing = request.form["playlist_item_id"]
+    l.save()
     
 @app.route('/login', methods=['POST'])
 def login():
@@ -113,17 +111,6 @@ def home():
 @app.route('/favicon.ico')
 def favicon():
     return ''
-
-@app.route('/initdbwithdrop/<pwd>')
-def initdbwithdrop(pwd):
-    if pwd == config.adminpass:
-        try:
-            init_db(1)
-            return "success!"
-        except:
-            return sys.exc_info()[0]
-    else:
-        return "bad bassword"
 
 @app.route('/initdb/<pwd>')
 def initdb(pwd):

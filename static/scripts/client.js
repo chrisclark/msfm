@@ -69,12 +69,17 @@ bindPlaylist = function (event) {
 				msfm.playlist = data;
 				var listing = [];
 				$.each(data, function(index, playlistitem) {
-					listing.push('<li class="playlistItemButton" data-id="'
+					listing.push(
+					'<li class="playlistItemButton" data-id="'
 					+ playlistitem.id
 					+ '" data-playlist_item_id="'
 					+ playlistitem.playlist_item_id
 					+ '" data-score="'
 					+ playlistitem.score
+					+ '" data-currently_playing="'
+					+ playlistitem.currently_playing
+					+ '" data-time_sort="'
+					+ playlistitem.time_sort
 					+ '" data-playlist_index="'
 					+ index
 					+ '"><a href="javascript:void(0);">'
@@ -86,13 +91,24 @@ bindPlaylist = function (event) {
 					+ playlistitem.title
 					+ ' ('
 					+ playlistitem.album
-					+')'
-					+ '</a></li>');
+					+ ')'
+					+ '</a></li>');	
 				});
 				listing = listing.join('');
 				
 				final_items = $(listing).detach().sort(function(a, b){
-					return $(b).jqmData("score") - $(a).jqmData("score");
+					if( $(a).jqmData("currently_playing") == 1 ){
+						return -1;
+					} else if($(b).jqmData("currently_playing") == 1){
+						return 1;
+					} else {
+						ascore = $(a).jqmData("score");
+						bscore = $(b).jqmData("score");
+						if(ascore == bscore) {
+							return $(a).jqmData("time_sort") - $(b).jqmData("time_sort");
+						}
+						return bscore - ascore;	
+					}
 				});
 				
 				$('#venuePlaylist').empty().append(final_items).listview("refresh");

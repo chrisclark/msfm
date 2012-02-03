@@ -1,13 +1,13 @@
 from playlistitem import PlaylistItem
+from location import Location
 from user import User
 from db import db_session
 from track import Track
 from flask import json
+import time
 import common
 
 class Playlist:
-    
-    #this should really be rewritten to use a JOINed sql alchemy mapper
     
     def __init__(self, loc_id=None):
         self.queue = []
@@ -22,6 +22,7 @@ class Playlist:
                                 filter(PlaylistItem.user_id == User.id).\
                                 filter(PlaylistItem.done_playing == False):             
             pl.add_track(t, pli, u)
+        pl.loc_id = location_id
         return pl
                 
     def add_track(self, t, pli=None, u=None):
@@ -31,6 +32,10 @@ class Playlist:
 
     def to_json(self):
         serialize_me = []
+        
+        #...not super happy about this either
+        if self.loc_id:
+            cur_playing_pli_id = Location.from_id(self.loc_id).currently_playing    
         
         for i in self.queue:
             t = i[0]
@@ -42,8 +47,13 @@ class Playlist:
             #kind of janky, but a playlist can consist of just
             #tracks (search results) and have no plis or users
             if pli:
+                if pli.id == cur_playing_pli_id:
+                    dic["currently_playing"] = 1
+                else:
+                    dic["currently_playing"] = 0
                 dic["score"] = pli.score()
                 dic["playlist_item_id"] = pli.id
+                dic["time_sort"] = time.mktime(pli.date_added.timetuple())
             if u:
                 dic["last_name"] = u.last_name
                 dic["first_name"] = u.first_name
