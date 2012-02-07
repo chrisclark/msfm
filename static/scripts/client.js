@@ -68,9 +68,22 @@ bindPlaylist = function (event) {
 		$.getJSON("/playlist/" + msfm.locationId(), function(data) {
 				msfm.playlist = data;
 				var listing = [];
+				
+				var cur_list = new Array();
+				$.each($(".playlistItemButton"), function(index, pli){
+					cur_list[$(pli).jqmData("playlist_item_id")] = $(pli).jqmData("score");				
+				});
+				
 				$.each(data, function(index, playlistitem) {
+					var changed_class = "";
+					var old_pli_score = cur_list[playlistitem.playlist_item_id];
+					if(typeof old_pli_score != 'undefined'){
+						if(old_pli_score != playlistitem.score){ changed_class = " changed"; } //score changed
+					} else { changed_class = " changed"; } //it's a new track
 					listing.push(
-					'<li class="playlistItemButton" data-id="'
+					'<li class="playlistItemButton'
+					+ changed_class
+					+ '" data-id="'
 					+ playlistitem.id
 					+ '" data-playlist_item_id="'
 					+ playlistitem.playlist_item_id
@@ -107,11 +120,12 @@ bindPlaylist = function (event) {
 						if(ascore == bscore) {
 							return $(a).jqmData("time_sort") - $(b).jqmData("time_sort");
 						}
-						return bscore - ascore;	
+						return bscore - ascore;
 					}
 				});
 				
 				$('#venuePlaylist').empty().append(final_items).listview("refresh");
+				$(".changed").effect("highlight", {color: "#EFBB63"}, 2000);
 				window.setTimeout("bindPlaylist();", 3000);
 		});
 	}
