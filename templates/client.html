@@ -7,34 +7,35 @@
 		
 	<title>Milkshake.fm - We, the DJ</title>
 	
-	<link rel="stylesheet" href="{{ url_for('static', filename='scripts/jquery.mobile-1.0.css') }}" type="text/css" /> 
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-1.6.2.js') }}"></script> 
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.mobile-1.0.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-ui-1.8.17.custom.min.js') }}"></script>
+	<link rel="stylesheet" href="/static/scripts/jquery.mobile-1.0.css" type="text/css" /> 
+	<script type="text/javascript" src="/static/scripts/jquery-1.6.2.js"></script> 
+	<script type="text/javascript" src="/static/scripts/jquery.mobile-1.0.js"></script>
+	<script type="text/javascript" src="/static/scripts/jquery-ui-1.8.17.custom.min.js"></script>
 	<script type="text/javascript" src="/static/scripts/jsuri-1.1.0.min.js"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/client.js') }}"></script>
+	<script type="text/javascript" src="/static/scripts/json2.js"></script>
+	<script type="text/javascript" src="/static/scripts/client.js"></script>
 	<link rel="stylesheet" href="/static/css/client.css">
 	
 	<!-- Zen Player -->
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.rotate.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.grab.js') }}"></script> 
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.jplayer.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/zen.js') }}"></script>
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/zen.css') }}">
+	<script type="text/javascript" src="/static/scripts/zen/jquery.rotate.js"></script>
+	<script type="text/javascript" src="/static/scripts/zen/jquery.grab.js"></script> 
+	<script type="text/javascript" src="/static/scripts/zen/jquery.jplayer.min.js"></script>
+	<script type="text/javascript" src="/static/scripts/zen/zen.js"></script>
+	<link rel="stylesheet" href="/static/css/zen.css">
 
 	<!-- Apple -->
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-	<link rel="apple-touch-startup-image" sizes="640x920" href="{{ url_for('static', filename='images/startup-retina.png') }}">
-	<link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/startup.png') }}">
+	<link rel="apple-touch-startup-image" sizes="640x920" href="/static/images/startup-retina.png">
+	<link rel="apple-touch-startup-image" href="/static/images/startup.png">
 	
 	<!-- Touch icons -->
 	<!-- For iPhone 4 with high-resolution Retina display: -->
-	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for('static', filename='images/apple-touch-icon-114x114-precomposed.png') }}">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/images/apple-touch-icon-114x114-precomposed.png">
 	<!-- For first-generation iPad: -->
-	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ url_for('static', filename='images/apple-touch-icon-72x72-precomposed.png') }}">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/images/apple-touch-icon-72x72-precomposed.png">
 	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-	<link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/apple-touch-icon-precomposed.png') }}">
+	<link rel="apple-touch-icon-precomposed" href="/static/images/apple-touch-icon-precomposed.png">
   
 </head>
 <body>  
@@ -140,8 +141,9 @@
 			<ul data-role="listview" id="playlistItemDetailsTrackDetails">
 			</ul>
 		</div>
-		<button id="btnUpVote" name="Thumbs Up">Thumbs Up</button>
-		<button id="btnDownVote" name="Thumbs Down">Thumbs Down</button>
+		<button id="btnUpVote" name="Thumbs Up">Vote Up</button>
+		<button id="btnDownVote" name="Thumbs Down">Vote Down</button>
+		<div style="text-align: center; font-size: 14px; font-weight: bold;" id="alreadyVoted">Thanks for voting!</div>
  	</div>
  	
 </body>

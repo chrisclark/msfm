@@ -80,7 +80,10 @@ def markPlayed():
     pli = db_session.query(PlaylistItem).filter(PlaylistItem.id == request.form["id"]).first()
     pli.done_playing = True
     pli.save()
-    
+
+#this seems weird because the client is driving which track is getting played next, but that is in fact
+#how it has to work for now. Even though the server has the most up to date info, the client is what
+#is actually playing the music so i think this makes sense for now. Definitely subject to change.
 @app.route('/mark_playing', methods=['POST'])
 def markPlaying():
     l = Location.from_id(request.form["location_id"])

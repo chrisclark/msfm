@@ -8,6 +8,7 @@ var msfm = {
 	},
 	location_id: null,
 	playlist: null,
+	votedCookieName: "msfm.votedArr",
 	renderDialog: function(title, msg, btnText){
 		$("#diagTitle", '#diagNotification').html(title);
 		$("#diagText", '#diagNotification').html(msg);
@@ -163,20 +164,6 @@ function bindTrackSearchResults(tracklist){
 	spinnerStop();
 }
 
-$("#btnMarkPlayed").unbind('click.msfm');
-$("#btnMarkPlayed").live('click.msfm', function() {
-	pli_id = $(".playlistItemButton").first().jqmData("playlist_item_id");
-	$.ajax({
-		type: "POST",
-		url: "/mark_played",
-		data: "id=" + pli_id,
-		success: function(data){
-			spinnerStop();
-			location.reload();
-		}
-	});
-});
-
 $("#btnAddTrack").unbind('click.msfm');
 $("#btnAddTrack").live('click.msfm', function(){
 	track_id = $('#addTrack').jqmData('id');
@@ -224,15 +211,20 @@ $("#btnDownVote").live('click.msfm', function(){ doVote(0); });
 
 function doVote(dir) {
 	spinnerStart();
+	id = $('#playlistItemDetails').jqmData('playlist_item_id');
 	$.ajax({
 		type: "POST",
 		url: "/vote",
 		data: "playlist_item_id="
-			+ $('#playlistItemDetails').jqmData('playlist_item_id')
+			+ id
 			+ '&direction='
 			+ dir,
 		success: function(data){
 			msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!");
+			voted = readCookie(msfm.votedCookieName);
+			if (! voted){ voted = []; }
+			voted.push(id);
+			createCookie(msfm.votedCookieName, voted, 3);
 		}
 	});
 }
@@ -251,8 +243,18 @@ $('#addTrack').live('pageshow', function(event){
 });
 
 $('#playlistItemDetails').live('pageshow', function(event){
-	data = msfm.playlist[$(this).jqmData('playlist_index')]
 	spinnerStart();
+	noVote = readCookie(msfm.votedCookieName).indexOf($(this).jqmData('playlist_item_id'));
+	if(noVote>=0){
+		$("#btnUpVote").parents('.ui-btn').hide();
+		$("#btnDownVote").parents('.ui-btn').hide();
+		$("#alreadyVoted").show();
+	} else {
+		$("#btnUpVote").parents('.ui-btn').show();
+		$("#btnDownVote").parents('.ui-btn').show();
+		$("#alreadyVoted").hide();
+	}
+	data = msfm.playlist[$(this).jqmData('playlist_index')]
 	selector = '#playlistItemDetailsTrackDetails'
 	buildTrackDetails(data, selector);
 	$(selector).append("<li style='padding-left: 75px;'>Picked by "
@@ -290,3 +292,25 @@ $(document).ready(function() {
 	});
 	
 });
+
+function createCookie(name,value,days) {
+	value = JSON.stringify(value);
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return JSON.parse(c.substring(nameEQ.length,c.length));
+	}
+	return null;
+}
