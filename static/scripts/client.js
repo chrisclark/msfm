@@ -45,7 +45,6 @@ function spinnerStart() { $.mobile.showPageLoadingMsg(); }
 function spinnerStop() { $.mobile.hidePageLoadingMsg(); }
 
 loginComplete = function(loginResponse) {
-	var l = 2;
 	if (loginResponse) {
 		$.mobile.changePage("#homePage");
 	}
@@ -108,7 +107,7 @@ bindPlaylist = function (event) {
 					+ ')'
 					+ '</a></li>');	
 				});
-				listing = listing.join('');
+				var listing = listing.join('');
 				
 				final_items = $(listing).detach().sort(function(a, b){
 					if( $(a).jqmData("currently_playing") == 1 ){
@@ -116,8 +115,8 @@ bindPlaylist = function (event) {
 					} else if($(b).jqmData("currently_playing") == 1){
 						return 1;
 					} else {
-						ascore = $(a).jqmData("score");
-						bscore = $(b).jqmData("score");
+						var ascore = $(a).jqmData("score");
+						var bscore = $(b).jqmData("score");
 						if(ascore == bscore) {
 							return $(a).jqmData("time_sort") - $(b).jqmData("time_sort");
 						}
@@ -166,7 +165,7 @@ function bindTrackSearchResults(tracklist){
 
 $("#btnAddTrack").unbind('click.msfm');
 $("#btnAddTrack").live('click.msfm', function(){
-	track_id = $('#addTrack').jqmData('id');
+	var track_id = $('#addTrack').jqmData('id');
 	FB.getLoginStatus(function(response) {
 		if (response.status === 'connected') {
 			msfm.doLogin(function(){
@@ -211,7 +210,7 @@ $("#btnDownVote").live('click.msfm', function(){ doVote(0); });
 
 function doVote(dir) {
 	spinnerStart();
-	id = $('#playlistItemDetails').jqmData('playlist_item_id');
+	var id = $('#playlistItemDetails').jqmData('playlist_item_id');
 	$.ajax({
 		type: "POST",
 		url: "/vote",
@@ -244,7 +243,9 @@ $('#addTrack').live('pageshow', function(event){
 
 $('#playlistItemDetails').live('pageshow', function(event){
 	spinnerStart();
-	noVote = readCookie(msfm.votedCookieName).indexOf($(this).jqmData('playlist_item_id'));
+	var arr = readCookie(msfm.votedCookieName);
+	var noVote = -1;
+	if(arr){ noVote = arr.indexOf($(this).jqmData('playlist_item_id')); }
 	if(noVote>=0){
 		$("#btnUpVote").parents('.ui-btn').hide();
 		$("#btnDownVote").parents('.ui-btn').hide();
@@ -254,8 +255,8 @@ $('#playlistItemDetails').live('pageshow', function(event){
 		$("#btnDownVote").parents('.ui-btn').show();
 		$("#alreadyVoted").hide();
 	}
-	data = msfm.playlist[$(this).jqmData('playlist_index')]
-	selector = '#playlistItemDetailsTrackDetails'
+	var data = msfm.playlist[$(this).jqmData('playlist_index')]
+	var selector = '#playlistItemDetailsTrackDetails'
 	buildTrackDetails(data, selector);
 	$(selector).append("<li style='padding-left: 75px;'>Picked by "
 						+ data.first_name + " "	+ data.last_name.substr(0,1)
