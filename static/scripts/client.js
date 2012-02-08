@@ -131,7 +131,13 @@ bindPlaylist = function (event) {
 	}
 }
 
-$('#homePage').live('pageshow', bindPlaylist);
+$('#homePage').live('pageshow', function(){
+	bindPlaylist();
+	//always hide this stuff and let the vote page show things appropriately
+	$("#alreadyVoted").hide();
+	$("#btnUpVote").parent('.ui-btn').hide();
+	$("#btnDownVote").parent('.ui-btn').hide();
+});
 
 //binds each button element in the <li> search results to the track details page
 $('.playlistItemButton').live('click', function() {
@@ -243,26 +249,29 @@ $('#addTrack').live('pageshow', function(event){
 
 $('#playlistItemDetails').live('pageshow', function(event){
 	spinnerStart();
+	
 	var arr = readCookie(msfm.votedCookieName);
 	var noVote = -1;
 	if(arr){ noVote = arr.indexOf($(this).jqmData('playlist_item_id')); }
-	if(noVote>=0){
-		$("#btnUpVote").parents('.ui-btn').hide();
-		$("#btnDownVote").parents('.ui-btn').hide();
-		$("#alreadyVoted").show();
-	} else {
-		$("#btnUpVote").parents('.ui-btn').show();
-		$("#btnDownVote").parents('.ui-btn').show();
-		$("#alreadyVoted").hide();
-	}
+	
 	var data = msfm.playlist[$(this).jqmData('playlist_index')]
 	var selector = '#playlistItemDetailsTrackDetails'
+	
 	buildTrackDetails(data, selector);
+	
 	$(selector).append("<li style='padding-left: 75px;'>Picked by "
 						+ data.first_name + " "	+ data.last_name.substr(0,1)
 						+ ". <img style='margin-left: 15px; margin-top: .7em;' src='"
 						+ data.photo_url + "'></li>");
 	$(selector).listview("refresh");
+	
+	if(noVote>=0){
+		$("#alreadyVoted").show();
+	} else {
+		$("#btnUpVote").parents('.ui-btn').show();
+		$("#btnDownVote").parents('.ui-btn').show();
+	}
+	
 	spinnerStop();
 });
 
