@@ -8,7 +8,7 @@ var msfm = {
 	},
 	location_id: null,
 	playlist: null,
-	votedCookieName: "msfm.votedArr",
+	votedKeyName: "msfm.votedArr",
 	renderDialog: function(title, msg, btnText){
 		$("#diagTitle", '#diagNotification').html(title);
 		$("#diagText", '#diagNotification').html(msg);
@@ -226,10 +226,10 @@ function doVote(dir) {
 			+ dir,
 		success: function(data){
 			msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!");
-			voted = readCookie(msfm.votedCookieName);
+			voted = JSON.parse(localStorage.getItem(msfm.votedKeyName));
 			if (! voted){ voted = []; }
 			voted.push(id);
-			createCookie(msfm.votedCookieName, voted, 3);
+			localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
 		}
 	});
 }
@@ -250,7 +250,7 @@ $('#addTrack').live('pageshow', function(event){
 $('#playlistItemDetails').live('pageshow', function(event){
 	spinnerStart();
 	
-	var arr = readCookie(msfm.votedCookieName);
+	var arr = JSON.parse(localStorage.getItem(msfm.votedKeyName));
 	var noVote = -1;
 	if(arr){ noVote = arr.indexOf($(this).jqmData('playlist_item_id')); }
 	
@@ -302,25 +302,3 @@ $(document).ready(function() {
 	});
 	
 });
-
-function createCookie(name,value,days) {
-	value = JSON.stringify(value);
-	if (days) {
-		var date = new Date();
-		date.setTime(date.getTime()+(days*24*60*60*1000));
-		var expires = "; expires="+date.toGMTString();
-	}
-	else var expires = "";
-	document.cookie = name+"="+value+expires+"; path=/";
-}
-
-function readCookie(name) {
-	var nameEQ = name + "=";
-	var ca = document.cookie.split(';');
-	for(var i=0;i < ca.length;i++) {
-		var c = ca[i];
-		while (c.charAt(0)==' ') c = c.substring(1,c.length);
-		if (c.indexOf(nameEQ) == 0) return JSON.parse(c.substring(nameEQ.length,c.length));
-	}
-	return null;
-}
