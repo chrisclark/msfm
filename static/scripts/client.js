@@ -56,11 +56,14 @@ LoadHeaders = function() {
 }
 
 trackSearch = function() {
-	spinnerStart();
-	$.getJSON("/search/" + $("#trackSearch").val(), function(data) {
-		bindTrackSearchResults(data);
-		spinnerStop(true);
-	});
+	var query = $("#trackSearch").val();
+	if (query.length > 0){
+		spinnerStart();
+		$.getJSON("/search/" + query, function(data) {
+			bindTrackSearchResults(data);
+			spinnerStop(true);
+		});
+	}
 }
 
 bindPlaylist = function (event) {
@@ -142,8 +145,7 @@ bindPlaylist = function (event) {
 				$('#venuePlaylist').empty().append(final_items).listview("refresh");
 				
 				$(".changed").effect("highlight", {color: "#EFBB63"}, 2000);
-				$(".playing a").css("color", "green");
-				$(".playing a").css("padding-left", "32px");
+				$(".playing a").css("color", "green").css("padding-left", "32px");
 				window.setTimeout("bindPlaylist();", 3000);
 		});
 	}
