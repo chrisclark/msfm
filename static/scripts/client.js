@@ -74,8 +74,20 @@ bindPlaylist = function (event) {
 					cur_list[$(pli).jqmData("playlist_item_id")] = $(pli).jqmData("score");				
 				});
 				
+				var playing_icon = "";
+				var playing_class = "";
+				var changed_class = "";
+				
 				$.each(data, function(index, playlistitem) {
-					var changed_class = "";
+									
+					if(playlistitem.currently_playing==1){
+						 playing_icon = "<img src='/static/images/sound_icon.png' class='ui-li-icon' />";
+						 playing_class = " playing";
+					} else {
+						playing_icon = "";
+						playing_class = "";
+					}
+					
 					var old_pli_score = cur_list[playlistitem.playlist_item_id];
 					if(typeof old_pli_score != 'undefined'){
 						if(old_pli_score != playlistitem.score){ changed_class = " changed"; } //score changed
@@ -83,6 +95,7 @@ bindPlaylist = function (event) {
 					listing.push(
 					'<li class="playlistItemButton'
 					+ changed_class
+					+ playing_class
 					+ '" data-id="'
 					+ playlistitem.id
 					+ '" data-playlist_item_id="'
@@ -95,7 +108,9 @@ bindPlaylist = function (event) {
 					+ playlistitem.time_sort
 					+ '" data-playlist_index="'
 					+ index
-					+ '"><a href="javascript:void(0);">'
+					+ '">'
+					+ playing_icon
+					+ '<a href="javascript:void(0);">'
 					+ '<span class="ui-li-count">'
 					+ playlistitem.score
 					+ '</span>'
@@ -125,7 +140,10 @@ bindPlaylist = function (event) {
 				});
 				
 				$('#venuePlaylist').empty().append(final_items).listview("refresh");
+				
 				$(".changed").effect("highlight", {color: "#EFBB63"}, 2000);
+				$(".playing a").css("color", "green");
+				$(".playing a").css("padding-left", "32px");
 				window.setTimeout("bindPlaylist();", 3000);
 		});
 	}

@@ -42,8 +42,8 @@ def index(location_id):
         l.save()
     return render_template('client.html')
 
-@app.route('/venue/<location_name>')
-def venue(location_name):
+@app.route('/venue/<location_id>')
+def venue(location_id):
     return render_template('venue.html')
 
 @app.route('/vote', methods=['POST'])

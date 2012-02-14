@@ -5,35 +5,38 @@
 	<meta charset="utf-8"> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 		
-	<title>Milkshake.fm - We, the DJ - Admin panel</title>
+	<title>Milkshake.fm - We, the DJ</title>
 	
-	<link rel="stylesheet" href="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.css') }}" type="text/css" /> 
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery-1.6.2.js') }}"></script> 
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.mobile-1.0b2.js') }}"></script>
+	<link rel="stylesheet" href="/static/scripts/jquery.mobile-1.0.css" type="text/css" /> 
+	<script type="text/javascript" src="/static/scripts/jquery-1.6.2.js"></script> 
+	<script type="text/javascript" src="/static/scripts/jquery.mobile-1.0.js"></script>
+	<script type="text/javascript" src="/static/scripts/jquery-ui-1.8.17.custom.min.js"></script>
 	<script type="text/javascript" src="/static/scripts/jsuri-1.1.0.min.js"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/client.js') }}"></script>
+	<script type="text/javascript" src="/static/scripts/json2.js"></script>
+	<script type="text/javascript" src="/static/scripts/client.js"></script>
+	<script type="text/javascript" src="/static/scripts/admin.js"></script>
 	<link rel="stylesheet" href="/static/css/client.css">
 	
 	<!-- Zen Player -->
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.rotate.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.grab.js') }}"></script> 
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/jquery.jplayer.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url_for('static', filename='scripts/zen/zen.js') }}"></script>
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/zen.css') }}">
+	<script type="text/javascript" src="/static/scripts/zen/jquery.rotate.js"></script>
+	<script type="text/javascript" src="/static/scripts/zen/jquery.grab.js"></script> 
+	<script type="text/javascript" src="/static/scripts/zen/jquery.jplayer.min.js"></script>
+	<script type="text/javascript" src="/static/scripts/zen/zen.js"></script>
+	<link rel="stylesheet" href="/static/css/zen.css">
 
 	<!-- Apple -->
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-	<link rel="apple-touch-startup-image" sizes="640x920" href="{{ url_for('static', filename='images/startup-retina.png') }}">
-	<link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/startup.png') }}">
+	<link rel="apple-touch-startup-image" sizes="640x920" href="/static/images/startup-retina.png">
+	<link rel="apple-touch-startup-image" href="/static/images/startup.png">
 	
 	<!-- Touch icons -->
 	<!-- For iPhone 4 with high-resolution Retina display: -->
-	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ url_for('static', filename='images/apple-touch-icon-114x114-precomposed.png') }}">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/images/apple-touch-icon-114x114-precomposed.png">
 	<!-- For first-generation iPad: -->
-	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ url_for('static', filename='images/apple-touch-icon-72x72-precomposed.png') }}">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/images/apple-touch-icon-72x72-precomposed.png">
 	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-	<link rel="apple-touch-icon-precomposed" href="{{ url_for('static', filename='images/apple-touch-icon-precomposed.png') }}">
+	<link rel="apple-touch-icon-precomposed" href="/static/images/apple-touch-icon-precomposed.png">
   
 </head>
 <body>  
@@ -48,13 +51,7 @@
 				oauth      : true, // enable OAuth 2.0
 				xfbml      : true  // parse XFBML
 			});
-			
-			$('#btnFBLogin').click(function(){
-				FB.login()
-			});
-			
-			//FB login is turned off for now
-			//FB.Event.subscribe('auth.statusChange', msfm.FBAuthChange);
+
 		};
 	
 		// Load the SDK Asynchronously
@@ -66,6 +63,9 @@
 		}(document));
 	   	  
 	</script>
+	
+	<a id="lnkShowLoginDialog" href="#pleaseLogin" data-rel="dialog" data-role="button" style="display: none;"></a>
+	
 	<div data-role="page" id="homePage"> 
 		<div data-role="header" class="header"></div>
 		<div data-role="content">
@@ -76,16 +76,9 @@
 		</div>
 		<div>
 			<a href="#search" data-role="button">Add Song</a>
+			<a href="javascript:void(0);" id="btnMarkPlaying" data-role="button">Mark Top Song as Playing</a>
 			<a href="javascript:void(0);" id="btnMarkPlayed" data-role="button">Mark Top Song as Played</a>
 		</div>
-	</div>
-	
-	<div data-role="page" id="login">
-		<div data-role="header" class="header"></div>
-		<div id="FBLogin">
-			<a href="javascript:void(0);" id="btnFBLogin" data-role="button" data-icon="msfm-facebook">Log In with Facebook</a>
-		</div>
-		<input type="hidden" name="fbid" id="fbid" />
 	</div>
 	
 	<div data-role="page" id="search">
@@ -121,28 +114,27 @@
 			</div>
 		</div>
 		<button id="btnAddTrack" name="Add">Add Track</button>
-		<a id="lnkAddTrackDialog" href="#confirmAdd" data-rel="dialog" data-role="button" style="display: none;"></a>
  	</div>
  	
- 	<div data-role="page" id="confirmAdd">
+ 	<div data-role="dialog" id="diagNotification">
  		<div data-role="header">
 			<h1>Milkshake.fm</h1>
 		</div>
 		<div data-role="content">
-			<h1>Song added!</h1>
-			<p>You've added the track to the location</p>
-			<a href="#homePage" data-role="button">Ok!</a>           
+			<h1 id="diagTitle"></h1>
+			<p id="diagText"></p>
+			<a href="#homePage" data-role="button" id="diagConfirm"><span></span></a>           
 		</div>
 	</div>
 	
- 	<div data-role="page" id="confirmVote">
+ 	<div data-role="page" id="pleaseLogin">
  		<div data-role="header">
 			<h1>Milkshake.fm</h1>
 		</div>
 		<div data-role="content">
-			<h1>Voted!</h1>
-			<p>Thanks!</p>
-			<a href="#homePage" data-role="button">Ok!</a>           
+			<h1>Please log in</h1>
+			<p>Log in with Facebook to add this song.</p>
+			<a href="javascript:void(0);" data-role="button" id="lnkFBLogin">Log in</a>           
 		</div>
 	</div>
  	
@@ -152,9 +144,9 @@
 			<ul data-role="listview" id="playlistItemDetailsTrackDetails">
 			</ul>
 		</div>
-		<button id="btnUpVote" name="Thumbs Up">Thumbs Up</button>
-		<button id="btnDownVote" name="Thumbs Down">Thumbs Down</button>
-		<a href="#confirmVote" id="lnkConfirmVote" data-rel="dialog" data-role="button" style="display: none;"></a>
+		<button id="btnUpVote" name="Thumbs Up">Vote Up</button>
+		<button id="btnDownVote" name="Thumbs Down">Vote Down</button>
+		<div style="text-align: center; font-size: 14px; font-weight: bold;" id="alreadyVoted">Thanks for voting!</div>
  	</div>
  	
 </body>
