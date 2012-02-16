@@ -51,8 +51,8 @@ loginComplete = function(loginResponse) {
 }
 
 LoadHeaders = function() {
-	var header = '<div style="text-align:center;"><a href="#homePage" data-transition="slide" data-direction="reverse"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 5px;" /> </a><div>You\'re picking music for Mellow Mushroom</div></div>';
-	$(".header").html(header)
+	var header = '<div style="text-align:center;"><a href="#homePage" data-transition="slide" data-direction="reverse"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 5px;" /> </a><div>You\'re the DJ for Mellow Mushroom</div></div>';
+	$(".header").html(header);
 }
 
 trackSearch = function() {
