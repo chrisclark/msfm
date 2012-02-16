@@ -80,6 +80,7 @@ def markPlayed():
     pli = db_session.query(PlaylistItem).filter(PlaylistItem.id == request.form["id"]).first()
     pli.done_playing = True
     pli.save()
+    return 1
 
 #this seems weird because the client is driving which track is getting played next, but that is in fact
 #how it has to work for now. Even though the server has the most up to date info, the client is what
@@ -89,6 +90,7 @@ def markPlaying():
     l = Location.from_id(request.form["location_id"])
     l.currently_playing = request.form["playlist_item_id"]
     l.save()
+    return 1
     
 @app.route('/login', methods=['POST'])
 def login():

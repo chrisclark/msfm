@@ -16,6 +16,7 @@ var msfm = {
 		spinnerStop();
 		$.mobile.changePage('#diagNotification', {transition: 'pop', reverse: false, changeHash: false});
 	},
+	isAdmin: null,
 	doLogin: function(callbackFn) {
 		FB.login(function(response){
 			if(response.authResponse){
@@ -80,6 +81,7 @@ bindPlaylist = function (event) {
 				var playing_icon = "";
 				var playing_class = "";
 				var changed_class = "";
+				var admin_info = "";
 				
 				$.each(data, function(index, playlistitem) {
 									
@@ -89,6 +91,12 @@ bindPlaylist = function (event) {
 					} else {
 						playing_icon = "";
 						playing_class = "";
+					}
+					
+					if(msfm.isAdmin){
+						admin_info = '(' + playlistitem.playlist_item_id + ') ';
+					} else {
+						admin_info = '';
 					}
 					
 					var old_pli_score = cur_list[playlistitem.playlist_item_id];
@@ -119,6 +127,7 @@ bindPlaylist = function (event) {
 					+ '</span><p><strong>'
 					+ playlistitem.artist
 					+ '</strong></p><p>'
+					+ admin_info
 					+ playlistitem.title
 					+ '</p></a></li>');	
 				});
@@ -309,6 +318,8 @@ $('.trackButton').live('click', function() {
 
 $(document).ready(function() {
 	LoadHeaders();
+	
+	$.mobile.loadingMessage = "Workin' hard!"
 	
 	$("#btnSubmitSearch").unbind('click.msfm');
 	$("#btnSubmitSearch").bind('click.msfm', trackSearch);
