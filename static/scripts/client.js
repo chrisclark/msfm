@@ -199,11 +199,13 @@ $("#btnAddTrack").live('click.msfm', function(){
 
 $("#lnkFBLogin").unbind('click.msfm');
 $("#lnkFBLogin").live('click.msfm', function(){
-	msfm.doLogin(function(){$('#pleaseLogin').dialog('close');})
+	msfm.doLogin(function(){
+		$('#pleaseLogin').dialog('close');
+		doAddTrack($('#addTrack').jqmData('id'));
+	})
 });
 
 doAddTrack = function(track_id){
-	spinnerStart();
 	$.ajax({
 		type: "POST",
 		url: "/add_track",
