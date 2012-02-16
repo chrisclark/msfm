@@ -84,7 +84,7 @@ bindPlaylist = function (event) {
 				$.each(data, function(index, playlistitem) {
 									
 					if(playlistitem.currently_playing==1){
-						 playing_icon = "<img src='/static/images/sound_icon.png' class='ui-li-icon' />";
+						 playing_icon = "<img width='16px' src='/static/images/sound_icon.png' class='ui-li-icon' />";
 						 playing_class = " playing";
 					} else {
 						playing_icon = "";
