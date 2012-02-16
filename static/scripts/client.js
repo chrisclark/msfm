@@ -88,7 +88,7 @@ bindPlaylist = function (event) {
 						 playing_class = " playing";
 					} else {
 						playing_icon = "";
-						playing_class = " not_playing";
+						playing_class = "";
 					}
 					
 					var old_pli_score = cur_list[playlistitem.playlist_item_id];
@@ -113,7 +113,7 @@ bindPlaylist = function (event) {
 					+ index
 					+ '">'
 					+ playing_icon
-					+ '<a href="javascript:void(0);">'
+					+ '<a style="padding: .7em 15px 0 15px;" href="javascript:void(0);">'
 					+ '<span class="ui-li-count">'
 					+ playlistitem.score
 					+ '</span><p><strong>'
@@ -143,7 +143,6 @@ bindPlaylist = function (event) {
 				
 				$(".changed").effect("highlight", {color: "#EFBB63"}, 2000);
 				$(".playing a").css("color", "green").css("padding", ".7em 32px 0");
-				$(".not_playing a").css("padding", ".7em 15px 0 15px");
 				window.setTimeout("bindPlaylist();", 3000);
 		});
 	}
@@ -174,14 +173,11 @@ function bindTrackSearchResults(tracklist){
 	$.each(tracklist, function(index, playlistitem) {
 		listing.push('<li class="trackButton" data-id="'
 		+ playlistitem.id
-		+ '"><a href="javascript:void(0);">'
+		+ '"><a href="javascript:void(0);" style="padding: .7em 15px 0 15px;""><p><strong>'
 		+ playlistitem.artist
-		+ ' - '
+		+ '</strong></p><p>'
 		+ playlistitem.title
-		+ ' ('
-		+ playlistitem.album
-		+ ')'
-		+ '</a></li>');
+		+ '</p></a></li>');
 	});
 	$('#searchListing').empty().append(listing.join('')).listview("refresh");
 	spinnerStop();
