@@ -88,7 +88,7 @@ bindPlaylist = function (event) {
 						 playing_class = " playing";
 					} else {
 						playing_icon = "";
-						playing_class = "";
+						playing_class = " not_playing";
 					}
 					
 					var old_pli_score = cur_list[playlistitem.playlist_item_id];
@@ -116,14 +116,11 @@ bindPlaylist = function (event) {
 					+ '<a href="javascript:void(0);">'
 					+ '<span class="ui-li-count">'
 					+ playlistitem.score
-					+ '</span>'
+					+ '</span><p><strong>'
 					+ playlistitem.artist
-					+ ' - '
+					+ '</strong></p><p>'
 					+ playlistitem.title
-					+ ' ('
-					+ playlistitem.album
-					+ ')'
-					+ '</a></li>');	
+					+ '</p></a></li>');	
 				});
 				var listing = listing.join('');
 				
@@ -145,7 +142,8 @@ bindPlaylist = function (event) {
 				$('#venuePlaylist').empty().append(final_items).listview("refresh");
 				
 				$(".changed").effect("highlight", {color: "#EFBB63"}, 2000);
-				$(".playing a").css("color", "green").css("padding-left", "32px");
+				$(".playing a").css("color", "green").css("padding", ".7em 32px 0");
+				$(".not_playing a").css("padding", ".7em 15px 0 15px");
 				window.setTimeout("bindPlaylist();", 3000);
 		});
 	}
