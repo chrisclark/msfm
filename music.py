@@ -36,11 +36,12 @@ def login_required(f):
 
 @app.route('/<location_id>')
 def index(location_id):
-    l = Location.from_id(location_id)
-    if not l:
-        l = Location(name="whatever")
-        l.save()
-    return render_template('client.html')
+    #l = Location.from_id(location_id)
+    #if not l:
+    #    l = Location(name="whatever")
+    #    l.save()
+    #return render_template('client.html')
+    return "Thanks everyone! And now back to pandora. Feedback to chris@untrod.com."
 
 @app.route('/venue/<location_id>')
 def venue(location_id):
