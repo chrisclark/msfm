@@ -49,7 +49,6 @@ var msfm = {
 		$(selector).append("<li>Song Title: " + track.title + '</li>');
 		$(selector).append("<li>Album: " + track.album + "</li>");
 		$(selector).append("<li>Length: " + track.length_friendly + "</li>");
-		$(selector).listview("refresh");
 	},
 	LoadHeaders: function () {
 		"use strict";
@@ -159,22 +158,28 @@ var msfm = {
 			});
 		}
 	},
-	doVote: function (dir) {
+	disableVotingButtons: function () {
+		$('#btnUpVote').attr("disabled", "disabled");
+		$('#btnDownVote').attr("disabled", "disabled");
+	},
+	enableVotingButtons: function () {
+		$('#btnUpVote').removeAttr("disabled");
+		$('#btnDownVote').removeAttr("disabled");
+	},
+	doVote: function (pli_id , dir) {
 		"use strict";
-		msfm.spinnerStart();
-		var id = $('#playlistItemDetails').jqmData('playlist_item_id');
 		$.ajax({
 			type: "POST",
 			url: "/vote",
 			data: "playlist_item_id="
-				+ id
+				+ pli_id
 				+ '&direction='
 				+ dir,
 			success: function (data) {
 				msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!");
 				var voted = JSON.parse(localStorage.getItem(msfm.votedKeyName));
 				if (! voted) { voted = []; }
-				voted.push(id);
+				voted.push(pli_id);
 				localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
 			}
 		});
@@ -229,15 +234,11 @@ var msfm = {
 	}
 };
 
-
-
-
 $('#homePage').live('pageshow', function () {
 	"use strict";
 	msfm.bindPlaylist();
 });
 
-//binds each button element in the <li> search results to the track details page
 $('.playlistItemButton').live('click', function () {
 	"use strict";
 	var track_id = $(this).jqmData('id'),
@@ -257,10 +258,24 @@ $('.playlistItemButton').live('click', function () {
 		$("#voteBtns").show();
 	}
 	
-	$('#playlistItemDetails').jqmData('id', track_id);
 	$('#playlistItemDetails').jqmData('playlist_item_id', pli_id);
-	$('#playlistItemDetails').jqmData('playlist_index', playlist_index);
+	
+	var data = msfm.playlist[playlist_index],
+		selector = '#playlistItemDetailsTrackDetails';
+	
+	msfm.buildTrackDetails(data, selector);
+	
+	$(selector).append("<li style='padding-left: 75px;'>Picked by "
+						+ data.first_name + " "	+ data.last_name.substr(0,1)
+						+ ". <img style='margin-left: 15px; margin-top: .7em;' src='"
+						+ data.photo_url + "'></li>");
+	
 	$.mobile.changePage('#playlistItemDetails');
+});
+
+$("#playlistItemDetails").live('pagebeforeshow', function() {
+	$('#playlistItemDetailsTrackDetails').listview("refresh");
+	msfm.enableVotingButtons();
 });
 
 $("#btnAddTrack").unbind('click.msfm');
@@ -290,13 +305,15 @@ $("#lnkFBLogin").live('click.msfm', function () {
 $("#btnUpVote").unbind('click.msfm');
 $("#btnUpVote").live('click.msfm', function () {
 	"use strict";
-	msfm.doVote(1);
+	msfm.disableVotingButtons();
+	msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), 1);
 });
 
 $("#btnDownVote").unbind('click.msfm');
 $("#btnDownVote").live('click.msfm', function () {
 	"use strict";
-	msfm.doVote(0);
+	msfm.disableVotingButtons();
+	msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), 0);
 });	
 
 //sets up the track details page
@@ -305,23 +322,9 @@ $('#addTrack').live('pageshow', function (event) {
 	$.getJSON("/track/" + $(this).jqmData('id'),
 		function (data) {
 			msfm.buildTrackDetails(data, '#addTrackDetails');
+			$('#addTrackDetails').listview("refresh");
 		}
 	);
-});
-
-$('#playlistItemDetails').live('pageshow', function (event) {
-	"use strict";
-	
-	var data = msfm.playlist[$(this).jqmData('playlist_index')],
-		selector = '#playlistItemDetailsTrackDetails';
-	
-	msfm.buildTrackDetails(data, selector);
-	
-	$(selector).append("<li style='padding-left: 75px;'>Picked by "
-						+ data.first_name + " "	+ data.last_name.substr(0,1)
-						+ ". <img style='margin-left: 15px; margin-top: .7em;' src='"
-						+ data.photo_url + "'></li>");
-	$(selector).listview("refresh");	
 });
 
 //binds each button element in the <li> search results to the track details page
@@ -343,6 +346,5 @@ $(document).ready(function () {
 	
 	$(document).live('pagebeforechange', function (event, data) {
 		msfm.spinnerStop();
-	});
-	
+	});	
 });
