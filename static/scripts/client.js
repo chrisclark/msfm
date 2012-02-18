@@ -52,7 +52,7 @@ var msfm = {
 	},
 	LoadHeaders: function () {
 		"use strict";
-		var header = '<div style="text-align:center;"><a href="#homePage" data-transition="slide" data-direction="reverse"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /> </a><div>You\'re the DJ for Mellow Mushroom</div></div>';
+		var header = '<div style="text-align:center;"><a href="#homePage"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /> </a><div>You\'re the DJ for Mellow Mushroom</div></div>';
 		$(".header").html(header);
 	},
 	bindPlaylist: function (event) {
@@ -340,6 +340,7 @@ $(document).ready(function () {
 	msfm.LoadHeaders();
 	
 	$.mobile.loadingMessage = "Workin' hard!";
+	$.mobile.defaultPageTransition = "fade";
 	
 	$("#btnSubmitSearch").unbind('click.msfm');
 	$("#btnSubmitSearch").bind('click.msfm', msfm.trackSearch);
@@ -347,4 +348,8 @@ $(document).ready(function () {
 	$(document).live('pagebeforechange', function (event, data) {
 		msfm.spinnerStop();
 	});	
+});
+
+$(document).bind("mobileinit", function(){
+  	
 });
