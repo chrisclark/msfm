@@ -1,7 +1,3 @@
 :focus { outline: 0; }
 
-.ui-icon-msfm-facebook {
-	background-image: url('/static/images/facebook_icon.png')
-}
-
-.ui-dialog .ui-header .ui-btn-icon-notext { display: none; } 
+.ui-dialog .ui-header .ui-btn-icon-notext { display: none; }

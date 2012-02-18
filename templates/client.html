@@ -8,7 +8,7 @@
 	<title>Milkshake.fm - We, the DJ</title>
 	
 	<link rel="stylesheet" href="/static/scripts/jquery.mobile-1.0.css" type="text/css" /> 
-	<script type="text/javascript" src="/static/scripts/jquery-1.6.2.js"></script> 
+	<script type="text/javascript" src="/static/scripts/jquery-1.7.1.min.js"></script> 
 	<script type="text/javascript" src="/static/scripts/jquery.mobile-1.0.js"></script>
 	<script type="text/javascript" src="/static/scripts/jquery-ui-1.8.17.custom.min.js"></script>
 	<script type="text/javascript" src="/static/scripts/jsuri-1.1.0.min.js"></script>
@@ -16,13 +16,6 @@
 	<script type="text/javascript" src="/static/scripts/client.js"></script>
 	<link rel="stylesheet" href="/static/css/client.css">
 	
-	<!-- Zen Player -->
-	<script type="text/javascript" src="/static/scripts/zen/jquery.rotate.js"></script>
-	<script type="text/javascript" src="/static/scripts/zen/jquery.grab.js"></script> 
-	<script type="text/javascript" src="/static/scripts/zen/jquery.jplayer.min.js"></script>
-	<script type="text/javascript" src="/static/scripts/zen/zen.js"></script>
-	<link rel="stylesheet" href="/static/css/zen.css">
-
 	<!-- Apple -->
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -97,19 +90,6 @@
 			<ul data-role="listview" id="addTrackDetails">
 			</ul>
 		</div>
-		<div style="margin-top: 10px; width: 100%; text-align:center; display: none;">
-			<div id="zen">
-				<span class="player"></span>
-				<span class="circle"></span>
-				<span class="progress"></span>
-				<span class="buffer"></span>
-				<span class="drag"></span>
-				<div class="button">
-					<span class="icon play"></span>
-					<span class="icon pause"></span>
-				</div>
-			</div>
-		</div>
 		<button id="btnAddTrack" name="Add">Add Track</button>
  	</div>
  	
@@ -141,8 +121,10 @@
 			<ul data-role="listview" id="playlistItemDetailsTrackDetails">
 			</ul>
 		</div>
-		<button id="btnUpVote" name="Thumbs Up">Vote Up</button>
-		<button id="btnDownVote" name="Thumbs Down">Vote Down</button>
+		<div id="voteBtns">
+			<button id="btnUpVote" name="Thumbs Up">Vote Up</button>
+			<button id="btnDownVote" name="Thumbs Down">Vote Down</button>
+		</div>
 		<div style="text-align: center; font-size: 14px; font-weight: bold; padding-top: 3px;" id="alreadyVoted">Thanks for voting on this song!</div>
  	</div>
  	
