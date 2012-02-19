@@ -30,6 +30,12 @@ class Playlist:
             t.id = MusicLibrary.get_track(provider_id=t.provider_id).id
         self.queue.append((t, pli, u))
 
+    def contains_track(self, track_id):
+        for i in self.queue:
+            if str(i[0].id) == str(track_id):
+                return True
+        return False
+
     def to_json(self):
         serialize_me = []
         
@@ -47,10 +53,7 @@ class Playlist:
             #kind of janky, but a playlist can consist of just
             #tracks (search results) and have no plis or users
             if pli:
-                if pli.id == cur_playing_pli_id:
-                    dic["currently_playing"] = 1
-                else:
-                    dic["currently_playing"] = 0
+                dic["currently_playing"] = (pli.id == cur_playing_pli_id)
                 dic["score"] = pli.score()
                 dic["playlist_item_id"] = pli.id
                 dic["time_sort"] = time.mktime(pli.date_added.timetuple())
