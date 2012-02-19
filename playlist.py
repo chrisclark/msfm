@@ -31,11 +31,8 @@ class Playlist:
         self.queue.append((t, pli, u))
 
     def contains_track(self, track_id):
-        for i in self.queue:
-            if str(i[0].id) == str(track_id):
-                return True
-        return False
-
+        return str(track_id) in [str(x[0].id) for x in self.queue]
+        
     def to_json(self):
         serialize_me = []
         
