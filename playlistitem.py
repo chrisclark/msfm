@@ -3,7 +3,6 @@ from sqlalchemy.orm import relationship, backref
 from db import db_session, Base
 from location import Location
 from vote import Vote
-from datetime import datetime
 
 class PlaylistItem(Base):
     
@@ -28,9 +27,9 @@ class PlaylistItem(Base):
         self.done_playing = False
         
     def score(self):
-        total = db_session.query(func.count(Vote.id)).filter(Vote.playlist_item_id == self.id).first()[0]
-        minus = db_session.query(func.count(Vote.id)).filter(Vote.playlist_item_id == self.id).filter(Vote.direction == False).first()[0]
-        return total - 2*(minus)
+        total = db_session.query(func.sum(Vote.direction)).filter(Vote.playlist_item_id == self.id).scalar()
+        if not total: return 0 
+        return int(total)
     
     def save(self):
         db_session.add(self)

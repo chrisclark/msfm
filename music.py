@@ -50,7 +50,7 @@ def venue(location_id):
 def vote():
     v = Vote(playlist_item_id=request.form["playlist_item_id"],\
              user_id=User.current_id(),\
-             direction=request.form["direction"])
+             direction=Vote.parseVote(request.form["direction"]))
     v.save()
     return ""
 

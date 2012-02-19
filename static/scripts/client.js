@@ -313,7 +313,7 @@ $("#btnDownVote").unbind('click.msfm');
 $("#btnDownVote").live('click.msfm', function () {
 	"use strict";
 	msfm.disableVotingButtons();
-	msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), 0);
+	msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), -1);
 });	
 
 //sets up the track details page

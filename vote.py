@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Sequence, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, Sequence, ForeignKey, SmallInteger
 from db import db_session, Base
 
 class Vote(Base):
@@ -11,7 +11,7 @@ class Vote(Base):
     
     #1 = upvote
     #0 = downvote
-    direction = Column(Boolean)
+    direction = Column(SmallInteger)
     
     def __init__(self, id=None, user_id=None, playlist_item_id=None, direction=None):
         self.id = id
@@ -22,3 +22,14 @@ class Vote(Base):
     def save(self):
         db_session.add(self)
         db_session.commit()
+        
+    @staticmethod
+    def parseVote(val):
+        try:
+            parsed = int(val)
+            ret = -1
+            if parsed > 0:
+                ret = 1
+            return ret
+        except:
+            return 0

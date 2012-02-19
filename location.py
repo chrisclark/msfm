@@ -44,16 +44,17 @@ class Location(Base):
         return l
     
     def add_track(self, track_id, user_id):
-        if self._numTracksFromUser(user_id) <= 2:
-            if self.playlist().contains_track(track_id):
-                return common.buildDialogResponse("Someone already added that one (but you can go vote it up).", 409)
-            PlaylistItem(track_id=track_id, location_id=self.id, user_id=user_id, date_added=str(datetime.now())).save()
-            return common.buildDialogResponse("Song added!", 200)
-        else:
+        if self._numTracksFromUser(user_id) > 2:
             return common.buildDialogResponse("You can only have 3 songs on the playlist at once :(", 409)
-    
+
+        if self.playlist().contains_track(track_id):
+            return common.buildDialogResponse("Someone already added that one (but you can go vote it up).", 409)
+            
+        PlaylistItem(track_id=track_id, location_id=self.id, user_id=user_id, date_added=str(datetime.now())).save()
+        return common.buildDialogResponse("Song added!", 200)
+        
     def _numTracksFromUser(self, uid):
-        return db_session.query(PlaylistItem).filter_by(user_id=uid).filter_by(done_playing=False).count()
+        return db_session.query(PlaylistItem).filter_by(user_id=uid).filter_by(done_playing=False).filter_by(location_id=self.id).count()
     
     def __repr__(self):
         return "<Location('%s','%s')>" % (self.name, str(self.id))
