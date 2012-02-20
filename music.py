@@ -61,7 +61,7 @@ def getPlaylist(location_id):
 
 @app.route('/search/<query>')
 def getSearch(query):
-    return MusicLibrary.search(query).to_json()
+    return json.dumps(MusicLibrary.search(query))
 
 @app.route('/track/<track_id>')
 def getTrack(track_id):
@@ -70,10 +70,10 @@ def getTrack(track_id):
 @app.route('/add_track', methods=['POST'])
 @login_required
 def addTrack():
-    track_id = request.form["track_id"]
+    provider_id = request.form["provider_id"]
     location_id = request.form["location_id"]
     l = Location.from_id(location_id)
-    return l.add_track(track_id, User.current_id())
+    return l.add_track(provider_id, User.current_id())
 
 @app.route('/mark_played', methods=['POST'])
 def markPlayed():

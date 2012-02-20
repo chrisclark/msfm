@@ -4,6 +4,7 @@ from user import User
 from db import db_session
 from track import Track
 from flask import json
+from operator import itemgetter
 import time
 import common
 
@@ -26,19 +27,17 @@ class Playlist:
         return pl
                 
     def add_track(self, t, pli=None, u=None):
-        if t.id == None: #only add tracks that are in the DB
-            t.id = MusicLibrary.get_track(provider_id=t.provider_id).id
         self.queue.append((t, pli, u))
-
+            
     def contains_track(self, track_id):
         return str(track_id) in [str(x[0].id) for x in self.queue]
         
     def to_json(self):
         serialize_me = []
         
-        #...not super happy about this either
-        if self.loc_id:
-            cur_playing_pli_id = Location.from_id(self.loc_id).currently_playing    
+        cur_playing_pli_id = Location.from_id(self.loc_id).currently_playing    
+        
+        cur_playing_pli = None
         
         for i in self.queue:
             t = i[0]
@@ -46,21 +45,29 @@ class Playlist:
             u = i[2]
             
             dic = common.strip_private(t.__dict__)
+        
+            dic["currently_playing"] = (pli.id == cur_playing_pli_id)
+            dic["score"] = pli.score()
+            dic["playlist_item_id"] = pli.id
+            dic["time_sort"] = time.mktime(pli.date_added.timetuple())
             
-            #kind of janky, but a playlist can consist of just
-            #tracks (search results) and have no plis or users
-            if pli:
-                dic["currently_playing"] = (pli.id == cur_playing_pli_id)
-                dic["score"] = pli.score()
-                dic["playlist_item_id"] = pli.id
-                dic["time_sort"] = time.mktime(pli.date_added.timetuple())
-            if u:
-                dic["last_name"] = u.last_name
-                dic["first_name"] = u.first_name
-                dic["photo_url"] = u.photo_url 
-                dic["user_id"] = u.id
+            dic["last_name"] = u.last_name
+            dic["first_name"] = u.first_name
+            dic["photo_url"] = u.photo_url 
+            dic["user_id"] = u.id
             
-            serialize_me.append(dic)
+            #this let's us skip an entire sort later on
+            if dic["currently_playing"]:
+                cur_playing_pli = dic
+            else:            
+                serialize_me.append(dic)
+        
+        serialize_me.sort(key=itemgetter("time_sort"))
+        serialize_me.sort(key=itemgetter("score"), reverse=True)
+        
+        if cur_playing_pli:
+            serialize_me.insert(0, cur_playing_pli)
+
         return json.dumps(serialize_me)
     
 from musicLibrary import MusicLibrary

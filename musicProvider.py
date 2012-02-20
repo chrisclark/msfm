@@ -1,5 +1,4 @@
 from track import Track
-from playlist import Playlist
 import urllib
 import common
 from flask import json
@@ -14,18 +13,23 @@ class MusicProvider:
         reqUrl = 'http://ie-api.mndigital.com?method=Search.GetTracks&format=json&'\
                  + urllib.urlencode({'keyword': query})\
                  + '&page=1&pageSize=10&apiKey=%s' % MusicProvider._mnDigitalIntegrationAPIKey
+
         r = common.get_json(reqUrl)
-        res = Playlist()
+
+        serialize_me = []
+        
         for t in r["Tracks"]:
-            res.add_track(Track(provider_id=t["MnetId"],
-                              artist=t["Artist"]["Name"],
-                              title=t["Title"],
-                              length_seconds=0,
-                              length_friendly=t["Duration"],
-                              url="",
-                              album=t["Album"]["Title"]))
+            dic = dict()
+            dic["provider_id"] = t["MnetId"]
+            dic["artist"] = t["Artist"]["Name"]
+            dic["title"] = t["Title"]
+            dic["length_seconds"] = 0
+            dic["length_friendly"] = t["Duration"]
+            dic["url"] = ""
+            dic["album"] = t["Album"]["Title"]
+            serialize_me.append(dic)
             
-        return res
+        return serialize_me
     
     @staticmethod
     def get_track(provider_id):

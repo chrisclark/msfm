@@ -26,12 +26,12 @@ var msfm = {
 		msfm.spinnerStop();
 		$.mobile.changePage('#diagNotification', {transition: 'pop', reverse: false, changeHash: false});
 	},
-	doAddTrack: function (track_id) {
+	doAddTrack: function (provider_id) {
 		"use strict";
 		$.ajax({
 			type: "POST",
 			url: "/add_track",
-			data: "track_id=" + track_id + '&location_id=' + msfm.locationId(),
+			data: "provider_id=" + provider_id + '&location_id=' + msfm.locationId(),
 			complete: function (xhr) {
 				if (xhr.status != 200) {
 					msfm.renderDialog("Whoops!", jQuery.parseJSON(xhr.responseText).msg, "Home");
@@ -78,19 +78,18 @@ var msfm = {
 						 playing_icon = "<img width='16px' src='/static/images/sound_icon.png' class='ui-li-icon' />";
 						 playing_class = " playing";
 					} else {
-						playing_icon = "";
-						playing_class = "";
+						playing_icon = playing_class = "";
 					}
 					
 					if (msfm.isAdmin) {
-						admin_info = '(' + playlistitem.playlist_item_id + ') ';
+						admin_info = "(" + playlistitem.playlist_item_id + ") ";
 					} else {
-						admin_info = '';
+						admin_info = "";
 					}
 					
 					var old_pli_score = cur_list[playlistitem.playlist_item_id];
 					
-					if (typeof old_pli_score != 'undefined') {
+					if (typeof old_pli_score != "undefined") {
 						if (old_pli_score == playlistitem.score){
 							changed_class = "";
 						} else if (old_pli_score < playlistitem.score) {
@@ -103,57 +102,33 @@ var msfm = {
 					}
 					
 					listing.push(
-					'<li class="playlistItemButton'
-					+ changed_class
-					+ playing_class
-					+ '" data-id="'
-					+ playlistitem.id
-					+ '" data-playlist_item_id="'
-					+ playlistitem.playlist_item_id
-					+ '" data-score="'
-					+ playlistitem.score
-					+ '" data-currently_playing="'
-					+ playlistitem.currently_playing
-					+ '" data-time_sort="'
-					+ playlistitem.time_sort
-					+ '" data-playlist_index="'
-					+ index
-					+ '">'
-					+ playing_icon
-					+ '<a style="padding: .7em 15px 0 15px;" href="javascript:void(0);">'
-					+ '<span class="ui-li-count">'
-					+ playlistitem.score
-					+ '</span><p><strong>'
-					+ playlistitem.artist
-					+ '</strong></p><p>'
-					+ admin_info
-					+ playlistitem.title
-					+ '</p></a></li>');	
+						'<li class="playlistItemButton'	+ changed_class	+ playing_class
+						+ '" data-id="'	+ playlistitem.id
+						+ '" data-playlist_item_id="' + playlistitem.playlist_item_id
+						+ '" data-score="' + playlistitem.score
+						+ '" data-currently_playing="' + playlistitem.currently_playing
+						+ '" data-time_sort="' + playlistitem.time_sort
+						+ '" data-playlist_index="'	+ index	+ '">'
+						+ playing_icon
+						+ '<a style="padding: .7em 15px 0 15px;" href="javascript:void(0);">'
+						+ '<span class="ui-li-count">' + playlistitem.score + '</span>'
+						+ '<p><strong>'	+ playlistitem.artist + '</strong></p>'
+						+ '<p>'	+ admin_info + playlistitem.title + '</p>'
+						+ '</a></li>'
+					);
+					
 				});
-				var listing_joined = listing.join('');
 				
-				var final_items = $(listing_joined).detach().sort(function (a, b) {
-					if ( $(a).jqmData("currently_playing") == 1 ) {
-						return -1;
-					} else if ($(b).jqmData("currently_playing") == 1) {
-						return 1;
-					} else {
-						var ascore = $(a).jqmData("score");
-						var bscore = $(b).jqmData("score");
-						if (ascore == bscore) {
-							return $(a).jqmData("time_sort") - $(b).jqmData("time_sort");
-						}
-						return bscore - ascore;
-					}
-				});
+				var listing_joined = listing.join(""),
+					final_items = $(listing_joined).detach();
 				
 				$('#venuePlaylist').empty().append(final_items).listview("refresh");
 				
-				$(".changed_new").effect("highlight", {color: "#e5e89b"}, 2000);
-				$(".changed_up").effect("highlight", {color: "#a0e89b"}, 2000);
-				$(".changed_down").effect("highlight", {color: "#e89b9b"}, 2000);
+				$(".changed_new", '#venuePlaylist').effect("highlight", {color: "#e5e89b"}, 2500);
+				$(".changed_up", '#venuePlaylist').effect("highlight", {color: "#a0e89b"}, 2500);
+				$(".changed_down", '#venuePlaylist').effect("highlight", {color: "#e89b9b"}, 2500);
+				$(".playing a", '#venuePlaylist').css("color", "green").css("padding", ".7em 32px 0");
 				
-				$(".playing a").css("color", "green").css("padding", ".7em 32px 0");
 				window.setTimeout("msfm.bindPlaylist();", 3000);
 			});
 		}
@@ -188,15 +163,17 @@ var msfm = {
 	bindTrackSearchResults: function (tracklist) {
 		"use strict";
 		var listing = [];
-		$.each(tracklist, function (index, playlistitem) {
-			listing.push('<li class="trackButton" data-id="'
-			+ playlistitem.id
-			+ '"><a href="javascript:void(0);" style="padding: .7em 15px 0 15px;""><p><strong>'
-			+ playlistitem.artist
-			+ '</strong></p><p>'
-			+ playlistitem.title
-			+ '</p></a></li>');
+		$.each(tracklist, function (index, track) {
+			listing.push(	
+				'<li class="trackButton"'+
+				+ ' data-provider-id="'	+ track.provider_id
+				+ '" data-index="' + index + '">'
+				+ '<a href="javascript:void(0);" style="padding: .7em 15px 0 15px;"">'
+				+ '<p><strong>'	+ track.artist + '</strong></p>'
+				+ '<p>' + track.title + '</p></a></li>'
+			);
 		});
+		
 		$('#searchListing').empty().append(listing.join('')).listview("refresh");
 	},
 	trackSearch: function () {
@@ -205,6 +182,7 @@ var msfm = {
 		if (query.length > 0) {
 			msfm.spinnerStart();
 			$.getJSON("/search/" + query, function (data) {
+				msfm.playlist = data;
 				msfm.bindTrackSearchResults(data);
 				msfm.spinnerStop();
 			});
@@ -238,6 +216,24 @@ $('#homePage').live('pageshow', function () {
 	"use strict";
 	msfm.bindPlaylist();
 });
+
+$('.trackButton').live('click', function() {
+	"use strict";
+	var data = msfm.playlist[$(this).jqmData('index')];
+	msfm.buildTrackDetails(data, '#addTrackDetails');
+	$('#addTrack').jqmData('provider-id', data.provider_id);
+	$.mobile.changePage('#addTrack');
+});
+
+$("#addTrack").live('pagebeforeshow', function() {
+	"use strict";
+	$('#addTrackDetails').listview("refresh");
+});
+
+$("#addSongBtn").live('click', function () {
+	"use strict";
+	$('#searchListing').empty();
+})
 
 $('.playlistItemButton').live('click', function () {
 	"use strict";
@@ -281,11 +277,11 @@ $("#playlistItemDetails").live('pagebeforeshow', function() {
 $("#btnAddTrack").unbind('click.msfm');
 $("#btnAddTrack").live('click.msfm', function () {
 	"use strict";
-	var track_id = $('#addTrack').jqmData('id');
+	var provider_id = $('#addTrack').jqmData('provider-id');
 	FB.getLoginStatus(function (response) {
 		if (response.status === 'connected') {
 			msfm.doLogin(function () {
-				msfm.doAddTrack(track_id);
+				msfm.doAddTrack(provider_id);
 			});
 		} else {
 			$('#lnkShowLoginDialog').click();
@@ -315,25 +311,6 @@ $("#btnDownVote").live('click.msfm', function () {
 	msfm.disableVotingButtons();
 	msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), -1);
 });	
-
-//sets up the track details page
-$('#addTrack').live('pageshow', function (event) {
-	"use strict";
-	$.getJSON("/track/" + $(this).jqmData('id'),
-		function (data) {
-			msfm.buildTrackDetails(data, '#addTrackDetails');
-			$('#addTrackDetails').listview("refresh");
-		}
-	);
-});
-
-//binds each button element in the <li> search results to the track details page
-$('.trackButton').live('click', function () {
-	"use strict";
-	var track_id = $(this).jqmData('id');
-	$('#addTrack').jqmData('id', track_id);
-	$.mobile.changePage('#addTrack');
-});
 
 $(document).ready(function () {
 	"use strict";

@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
 from db import db_session, Base
 from datetime import datetime
 import common
+from musicLibrary import MusicLibrary
 
 class Location(Base):
     __tablename__ = 'locations'
@@ -43,14 +44,18 @@ class Location(Base):
         l = db_session.query(Location).filter_by(id=location_id).first()
         return l
     
-    def add_track(self, track_id, user_id):
+    def add_track(self, prov_id, user_id):
+        
+        #make sure it's in the DB
+        t = MusicLibrary.get_track(provider_id=prov_id)
+        
         if self._numTracksFromUser(user_id) > 2:
             return common.buildDialogResponse("You can only have 3 songs on the playlist at once :(", 409)
 
-        if self.playlist().contains_track(track_id):
+        if self.playlist().contains_track(t.id):
             return common.buildDialogResponse("Someone already added that one (but you can go vote it up).", 409)
-            
-        PlaylistItem(track_id=track_id, location_id=self.id, user_id=user_id, date_added=str(datetime.now())).save()
+        
+        PlaylistItem(track_id=t.id, location_id=self.id, user_id=user_id, date_added=str(datetime.now())).save()
         return common.buildDialogResponse("Song added!", 200)
         
     def _numTracksFromUser(self, uid):
