@@ -280,6 +280,7 @@ $("#btnAddTrack").live('click.msfm', function () {
 	var provider_id = $('#addTrack').jqmData('provider-id');
 	FB.getLoginStatus(function (response) {
 		if (response.status === 'connected') {
+			msfm.spinnerStart();
 			msfm.doLogin(function () {
 				msfm.doAddTrack(provider_id);
 			});

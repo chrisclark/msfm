@@ -94,17 +94,18 @@ def markPlaying():
     
 @app.route('/login', methods=['POST'])
 def login():
-    fbid = request.form["fbid"]
-    fbat = request.form["fbat"]
-    u = User.from_fbid(fbid)
-    if not u:
-        profile_info = common.get_json('http://graph.facebook.com/' + fbid)
-        u = User(facebook_id=fbid,\
-                 facebook_access_token=fbat,\
-                 first_name=profile_info["first_name"],\
-                 last_name=profile_info["last_name"],\
-                 photo_url="http://graph.facebook.com/"+fbid+"/picture")
-    u.login()
+    if not User.is_logged_in():
+        fbid = request.form["fbid"]
+        fbat = request.form["fbat"]
+        u = User.from_fbid(fbid)
+        if not u:
+            profile_info = common.get_json('http://graph.facebook.com/' + fbid)
+            u = User(facebook_id=fbid,\
+                     facebook_access_token=fbat,\
+                     first_name=profile_info["first_name"],\
+                     last_name=profile_info["last_name"],\
+                     photo_url="http://graph.facebook.com/"+fbid+"/picture")
+        u.login()
     return json.dumps(True)
 
 ##########  Static and Special Cases ##########
