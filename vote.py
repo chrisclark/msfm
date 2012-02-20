@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, Sequence, ForeignKey, SmallInteger
 from db import db_session, Base
+from flask import json
 
 class Vote(Base):
 
@@ -23,6 +24,13 @@ class Vote(Base):
         db_session.add(self)
         db_session.commit()
         
+    def to_json(self):
+        d = dict()
+        d["user_id"] = self.user_id
+        d["playlist_item_id"] = self.playlist_item_id
+        d["direction"] = self.direction
+        return json.dumps(d)
+                
     @staticmethod
     def parseVote(val):
         try:

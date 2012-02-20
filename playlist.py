@@ -10,20 +10,20 @@ import common
 
 class Playlist:
     
-    def __init__(self, loc_id=None):
+    def __init__(self, loc_id=None, cur_pli_id=None):
         self.queue = []
         self.loc_id = loc_id
+        self.currently_playing_pli_id = cur_pli_id
             
     @staticmethod
-    def from_location_id(location_id):
-        pl = Playlist(location_id)
+    def from_location(l):
+        pl = Playlist(loc_id=l.id, cur_pli_id=l.currently_playing)
         for pli, t, u in db_session.query(PlaylistItem, Track, User).\
-                                filter(PlaylistItem.location_id == location_id).\
+                                filter(PlaylistItem.location_id == l.id).\
                                 filter(Track.id == PlaylistItem.track_id).\
                                 filter(PlaylistItem.user_id == User.id).\
                                 filter(PlaylistItem.done_playing == False):             
             pl.add_track(t, pli, u)
-        pl.loc_id = location_id
         return pl
                 
     def add_track(self, t, pli=None, u=None):
@@ -35,8 +35,6 @@ class Playlist:
     def to_json(self):
         serialize_me = []
         
-        cur_playing_pli_id = Location.from_id(self.loc_id).currently_playing    
-        
         cur_playing_pli = None
         
         for i in self.queue:
@@ -46,7 +44,7 @@ class Playlist:
             
             dic = common.strip_private(t.__dict__)
         
-            dic["currently_playing"] = (pli.id == cur_playing_pli_id)
+            dic["currently_playing"] = (pli.id == self.currently_playing_pli_id)
             dic["score"] = pli.score()
             dic["playlist_item_id"] = pli.id
             dic["time_sort"] = time.mktime(pli.date_added.timetuple())

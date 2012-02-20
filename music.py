@@ -10,11 +10,13 @@ from playlistitem import PlaylistItem
 from user import User
 from vote import Vote
 import config
+from juggernaut import Juggernaut
 
 from functools import wraps
 
 app = Flask(__name__)
 app.debug = config.debugMode
+jug = Juggernaut()
 
 import logging
 from logging import FileHandler
@@ -40,6 +42,7 @@ def index(location_id):
     if not l:
         l = Location(name="whatever")
         l.save()
+    
     return render_template('client.html')
 
 @app.route('/venue/<location_id>')
@@ -50,8 +53,9 @@ def venue(location_id):
 def vote():
     v = Vote(playlist_item_id=request.form["playlist_item_id"],\
              user_id=User.current_id(),\
-             direction=Vote.parseVote(request.form["direction"]))
+             direction=Vote.parseVote(request.form["direction"]))    
     v.save()
+    jug.publish(config.jug_channel_name + ':' + str(Location.cur_location()) ,v.to_json())
     return ""
 
 @app.route('/playlist/<int:location_id>')

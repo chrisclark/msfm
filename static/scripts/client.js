@@ -1,4 +1,7 @@
 var msfm = {
+	jug_channel_name: function() {
+		return "ms.fm:" + msfm.locationId();
+	}, //must be kept in sync with the name in config.py
 	spinnerStart: function () {
 		"use strict";
 		$.mobile.showPageLoadingMsg();
@@ -317,6 +320,12 @@ $(document).ready(function () {
 	"use strict";
 	msfm.LoadHeaders();
 	
+	var jug = new Juggernaut;
+	var chan = msfm.jug_channel_name();
+	jug.subscribe(chan, function(data){
+		console.log("Got data: " + data);
+	});
+	
 	$.mobile.loadingMessage = "Workin' hard!";
 	$.mobile.defaultPageTransition = "fade";
 	
@@ -326,8 +335,4 @@ $(document).ready(function () {
 	$(document).live('pagebeforechange', function (event, data) {
 		msfm.spinnerStop();
 	});	
-});
-
-$(document).bind("mobileinit", function(){
-  	
 });

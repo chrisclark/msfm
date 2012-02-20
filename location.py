@@ -3,6 +3,7 @@ from db import db_session, Base
 from datetime import datetime
 import common
 from musicLibrary import MusicLibrary
+from flask import session
 
 class Location(Base):
     __tablename__ = 'locations'
@@ -20,6 +21,7 @@ class Location(Base):
         self.id = id
         self.name = name
         self.currently_playing = currently_playing
+        if id: session["location_id"] = self.id
         
     def save(self):
         db_session.add(self)
@@ -27,7 +29,7 @@ class Location(Base):
     
     def playlist(self):
         if self._playlist == None:
-            self._playlist = Playlist.from_location_id(self.id)
+            self._playlist = Playlist.from_location(self)
         return self._playlist
         
     def mark_playing(self, playlist_item_id):
@@ -37,12 +39,18 @@ class Location(Base):
     @staticmethod
     def from_name(location_name):
         l = db_session.query(Location).filter_by(name=location_name).first()
+        if l: session["location_id"] = l.id
         return l
     
     @staticmethod
     def from_id(location_id):
         l = db_session.query(Location).filter_by(id=location_id).first()
+        if l: session["location_id"] = l.id
         return l
+    
+    @staticmethod
+    def cur_location():
+        return session["location_id"]
     
     def add_track(self, prov_id, user_id):
         
