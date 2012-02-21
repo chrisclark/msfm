@@ -56,6 +56,8 @@ class User(Base):
             return None
     
     def save(self):
+        if not self.id:
+            self.created = str(datetime.now())
         db_session.add(self)
         db_session.commit()
     

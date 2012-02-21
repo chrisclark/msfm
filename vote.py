@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, Sequence, ForeignKey, SmallInteger
+from sqlalchemy import Column, Integer, Sequence, ForeignKey, SmallInteger, DateTime
 from db import db_session, Base
 from flask import json
+from datetime import datetime
 
 class Vote(Base):
 
@@ -9,9 +10,10 @@ class Vote(Base):
     id = Column(Integer, Sequence('vote_id_seq'), primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     playlist_item_id = Column(Integer, ForeignKey('playlist_items.id'))
+    timestamp = Column(DateTime)
     
     #1 = upvote
-    #0 = downvote
+    #-1 = downvote
     direction = Column(SmallInteger)
     
     def __init__(self, id=None, user_id=None, playlist_item_id=None, direction=None):
@@ -21,6 +23,7 @@ class Vote(Base):
         self.direction = direction
         
     def save(self):
+        self.timestamp = str(datetime.now())
         db_session.add(self)
         db_session.commit()
         
@@ -30,7 +33,7 @@ class Vote(Base):
         d["playlist_item_id"] = self.playlist_item_id
         d["direction"] = self.direction
         return json.dumps(d)
-                
+    
     @staticmethod
     def parseVote(val):
         try:

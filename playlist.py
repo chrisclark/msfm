@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from playlistitem import PlaylistItem
 from location import Location
 from user import User
@@ -5,6 +6,7 @@ from db import db_session
 from track import Track
 from flask import json
 from operator import itemgetter
+from vote import Vote
 import time
 import common
 
@@ -28,21 +30,33 @@ class Playlist:
             
     def contains_track(self, track_id):
         return str(track_id) in [str(x[0].id) for x in self.queue]
+    
+    def _get_scores(self):
+        conn = db_session.connection()
+        votes = conn.execute("select pi.id AS pli_id, sum(v.direction) AS score from Votes v join Playlist_items pi on v.playlist_item_id = pi.id join locations l on pi.location_id = l.id where l.id=" + str(self.loc_id) + " group by pi.id")
+        dic = dict()
+        for row in votes:
+            dic[row["pli_id"]] = int(row["score"])
+        return dic
         
     def to_json(self):
         serialize_me = []
         
         cur_playing_pli = None
         
+        scores = self._get_scores()
+        
         for i in self.queue:
             t = i[0]
             pli = i[1]
             u = i[2]
             
+            if pli.id not in scores: scores[pli.id] = 0
+            
             dic = common.strip_private(t.__dict__)
         
             dic["currently_playing"] = (pli.id == self.currently_playing_pli_id)
-            dic["score"] = pli.score()
+            dic["score"] = scores[pli.id]
             dic["playlist_item_id"] = pli.id
             dic["time_sort"] = time.mktime(pli.date_added.timetuple())
             
