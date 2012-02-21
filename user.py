@@ -49,25 +49,11 @@ class User(Base):
         return l
     
     @staticmethod
-    def is_logged_in():
-        try:
-            return session['user_id'] != None
-        except:
-            return False
-    
-    @staticmethod
-    def current():
-        if User.is_logged_in():
-            return User.from_id(session['user_id'])
-        else:
-            return None
-    
-    @staticmethod
     def current_id():
-        uid = None
-        usr = User.current()
-        if usr: uid = usr.id
-        return uid 
+        try:
+            return session["user_id"]
+        except:
+            return None
     
     def save(self):
         db_session.add(self)

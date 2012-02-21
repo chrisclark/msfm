@@ -23,11 +23,8 @@ class Playlist:
                                 filter(Track.id == PlaylistItem.track_id).\
                                 filter(PlaylistItem.user_id == User.id).\
                                 filter(PlaylistItem.done_playing == False):             
-            pl.add_track(t, pli, u)
+            pl.queue.append((t, pli, u))
         return pl
-                
-    def add_track(self, t, pli=None, u=None):
-        self.queue.append((t, pli, u))
             
     def contains_track(self, track_id):
         return str(track_id) in [str(x[0].id) for x in self.queue]

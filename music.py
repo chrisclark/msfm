@@ -29,7 +29,7 @@ app.secret_key = config.secret_key
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if User.current() is None:
+        if User.current_id() is None:
             return common.buildDialogResponse("Please log in.", 401)
         return f(*args, **kwargs)
     return decorated_function
@@ -78,7 +78,10 @@ def addTrack():
     provider_id = request.form["provider_id"]
     location_id = request.form["location_id"]
     l = Location.from_id(location_id)
-    return l.add_track(provider_id, User.current_id())
+    ret = l.add_track(provider_id, User.current_id())
+    if ret.status_code == 200:
+        jug.publish('msfm:playlist:' + str(l.id), l.playlist().to_json())
+    return ret
 
 @app.route('/mark_played', methods=['POST'])
 def markPlayed():
@@ -99,18 +102,17 @@ def markPlaying():
     
 @app.route('/login', methods=['POST'])
 def login():
-    if not User.is_logged_in():
-        fbid = request.form["fbid"]
-        fbat = request.form["fbat"]
-        u = User.from_fbid(fbid)
-        if not u:
-            profile_info = common.get_json('http://graph.facebook.com/' + fbid)
-            u = User(facebook_id=fbid,\
-                     facebook_access_token=fbat,\
-                     first_name=profile_info["first_name"],\
-                     last_name=profile_info["last_name"],\
-                     photo_url="http://graph.facebook.com/"+fbid+"/picture")
-        u.login()
+    fbid = request.form["fbid"]
+    fbat = request.form["fbat"]
+    u = User.from_fbid(fbid)
+    if not u:
+        profile_info = common.get_json('http://graph.facebook.com/' + fbid)
+        u = User(facebook_id=fbid,\
+                 facebook_access_token=fbat,\
+                 first_name=profile_info["first_name"],\
+                 last_name=profile_info["last_name"],\
+                 photo_url="http://graph.facebook.com/"+fbid+"/picture")
+    u.login()
     return json.dumps(True)
 
 ##########  Static and Special Cases ##########

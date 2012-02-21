@@ -27,9 +27,7 @@ class Location(Base):
         db_session.commit() #this also refreshes self with the updated ID
     
     def playlist(self):
-        if self._playlist == None:
-            self._playlist = Playlist.from_location(self)
-        return self._playlist
+        return Playlist.from_location(self)
         
     def mark_playing(self, playlist_item_id):
         self.currently_playing = playlist_item_id
