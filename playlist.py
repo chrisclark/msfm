@@ -33,7 +33,7 @@ class Playlist:
     
     def _get_scores(self):
         conn = db_session.connection()
-        votes = conn.execute("select pi.id AS pli_id, sum(v.direction) AS score from Votes v join Playlist_items pi on v.playlist_item_id = pi.id join locations l on pi.location_id = l.id where l.id=" + str(self.loc_id) + " group by pi.id")
+        votes = conn.execute("select pi.id AS pli_id, sum(v.direction) AS score from Votes v join Playlist_items pi on v.playlist_item_id = pi.id join locations l on pi.location_id = l.id where pi.done_playing=False and l.id=" + str(self.loc_id) + " group by pi.id")
         dic = dict()
         for row in votes:
             dic[row["pli_id"]] = int(row["score"])
