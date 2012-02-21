@@ -55,7 +55,8 @@ def vote():
              user_id=User.current_id(),\
              direction=Vote.parseVote(request.form["direction"]))    
     v.save()
-    jug.publish(config.jug_channel_name + ':' + str(Location.cur_location()) ,v.to_json())
+    l = Location.from_id(request.form["location_id"])
+    jug.publish('msfm:playlist:' + str(l.id), l.playlist().to_json())
     return ""
 
 @app.route('/playlist/<int:location_id>')

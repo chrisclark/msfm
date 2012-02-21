@@ -26,7 +26,7 @@ class Vote(Base):
         
     def to_json(self):
         d = dict()
-        d["user_id"] = self.user_id
+        if self.user_id: d["user_id"] = self.user_id #handle anonymous votes
         d["playlist_item_id"] = self.playlist_item_id
         d["direction"] = self.direction
         return json.dumps(d)

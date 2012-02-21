@@ -21,7 +21,6 @@ class Location(Base):
         self.id = id
         self.name = name
         self.currently_playing = currently_playing
-        if id: session["location_id"] = self.id
         
     def save(self):
         db_session.add(self)
@@ -39,18 +38,12 @@ class Location(Base):
     @staticmethod
     def from_name(location_name):
         l = db_session.query(Location).filter_by(name=location_name).first()
-        if l: session["location_id"] = l.id
         return l
     
     @staticmethod
     def from_id(location_id):
         l = db_session.query(Location).filter_by(id=location_id).first()
-        if l: session["location_id"] = l.id
         return l
-    
-    @staticmethod
-    def cur_location():
-        return session["location_id"]
     
     def add_track(self, prov_id, user_id):
         

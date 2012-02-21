@@ -1,7 +1,4 @@
 var msfm = {
-	jug_channel_name: function() {
-		return "ms.fm:" + msfm.locationId();
-	}, //must be kept in sync with the name in config.py
 	spinnerStart: function () {
 		"use strict";
 		$.mobile.showPageLoadingMsg();
@@ -58,83 +55,77 @@ var msfm = {
 		var header = '<div style="text-align:center;"><a href="#homePage"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /> </a><div>You\'re the DJ at this location</div></div>';
 		$(".header").html(header);
 	},
-	bindPlaylist: function (event) {
+	bindPlaylist: function () {
 		"use strict";
-		if ($.mobile.activePage[0].id == "homePage") { //then bind and start auto-refreshing
-			$.getJSON("/playlist/" + msfm.locationId(), function (data) {
-				msfm.playlist = data;
-				
-				var listing = [],
-					cur_list = [],
-					playing_icon = "",
-					playing_class = "",
-					changed_class = "",
-					admin_info = "";
-				
-				$.each( $(".playlistItemButton"), function (index, plib) {
-					cur_list[ $(plib).jqmData("playlist_item_id") ] = $(plib).jqmData("score");				
-				});
-				
-				$.each(data, function (index, playlistitem) {
-									
-					if (playlistitem.currently_playing==1) {
-						 playing_icon = "<img width='16px' src='/static/images/sound_icon.png' class='ui-li-icon' />";
-						 playing_class = " playing";
-					} else {
-						playing_icon = playing_class = "";
-					}
-					
-					if (msfm.isAdmin) {
-						admin_info = "(" + playlistitem.playlist_item_id + ") ";
-					} else {
-						admin_info = "";
-					}
-					
-					var old_pli_score = cur_list[playlistitem.playlist_item_id];
-					
-					if (typeof old_pli_score != "undefined") {
-						if (old_pli_score == playlistitem.score){
-							changed_class = "";
-						} else if (old_pli_score < playlistitem.score) {
-							changed_class = " changed_up";
-						} else if (old_pli_score > playlistitem.score) {
-							changed_class = " changed_down";
-						}
-					} else {
-						changed_class = " changed_new"; //it's a new track
-					}
-					
-					listing.push(
-						'<li class="playlistItemButton'	+ changed_class	+ playing_class
-						+ '" data-id="'	+ playlistitem.id
-						+ '" data-playlist_item_id="' + playlistitem.playlist_item_id
-						+ '" data-score="' + playlistitem.score
-						+ '" data-currently_playing="' + playlistitem.currently_playing
-						+ '" data-time_sort="' + playlistitem.time_sort
-						+ '" data-playlist_index="'	+ index	+ '">'
-						+ playing_icon
-						+ '<a style="padding: .7em 15px 0 15px;" href="javascript:void(0);">'
-						+ '<span class="ui-li-count">' + playlistitem.score + '</span>'
-						+ '<p><strong>'	+ playlistitem.artist + '</strong></p>'
-						+ '<p>'	+ admin_info + playlistitem.title + '</p>'
-						+ '</a></li>'
-					);
-					
-				});
-				
-				var listing_joined = listing.join(""),
-					final_items = $(listing_joined).detach();
-				
-				$('#venuePlaylist').empty().append(final_items).listview("refresh");
-				
-				$(".changed_new", '#venuePlaylist').effect("highlight", {color: "#e5e89b"}, 2500);
-				$(".changed_up", '#venuePlaylist').effect("highlight", {color: "#a0e89b"}, 2500);
-				$(".changed_down", '#venuePlaylist').effect("highlight", {color: "#e89b9b"}, 2500);
-				$(".playing a", '#venuePlaylist').css("color", "green").css("padding", ".7em 32px 0");
-				
-				window.setTimeout("msfm.bindPlaylist();", 3000);
-			});
-		}
+
+			
+		var listing = [],
+			cur_list = [],
+			playing_icon = "",
+			playing_class = "",
+			changed_class = "",
+			admin_info = "";
+		
+		$.each( $(".playlistItemButton"), function (index, plib) {
+			cur_list[ $(plib).jqmData("playlist_item_id") ] = $(plib).jqmData("score");				
+		});
+		
+		$.each(msfm.playlist, function (index, playlistitem) {
+							
+			if (playlistitem.currently_playing==1) {
+				 playing_icon = "<img width='16px' src='/static/images/sound_icon.png' class='ui-li-icon' />";
+				 playing_class = " playing";
+			} else {
+				playing_icon = playing_class = "";
+			}
+			
+			if (msfm.isAdmin) {
+				admin_info = "(" + playlistitem.playlist_item_id + ") ";
+			} else {
+				admin_info = "";
+			}
+			
+			var old_pli_score = cur_list[playlistitem.playlist_item_id];
+			
+			if (typeof old_pli_score != "undefined") {
+				if (old_pli_score == playlistitem.score){
+					changed_class = "";
+				} else if (old_pli_score < playlistitem.score) {
+					changed_class = " changed_up";
+				} else if (old_pli_score > playlistitem.score) {
+					changed_class = " changed_down";
+				}
+			} else {
+				changed_class = " changed_new"; //it's a new track
+			}
+			
+			listing.push(
+				'<li id="pli_' + playlistitem.playlist_item_id
+				+ '" class="playlistItemButton'	+ playing_class + changed_class
+				+ '" data-id="'	+ playlistitem.id
+				+ '" data-playlist_item_id="' + playlistitem.playlist_item_id
+				+ '" data-score="' + playlistitem.score
+				+ '" data-time_sort="' + playlistitem.time_sort
+				+ '" data-playlist_index="'	+ index	+ '">'
+				+ playing_icon
+				+ '<a style="padding: .7em 15px 0 15px;" href="javascript:void(0);">'
+				+ '<span class="ui-li-count">' + playlistitem.score + '</span>'
+				+ '<p><strong>'	+ playlistitem.artist + '</strong></p>'
+				+ '<p>'	+ admin_info + playlistitem.title + '</p>'
+				+ '</a></li>'
+			);
+			
+		});
+		
+		var listing_joined = listing.join(""),
+			final_items = $(listing_joined).detach();
+		
+		$('#venuePlaylist').empty().append(final_items).listview("refresh");
+		
+		$(".changed_new", '#venuePlaylist').effect("highlight", {color: "#e5e89b"}, 2500);
+		$(".changed_up", '#venuePlaylist').effect("highlight", {color: "#a0e89b"}, 2500);
+		$(".changed_down", '#venuePlaylist').effect("highlight", {color: "#e89b9b"}, 2500);
+		$(".playing a", '#venuePlaylist').css("color", "green").css("padding", ".7em 32px 0");	
 	},
 	disableVotingButtons: function () {
 		$('#btnUpVote').attr("disabled", "disabled");
@@ -149,10 +140,9 @@ var msfm = {
 		$.ajax({
 			type: "POST",
 			url: "/vote",
-			data: "playlist_item_id="
-				+ pli_id
-				+ '&direction='
-				+ dir,
+			data: "playlist_item_id=" + pli_id
+				+ '&direction='	+ dir
+				+ "&location_id=" + msfm.locationId(),
 			success: function (data) {
 				msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!");
 				var voted = JSON.parse(localStorage.getItem(msfm.votedKeyName));
@@ -217,7 +207,10 @@ var msfm = {
 
 $('#homePage').live('pageshow', function () {
 	"use strict";
-	msfm.bindPlaylist();
+	$.getJSON("/playlist/" + msfm.locationId(), function (data) {
+		msfm.playlist = data;
+		msfm.bindPlaylist();
+	});
 });
 
 $('.trackButton').live('click', function() {
@@ -321,9 +314,10 @@ $(document).ready(function () {
 	msfm.LoadHeaders();
 	
 	var jug = new Juggernaut;
-	var chan = msfm.jug_channel_name();
-	jug.subscribe(chan, function(data){
-		console.log("Got data: " + data);
+	var vote_chan = "msfm:playlist:" + msfm.locationId();
+	jug.subscribe(vote_chan, function(data){
+		msfm.playlist = JSON.parse(data);
+		msfm.bindPlaylist();
 	});
 	
 	$.mobile.loadingMessage = "Workin' hard!";
