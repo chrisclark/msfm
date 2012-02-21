@@ -205,113 +205,128 @@ var msfm = {
 	}
 };
 
-$('#homePage').live('pageshow', function () {
+$(document).ready(function () {
 	"use strict";
+	msfm.LoadHeaders();
+	
 	$.getJSON("/playlist/" + msfm.locationId(), function (data) {
 		msfm.playlist = data;
 		msfm.bindPlaylist();
 	});
-});
-
-$('.trackButton').live('click', function() {
-	"use strict";
-	var data = msfm.playlist[$(this).jqmData('index')];
-	msfm.buildTrackDetails(data, '#addTrackDetails');
-	$('#addTrack').jqmData('provider-id', data.provider_id);
-	$.mobile.changePage('#addTrack');
-});
-
-$("#addTrack").live('pagebeforeshow', function() {
-	"use strict";
-	$('#addTrackDetails').listview("refresh");
-});
-
-$("#addSongBtn").live('click', function () {
-	"use strict";
-	$('#searchListing').empty();
-})
-
-$('.playlistItemButton').live('click', function () {
-	"use strict";
-	var track_id = $(this).jqmData('id'),
-		pli_id = $(this).jqmData('playlist_item_id'),
-		playlist_index = $(this).jqmData('playlist_index'),
-		arr = JSON.parse(localStorage.getItem(msfm.votedKeyName)),
-		noVote = -1;
-		
-	if (arr) {
-		noVote = arr.indexOf(pli_id);
-	}
-	if (noVote>=0) {
-		$("#alreadyVoted").show();
-		$("#voteBtns").hide();
-	} else {
-		$("#alreadyVoted").hide();
-		$("#voteBtns").show();
-	}
 	
-	$('#playlistItemDetails').jqmData('playlist_item_id', pli_id);
+	$.mobile.loadingMessage = "Workin' hard!";
+	$.mobile.defaultPageTransition = "fade";
 	
-	var data = msfm.playlist[playlist_index],
-		selector = '#playlistItemDetailsTrackDetails';
+	$("#search").off("click.msfm", "#btnSubmitSearch");
+	$("#search").on("click.msfm", "#btnSubmitSearch", msfm.trackSearch);
 	
-	msfm.buildTrackDetails(data, selector);
+	$(document).on('pagebeforechange', function (event, data) {
+		msfm.spinnerStop();
+	});
 	
-	$(selector).append("<li style='padding-left: 75px;'>Picked by "
-						+ data.first_name + " "	+ data.last_name.substr(0,1)
-						+ ". <img style='margin-left: 15px; margin-top: .7em;' src='"
-						+ data.photo_url + "'></li>");
+	$('#homePage').on('pageshow', function () {
+		"use strict";
+		$.getJSON("/playlist/" + msfm.locationId(), function (data) {
+			msfm.playlist = data;
+			msfm.bindPlaylist();
+		});
+	});
 	
-	$.mobile.changePage('#playlistItemDetails');
-});
-
-$("#playlistItemDetails").live('pagebeforeshow', function() {
-	$('#playlistItemDetailsTrackDetails').listview("refresh");
-	msfm.enableVotingButtons();
-});
-
-$("#btnAddTrack").unbind('click.msfm');
-$("#btnAddTrack").live('click.msfm', function () {
-	"use strict";
-	var provider_id = $('#addTrack').jqmData('provider-id');
-	FB.getLoginStatus(function (response) {
-		if (response.status === 'connected') {
-			msfm.spinnerStart();
-			msfm.doLogin(function () {
-				msfm.doAddTrack(provider_id);
-			});
-		} else {
-			$('#lnkShowLoginDialog').click();
+	$("#search").on('click.msfm', '.trackButton', function() {
+		"use strict";
+		var data = msfm.playlist[$(this).jqmData('index')];
+		msfm.buildTrackDetails(data, '#addTrackDetails');
+		$('#addTrack').jqmData('provider-id', data.provider_id);
+		$.mobile.changePage('#addTrack');
+	});
+	
+	$(document).on('pagebeforeshow', "#addTrack", function() {
+		"use strict";
+		$('#addTrackDetails').listview("refresh");
+	});
+	
+	$('#homePage').on('click.msfm', "#addSongBtn", function () {
+		"use strict";
+		$('#searchListing').empty();
+	})
+	
+	$('#homePage').on('click.msfm', ".playlistItemButton", function () {
+		"use strict";
+		var track_id = $(this).jqmData('id'),
+			pli_id = $(this).jqmData('playlist_item_id'),
+			playlist_index = $(this).jqmData('playlist_index'),
+			arr = JSON.parse(localStorage.getItem(msfm.votedKeyName)),
+			noVote = -1;
+			
+		if (arr) {
+			noVote = arr.indexOf(pli_id);
 		}
+		if (noVote>=0) {
+			$("#alreadyVoted").show();
+			$("#voteBtns").hide();
+		} else {
+			$("#alreadyVoted").hide();
+			$("#voteBtns").show();
+		}
+		
+		$('#playlistItemDetails').jqmData('playlist_item_id', pli_id);
+		
+		var data = msfm.playlist[playlist_index],
+			selector = '#playlistItemDetailsTrackDetails';
+		
+		msfm.buildTrackDetails(data, selector);
+		
+		$(selector).append("<li style='padding-left: 75px;'>Picked by "
+							+ data.first_name + " "	+ data.last_name.substr(0,1)
+							+ ". <img style='margin-left: 15px; margin-top: .7em;' src='"
+							+ data.photo_url + "'></li>");
+		
+		$.mobile.changePage('#playlistItemDetails');
 	});
-});
-
-$("#lnkFBLogin").unbind('click.msfm');
-$("#lnkFBLogin").live('click.msfm', function () {
-	"use strict";
-	msfm.doLogin(function () {
-		$('#pleaseLogin').dialog('close');
-		msfm.doAddTrack($('#addTrack').jqmData('id'));
+	
+	$(document).on('pagebeforeshow', "playlistItemDetails", function() {
+		$('#playlistItemDetailsTrackDetails').listview("refresh");
+		msfm.enableVotingButtons();
 	});
-});
-
-$("#btnUpVote").unbind('click.msfm');
-$("#btnUpVote").live('click.msfm', function () {
-	"use strict";
-	msfm.disableVotingButtons();
-	msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), 1);
-});
-
-$("#btnDownVote").unbind('click.msfm');
-$("#btnDownVote").live('click.msfm', function () {
-	"use strict";
-	msfm.disableVotingButtons();
-	msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), -1);
-});	
-
-$(document).ready(function () {
-	"use strict";
-	msfm.LoadHeaders();
+	
+	$("#addTrack").off('click.msfm', "#btnAddTrack");
+	$("#addTrack").on('click.msfm', "#btnAddTrack", function () {
+		"use strict";
+		var provider_id = $('#addTrack').jqmData('provider-id');
+		FB.getLoginStatus(function (response) {
+			if (response.status === 'connected') {
+				msfm.spinnerStart();
+				msfm.doLogin(function () {
+					msfm.doAddTrack(provider_id);
+				});
+			} else {
+				$('#lnkShowLoginDialog').click();
+			}
+		});
+	});
+	
+	$("#pleaseLogin").off('click.msfm', '#lnkFBLogin');
+	$("#pleaseLogin").on('click.msfm', '#lnkFBLogin', function () {
+		"use strict";
+		msfm.doLogin(function () {
+			$('#pleaseLogin').dialog('close');
+			msfm.doAddTrack($('#addTrack').jqmData('id'));
+		});
+	});
+	
+	$("#playlistItemDetails").off('click.msfm', "#btnUpVote");
+	$("#playlistItemDetails").on('click.msfm', "#btnUpVote", function () {
+		"use strict";
+		msfm.disableVotingButtons();
+		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), 1);
+	});
+	
+	$("#playlistItemDetails").off('click.msfm', "#btnDownVote");
+	$("#playlistItemDetails").on('click.msfm', "#btnDownVote", function () {
+		"use strict";
+		msfm.disableVotingButtons();
+		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), -1);
+	});
 	
 	var jug = new Juggernaut;
 	var vote_chan = "msfm:playlist:" + msfm.locationId();
@@ -320,13 +335,4 @@ $(document).ready(function () {
 		msfm.bindPlaylist();
 	});
 	
-	$.mobile.loadingMessage = "Workin' hard!";
-	$.mobile.defaultPageTransition = "fade";
-	
-	$("#btnSubmitSearch").unbind('click.msfm');
-	$("#btnSubmitSearch").bind('click.msfm', msfm.trackSearch);
-	
-	$(document).live('pagebeforechange', function (event, data) {
-		msfm.spinnerStop();
-	});	
 });

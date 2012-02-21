@@ -26,20 +26,20 @@ $(document).ready(function(){
 	"use strict";
 	msfm.isAdmin = true;
 	
-	$("#homePage").off('click', "#btnMarkTopPlayed");
-	$("#homePage").on('click', "#btnMarkTopPlayed", function(){
+	$("#homePage").off('click.msfm', "#btnMarkTopPlayed");
+	$("#homePage").on('click.msfm', "#btnMarkTopPlayed", function(){
 		"use strict";
 		msfmAdmin.markPlayed($(".playlistItemButton").first().jqmData("playlist_item_id"));
 	});
 	
-	$("#homePage").off('click', "#btnMarkPlayed");
+	$("#homePage").off('click.msfm', "#btnMarkPlayed");
 	$("#homePage").on('click.msfm', "#btnMarkPlayed", function(){
 		"use strict";
 		msfmAdmin.markPlayed($("#pli_id").val());
 	});
 	
-	$("#homePage").off('click', "#btnMarkPlaying");
-	$("#homePage").on('click', "#btnMarkPlaying", function(){
+	$("#homePage").off('click.msfm', "#btnMarkPlaying");
+	$("#homePage").on('click.msfm', "#btnMarkPlaying", function(){
 		"use strict";
 		var pli_id = $(".playlistItemButton").first().jqmData("playlist_item_id");
 		msfmAdmin.markPlaying(pli_id);
