@@ -315,7 +315,7 @@ $(document).ready(function () {
 		"use strict";
 		msfm.doLogin(function () {
 			$('#pleaseLogin').dialog('close');
-			msfm.doAddTrack($('#addTrack').jqmData('id'));
+			msfm.doAddTrack($('#addTrack').jqmData('provider-id'));
 		});
 	});
 	
