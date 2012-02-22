@@ -145,10 +145,10 @@ var msfm = {
 				+ "&location_id=" + msfm.locationId(),
 			success: function (data) {
 				msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!");
-				var voted = False //JSON.parse(localStorage.getItem(msfm.votedKeyName));
+				var voted = JSON.parse(window.localStorage.getItem(msfm.votedKeyName));
 				if (! voted) { voted = []; }
 				voted.push(pli_id);
-				//localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
+				window.localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
 			}
 		});
 	},
@@ -255,7 +255,7 @@ $(document).ready(function () {
 		var track_id = $(this).jqmData('id'),
 			pli_id = $(this).jqmData('playlist_item_id'),
 			playlist_index = $(this).jqmData('playlist_index'),
-			arr = [];//JSON.parse(localStorage.getItem(msfm.votedKeyName)),
+			arr = [];JSON.parse(window.localStorage.getItem(msfm.votedKeyName)),
 			noVote = -1;
 			
 		if (arr) {
