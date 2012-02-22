@@ -255,7 +255,7 @@ $(document).ready(function () {
 		var track_id = $(this).jqmData('id'),
 			pli_id = $(this).jqmData('playlist_item_id'),
 			playlist_index = $(this).jqmData('playlist_index'),
-			arr = [];JSON.parse(window.localStorage.getItem(msfm.votedKeyName)),
+			arr = window.localStorage.getItem(msfm.votedKeyName), //JSON.parse(window.localStorage.getItem(msfm.votedKeyName)),
 			noVote = -1;
 			
 		if (arr) {
