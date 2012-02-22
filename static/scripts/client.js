@@ -145,8 +145,12 @@ var msfm = {
 				+ "&location_id=" + msfm.locationId(),
 			success: function (data) {
 				msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!");
-				var voted = JSON.parse(window.localStorage.getItem(msfm.votedKeyName));
-				if (! voted) { voted = []; }
+				var voted = window.localStorage.getItem(msfm.votedKeyName);
+				if (! voted) {
+					voted = [];
+				} else {
+					voted = JSON.parse(voted); //gotta break this out from the retrieval from localstorage or else android chokes
+				}
 				voted.push(pli_id);
 				window.localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
 			}
