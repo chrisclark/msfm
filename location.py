@@ -48,7 +48,7 @@ class Location(Base):
         #make sure it's in the DB
         t = MusicLibrary.get_track(provider_id=prov_id)
         
-        if self._numTracksFromUser(user_id) > 20:
+        if self._numTracksFromUser(user_id) > 2:
             return common.buildDialogResponse("You can only have 3 songs on the playlist at once :(", 409)
 
         if self.playlist().contains_track(t.id):

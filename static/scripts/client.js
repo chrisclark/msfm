@@ -229,7 +229,6 @@ $(document).ready(function () {
 	});
 	
 	$('#homePage').on('pageshow', function () {
-		"use strict";
 		$.getJSON("/playlist/" + msfm.locationId(), function (data) {
 			msfm.playlist = data;
 			msfm.bindPlaylist();
@@ -237,7 +236,6 @@ $(document).ready(function () {
 	});
 	
 	$("#search").on('click.msfm', '.trackButton', function() {
-		"use strict";
 		var data = msfm.playlist[$(this).jqmData('index')];
 		msfm.buildTrackDetails(data, '#addTrackDetails');
 		$('#addTrack').jqmData('provider-id', data.provider_id);
@@ -245,12 +243,10 @@ $(document).ready(function () {
 	});
 	
 	$('#homePage').on('click.msfm', "#addSongBtn", function () {
-		"use strict";
 		$('#searchListing').empty();
-	})
+	});
 	
 	$('#homePage').on('click.msfm', ".playlistItemButton", function () {
-		"use strict";
 		var track_id = $(this).jqmData('id'),
 			pli_id = $(this).jqmData('playlist_item_id'),
 			playlist_index = $(this).jqmData('playlist_index'),
@@ -286,7 +282,6 @@ $(document).ready(function () {
 	
 	$("#addTrack").off('click.msfm', "#btnAddTrack");
 	$("#addTrack").on('click.msfm', "#btnAddTrack", function () {
-		"use strict";
 		var provider_id = $('#addTrack').jqmData('provider-id');
 		FB.getLoginStatus(function (response) {
 			if (response.status === 'connected') {
@@ -302,7 +297,6 @@ $(document).ready(function () {
 	
 	$("#pleaseLogin").off('click.msfm', '#lnkFBLogin');
 	$("#pleaseLogin").on('click.msfm', '#lnkFBLogin', function () {
-		"use strict";
 		msfm.doLogin(function () {
 			$('#pleaseLogin').dialog('close');
 			msfm.doAddTrack($('#addTrack').jqmData('provider-id'));
@@ -311,33 +305,28 @@ $(document).ready(function () {
 	
 	$("#playlistItemDetails").off('click.msfm', "#btnUpVote");
 	$("#playlistItemDetails").on('click.msfm', "#btnUpVote", function () {
-		"use strict";
 		msfm.disableVotingButtons();
 		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), 1);
 	});
 	
 	$("#playlistItemDetails").off('click.msfm', "#btnDownVote");
 	$("#playlistItemDetails").on('click.msfm', "#btnDownVote", function () {
-		"use strict";
 		msfm.disableVotingButtons();
 		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), -1);
 	});
 	
 	$(document).on('pagebeforeshow', "#playlistItemDetails", function() {
-		"use strict";
 		$('#playlistItemDetailsTrackDetails').listview("refresh");
 		msfm.enableVotingButtons();
 	});
 	
 	$(document).on('pagebeforeshow', "#addTrack", function() {
-		"use strict";
 		$('#addTrackDetails').listview("refresh");
 	});
 	
 	var jug = new Juggernaut;
 	var vote_chan = "msfm:playlist:" + msfm.locationId();
 	jug.subscribe(vote_chan, function(data){
-		"use strict";
 		msfm.playlist = JSON.parse(data);
 		msfm.bindPlaylist();
 	});
