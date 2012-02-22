@@ -244,11 +244,6 @@ $(document).ready(function () {
 		$.mobile.changePage('#addTrack');
 	});
 	
-	$(document).on('pagebeforeshow', "#addTrack", function() {
-		"use strict";
-		$('#addTrackDetails').listview("refresh");
-	});
-	
 	$('#homePage').on('click.msfm', "#addSongBtn", function () {
 		"use strict";
 		$('#searchListing').empty();
@@ -287,11 +282,6 @@ $(document).ready(function () {
 							+ data.photo_url + "'></li>");
 		
 		$.mobile.changePage('#playlistItemDetails');
-	});
-	
-	$(document).on('pagebeforeshow', "playlistItemDetails", function() {
-		$('#playlistItemDetailsTrackDetails').listview("refresh");
-		msfm.enableVotingButtons();
 	});
 	
 	$("#addTrack").off('click.msfm', "#btnAddTrack");
@@ -333,9 +323,21 @@ $(document).ready(function () {
 		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), -1);
 	});
 	
+	$(document).on('pagebeforeshow', "#playlistItemDetails", function() {
+		"use strict";
+		$('#playlistItemDetailsTrackDetails').listview("refresh");
+		msfm.enableVotingButtons();
+	});
+	
+	$(document).on('pagebeforeshow', "#addTrack", function() {
+		"use strict";
+		$('#addTrackDetails').listview("refresh");
+	});
+	
 	var jug = new Juggernaut;
 	var vote_chan = "msfm:playlist:" + msfm.locationId();
 	jug.subscribe(vote_chan, function(data){
+		"use strict";
 		msfm.playlist = JSON.parse(data);
 		msfm.bindPlaylist();
 	});
