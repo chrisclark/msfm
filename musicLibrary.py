@@ -19,6 +19,6 @@ class MusicLibrary:
         return ret
     
     @staticmethod
-    def search(query):
-        return MusicProvider.search(query)
+    def search(**kwargs):
+        return MusicProvider.search(**kwargs)
         

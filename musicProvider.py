@@ -4,15 +4,15 @@ import common
 from flask import json
 
 class MusicProvider:
-    _soundCloudClientId = '84926ddd328617c81cbbcfc03942dcb4'
     _mnDigitalIntegrationAPIKey = 'H7KQUnTksrwQtsNKfWF2JBKgX'
     
     @staticmethod
-    def search(query):
+    def search(**kwargs):
         ######MediaNet######
+        for key in kwargs:
+            qs_append = urllib.urlencode({key: kwargs[key]})
         reqUrl = 'http://ie-api.mndigital.com?method=Search.GetTracks&format=json&'\
-                 + urllib.urlencode({'keyword': query})\
-                 + '&page=1&pageSize=10&apiKey=%s' % MusicProvider._mnDigitalIntegrationAPIKey
+                 + qs_append + '&page=1&pageSize=10&apiKey=%s' % MusicProvider._mnDigitalIntegrationAPIKey
 
         r = common.get_json(reqUrl)
 

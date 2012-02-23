@@ -1,8 +1,9 @@
-from flask import session
+from flask import session, json
 from sqlalchemy import Column, Integer, String, Sequence, DateTime, Boolean
 from db import db_session, Base
 from sqlalchemy.orm import relationship
 from datetime import datetime
+import common
 
 class User(Base):
     __tablename__ = 'users'
@@ -79,6 +80,34 @@ class User(Base):
         
     def logout(self):
         session.pop('user_id', None)
+    
+    def to_json(self):
+        dic = dict()
+        dic["user_id"] = self.id
+        dic["admin"] = self.admin
+        return json.dumps(dic)
+    
+    @staticmethod
+    def facebook_login(fbid, fbat):
+        u = User.from_fbid(fbid) #has this person logged in before?
+        
+        if not u: #if not, register them and log them in
+            profile_info = common.get_json('http://graph.facebook.com/' + fbid)
+            u = User(facebook_id=fbid,\
+                     facebook_access_token=fbat,\
+                     first_name=profile_info["first_name"],\
+                     last_name=profile_info["last_name"],\
+                     photo_url="http://graph.facebook.com/"+fbid+"/picture",\
+                     admin=False)
+        
+        else: #known user. make sure it's really them
+            val = common.get_json("https://graph.facebook.com/me?fields=id&access_token=" + fbat)
+            if not "error" in val:
+                u.facebook_access_token = fbat
+            else:
+                return None
+        u.login() #this will also save the user so we get an updated fbat
+        return u
         
     def __repr__(self):
         return "<User('%s','%s', '%s')>" % (str(self.id), self.username, self.facebook_id)

@@ -80,7 +80,7 @@ def getPlaylist(location_id):
 
 @app.route('/search/<query>')
 def getSearch(query):
-    return json.dumps(MusicLibrary.search(query))
+    return json.dumps(MusicLibrary.search(**{"keyword":query}))
 
 @app.route('/track/<track_id>')
 def getTrack(track_id):
@@ -122,26 +122,14 @@ def markPlaying():
     
 @app.route('/login', methods=['POST'])
 def login():
-    fbid = request.form["fbid"]
-    fbat = request.form["fbat"]
-    u = User.from_fbid(fbid)
-    if not u:
-        profile_info = common.get_json('http://graph.facebook.com/' + fbid)
-        u = User(facebook_id=fbid,\
-                 facebook_access_token=fbat,\
-                 first_name=profile_info["first_name"],\
-                 last_name=profile_info["last_name"],\
-                 photo_url="http://graph.facebook.com/"+fbid+"/picture",\
-                 admin=False)
-        u.login()
-    else: #make sure it's really them
-        val = common.get_json("https://graph.facebook.com/me?fields=id&access_token=" + fbat)
-        if "error" in val:
-            return common.buildDialogResponse("Invalid login", 401)
+    if request.form["method"] == "facebook":
+        fbid = request.form["fbid"]
+        fbat = request.form["fbat"]
+        usr = User.facebook_login(fbid, fbat)
+        if usr:
+            return usr.to_json()
         else:
-            u.facebook_access_token = fbat
-            u.login()
-    return json.dumps(u.is_admin())
+            return common.buildDialogResponse("Invalid login", 401)
 
 @app.route('/logout')
 def logout():

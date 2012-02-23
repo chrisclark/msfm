@@ -46,9 +46,10 @@ var msfm = {
 	buildTrackDetails: function (track, selector) {
 		"use strict";
 		$(selector).empty();
-		$(selector).append("<li><img src='" + track.art_url + "' style='padding-top: 2px' />"
+		$(selector).append("<li><img src='" + track.art_url + "' style='padding-top: 3px' />"
 							+ "<h2>" + track.artist + "</h2>"
-							+ "<h2>" + track.title + "</h2>"
+							+ "<p><strong>" + track.title + "</strong></p>"
+							+ "<p>Album: " + track.album + "</p>"
 							+ "<p class='ui-li-aside'>" + track.length_friendly + "</p>"
 							+ "</li>"
 							);
@@ -180,37 +181,49 @@ var msfm = {
 		}
 	},
 	requireLogin: function(callbackFn) {
+		msfm.spinnerStart();
 		FB.getLoginStatus(function (response) {
 			if (response.status === 'connected') {
-				msfm.spinnerStart();
-				msfm.doLogin(function () {
-					callbackFn();
-				});
+				msfm.doLogin(response, callbackFn);
 			} else {
 				msfm.loginAction = callbackFn; //this is kind of ghetto. Stash away the callback so the login screen can get it later
+				$("#btnFBLogin").removeAttr("disabled");
 				$.mobile.changePage('#pleaseLogin', {transition: 'slidedown', reverse: false, changeHash: false});
 			}
 		});
 	},
-	doLogin: function (callbackFn) {
+	doLogin: function(resp, callbackFn) {
+		var fbid = resp.authResponse.userID,
+					fbat = resp.authResponse.accessToken;
+		$.ajax({
+			type: "POST",
+			url: "/login",
+			data: "fbid="
+				+ fbid
+				+ '&location_id='
+				+ msfm.locationId()
+				+ '&fbat='
+				+ fbat
+				+ '&method=facebook',
+			complete: function (xhr) {
+				if (xhr.status != 200) {
+					msfm.renderDialog("Whoops!", jQuery.parseJSON(xhr.responseText).msg, "Home");
+				}
+			},
+			success: function(data) { 
+				msfm.isAdmin = JSON.parse(data).admin;
+				callbackFn();
+			}
+		});
+	},
+	doFBLogin: function (callbackFn) {
 		"use strict";
 		FB.login(function (response) {
+			msfm.spinnerStart();
 			if (response.authResponse) {
-				var fbid = response.authResponse.userID,
-					fbat = response.authResponse.accessToken;
-				$.ajax({
-					type: "POST",
-					url: "/login",
-					data: "fbid="
-						+ fbid
-						+ '&location_id='
-						+ msfm.locationId()
-						+ '&fbat='
-						+ fbat,
-					success: callbackFn
-				});
+				msfm.doLogin(response, callbackFn)
 			} else {
-				alert("Please log in"); 
+				msfm.renderDialog("Hrm...", "You gotta log in buddy.", "Home");
 			}
 		}, {scope: 'email'});
 	}
@@ -291,8 +304,12 @@ $(document).ready(function () {
 		msfm.requireLogin( function() { msfm.doAddTrack(provider_id); } );
 	});
 	
-	$("#pleaseLogin").on('click.msfm', '#lnkFBLogin', function () {
-		msfm.doLogin(msfm.loginAction);
+	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function () {
+		$("#btnFBLogin").attr("disabled", "disabled");
+		msfm.doFBLogin(function() {
+			msfm.loginAction();
+			$("#btnFBLogin").removeAttr("disabled");
+		});
 	});
 	
 	$("#homePage").on('click.msfm', "#venueInfo", function() {
