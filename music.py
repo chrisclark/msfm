@@ -34,6 +34,14 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not User.is_admin():
+            return common.buildDialogResponse("Admins only", 401)
+        return f(*args, **kwargs)
+    return decorated_function
+
 ##########  API Routes ##########
 
 @app.route('/<location_id>')
@@ -45,9 +53,15 @@ def index(location_id):
     
     return render_template('client.html')
 
-@app.route('/venue/<location_id>')
-def venue(location_id):
-    return render_template('venue.html')
+@app.route('/venue_message', methods=["POST"])
+@admin_required
+def venue_message():
+    l = Location.from_id(request.form["location_id"])
+    msg = request.form["message"]
+    l.marketing_message = msg
+    l.save()
+    jug.publish('msfm:marketing:' + str(l.id), msg)
+    return ""
 
 @app.route('/vote', methods=['POST'])
 def vote():
@@ -84,20 +98,26 @@ def addTrack():
     return ret
 
 @app.route('/mark_played', methods=['POST'])
+@admin_required
 def markPlayed():
     pli = db_session.query(PlaylistItem).filter(PlaylistItem.id == request.form["id"]).first()
     pli.done_playing = True
     pli.save()
+    location_id = request.form["location_id"]
+    l = Location.from_id(location_id)
+    jug.publish('msfm:playlist:' + str(l.id), l.playlist().to_json())
     return ""
 
 #this seems weird because the client is driving which track is getting played next, but that is in fact
 #how it has to work for now. Even though the server has the most up to date info, the client is what
 #is actually playing the music so i think this makes sense for now. Definitely subject to change.
 @app.route('/mark_playing', methods=['POST'])
+@admin_required
 def markPlaying():
     l = Location.from_id(request.form["location_id"])
     l.currently_playing = request.form["playlist_item_id"]
     l.save()
+    jug.publish('msfm:playlist:' + str(l.id), l.playlist().to_json())
     return ""
     
 @app.route('/login', methods=['POST'])
@@ -111,9 +131,21 @@ def login():
                  facebook_access_token=fbat,\
                  first_name=profile_info["first_name"],\
                  last_name=profile_info["last_name"],\
-                 photo_url="http://graph.facebook.com/"+fbid+"/picture")
-    u.login()
-    return json.dumps(True)
+                 photo_url="http://graph.facebook.com/"+fbid+"/picture",\
+                 admin=False)
+        u.login()
+    else: #make sure it's really them
+        val = common.get_json("https://graph.facebook.com/me?fields=id&access_token=" + fbat)
+        if "error" in val:
+            return common.buildDialogResponse("Invalid login", 401)
+        else:
+            u.facebook_access_token = fbat
+            u.login()
+    return json.dumps(u.is_admin())
+
+@app.route('/logout')
+def logout():
+    User.logout()
 
 ##########  Static and Special Cases ##########
 
@@ -125,16 +157,14 @@ def home():
 def favicon():
     return ''
 
-@app.route('/initdb/<pwd>')
-def initdb(pwd):
-    if pwd == config.adminpass:
-        try:
-            init_db()
-            return "success!"
-        except:
-            return sys.exc_info()[0]
-    else:
-        return "bad bassword"
+@app.route('/initdb')
+@admin_required
+def initdb():
+    try:
+        init_db()
+        return "success!"
+    except:
+        return sys.exc_info()[0]
 
 ##########  SpecialHandlers ##########  
 

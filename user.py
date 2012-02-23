@@ -1,5 +1,5 @@
 from flask import session
-from sqlalchemy import Column, Integer, String, Sequence, DateTime
+from sqlalchemy import Column, Integer, String, Sequence, DateTime, Boolean
 from db import db_session, Base
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -17,6 +17,7 @@ class User(Base):
     first_name = Column(String(128))
     last_name = Column(String(128))
     photo_url = Column(String(128))
+    admin = Column(Boolean)
     
     votes = relationship("Vote")
     playlist_items = relationship("PlaylistItem")
@@ -28,7 +29,8 @@ class User(Base):
                  facebook_access_token=None,\
                  first_name=None,\
                  last_name=None,\
-                 photo_url=None):
+                 photo_url=None,\
+                 admin=None):
         self.id = id
         self.username = username
         self.email = email
@@ -37,6 +39,7 @@ class User(Base):
         self.first_name = first_name
         self.last_name = last_name
         self.photo_url = photo_url
+        self.admin = admin
     
     @staticmethod
     def from_fbid(fbid):
@@ -55,6 +58,13 @@ class User(Base):
         except:
             return None
     
+    @staticmethod
+    def is_admin():
+        try:
+            User.from_id(User.current_id()).admin
+        except:
+            return False
+    
     def save(self):
         if not self.id:
             self.created = str(datetime.now())
@@ -66,6 +76,9 @@ class User(Base):
         db_session.add(self)
         self.save()
         session["user_id"] = self.id
+        
+    def logout(self):
+        session.pop('user_id', None)
         
     def __repr__(self):
         return "<User('%s','%s', '%s')>" % (str(self.id), self.username, self.facebook_id)

@@ -26,6 +26,7 @@ var msfm = {
 		msfm.spinnerStop();
 		$.mobile.changePage('#diagNotification', {transition: 'slidedown', reverse: false, changeHash: false});
 	},
+	loginAction: null,
 	doAddTrack: function (provider_id) {
 		"use strict";
 		$.ajax({
@@ -45,7 +46,7 @@ var msfm = {
 	buildTrackDetails: function (track, selector) {
 		"use strict";
 		$(selector).empty();
-		$(selector).append("<li><img src='" + track.art_url + "'/>"
+		$(selector).append("<li><img src='" + track.art_url + "' style='padding-top: 2px' />"
 							+ "<h2>" + track.artist + "</h2>"
 							+ "<h2>" + track.title + "</h2>"
 							+ "<p class='ui-li-aside'>" + track.length_friendly + "</p>"
@@ -67,17 +68,15 @@ var msfm = {
 		
 		$.each(msfm.playlist, function (index, playlistitem) {
 							
+			playing_icon = playing_class = "";				
 			if (playlistitem.currently_playing==1) {
 				 playing_icon = "<img width='16px' src='/static/images/sound_icon.png' class='ui-li-icon' />";
 				 playing_class = " playing";
-			} else {
-				playing_icon = playing_class = "";
 			}
 			
+			admin_info = "";
 			if (msfm.isAdmin) {
 				admin_info = "(" + playlistitem.playlist_item_id + ") ";
-			} else {
-				admin_info = "";
 			}
 			
 			var old_pli_score = cur_list[playlistitem.playlist_item_id];
@@ -180,6 +179,19 @@ var msfm = {
 			});
 		}
 	},
+	requireLogin: function(callbackFn) {
+		FB.getLoginStatus(function (response) {
+			if (response.status === 'connected') {
+				msfm.spinnerStart();
+				msfm.doLogin(function () {
+					callbackFn();
+				});
+			} else {
+				msfm.loginAction = callbackFn; //this is kind of ghetto. Stash away the callback so the login screen can get it later
+				$.mobile.changePage('#pleaseLogin', {transition: 'slidedown', reverse: false, changeHash: false});
+			}
+		});
+	},
 	doLogin: function (callbackFn) {
 		"use strict";
 		FB.login(function (response) {
@@ -200,7 +212,7 @@ var msfm = {
 			} else {
 				alert("Please log in"); 
 			}
-		});
+		}, {scope: 'email'});
 	}
 };
 
@@ -247,8 +259,7 @@ $(document).ready(function () {
 			noVote = -1;
 			
 		if (arr) {
-			arr = JSON.parse(arr);
-			noVote = arr.indexOf(pli_id);
+			noVote = JSON.parse(arr).indexOf(pli_id);
 		}
 		if (noVote>=0) {
 			$("#alreadyVoted").show();
@@ -266,7 +277,7 @@ $(document).ready(function () {
 		msfm.buildTrackDetails(data, selector);
 		
 		$(selector).append("<li>"
-							+ "<a href='http://facebook.com/" + data.facebook_id + "'>"
+							+ "<a target='_blank' href='http://facebook.com/" + data.facebook_id + "'>"
 							+ "<img style='margin-left: 15px; margin-top: .7em;' src='"
 							+ data.photo_url + "'><h1>Picked by <strong>"
 							+ data.first_name + " "	+ data.last_name
@@ -277,27 +288,15 @@ $(document).ready(function () {
 	
 	$("#addTrack").on('click.msfm', "#btnAddTrack", function () {
 		var provider_id = $('#addTrack').jqmData('provider-id');
-		FB.getLoginStatus(function (response) {
-			if (response.status === 'connected') {
-				msfm.spinnerStart();
-				msfm.doLogin(function () {
-					msfm.doAddTrack(provider_id);
-				});
-			} else {
-				$('#lnkShowLoginDialog').click();
-			}
-		});
+		msfm.requireLogin( function() { msfm.doAddTrack(provider_id); } );
+	});
+	
+	$("#pleaseLogin").on('click.msfm', '#lnkFBLogin', function () {
+		msfm.doLogin(msfm.loginAction);
 	});
 	
 	$("#homePage").on('click.msfm', "#venueInfo", function() {
 		msfm.renderDialog("test", "Drink specials!", "Got it!");
-	});
-		
-	$("#pleaseLogin").on('click.msfm', '#lnkFBLogin', function () {
-		msfm.doLogin(function () {
-			$('#pleaseLogin').dialog('close');
-			msfm.doAddTrack($('#addTrack').jqmData('provider-id'));
-		});
 	});
 	
 	$("#playlistItemDetails").on('click.msfm', "#btnUpVote", function () {
@@ -320,12 +319,16 @@ $(document).ready(function () {
 	});
 	
 	var jug = new Juggernaut;
-	var vote_chan = "msfm:playlist:" + msfm.locationId();
-	jug.subscribe(vote_chan, function(data){
+	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data){
 		if ($.mobile.activePage.prop("id") == "homePage") {
 			msfm.playlist = JSON.parse(data);
 			msfm.bindPlaylist();
 		}
 	});
 	
+	jug.subscribe("msfm:marketing:" + msfm.locationId(), function(data){
+		if ($.mobile.activePage.prop("id") == "homePage") {
+			$("#venueInfo").effect("highlight", {color: "#e5e89b"}, 2500);
+		}
+	});
 });

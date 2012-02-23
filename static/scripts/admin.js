@@ -4,7 +4,7 @@ var msfmAdmin = {
 		$.ajax({
 			type: "POST",
 			url: "/mark_played",
-			data: "id=" + pli_id,
+			data: "id=" + pli_id + '&location_id=' + msfm.locationId(),
 			success: function(data){
 				location.reload();
 			}
