@@ -27,6 +27,7 @@ class MusicProvider:
             dic["length_friendly"] = t["Duration"]
             dic["url"] = ""
             dic["album"] = t["Album"]["Title"]
+            dic["art_url"] = t["Album"]["Images"]["Album150x150"]
             serialize_me.append(dic)
             
         return serialize_me
@@ -49,6 +50,7 @@ class MusicProvider:
             t.length_friendly = track_json["Duration"]
             t.url = ""
             t.album = track_json["Album"]["Title"]
+            t.art_url = track_json["Album"]["Images"]["Album150x150"]
             
         except Exception:
             pass

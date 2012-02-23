@@ -18,6 +18,7 @@ def init_db():
     #if full_drop:
     #conn = db_session.connection()
     #conn.execute('drop table votes;')
+    #conn.execute('alter table locations drop foreign key fk_locations_currently_playing_pli_id')
     #conn.execute('drop table playlist_items;')
     #conn.execute('drop table tracks;')
     #conn.execute('drop table locations;')

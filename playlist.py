@@ -60,10 +60,10 @@ class Playlist:
             dic["playlist_item_id"] = pli.id
             dic["time_sort"] = time.mktime(pli.date_added.timetuple())
             
-            dic["last_name"] = u.last_name
             dic["first_name"] = u.first_name
-            dic["photo_url"] = u.photo_url 
-            dic["user_id"] = u.id
+            dic["last_name"] = u.last_name[0]
+            dic["photo_url"] = u.photo_url
+            dic["facebook_id"] = u.facebook_id
             
             #this let's us skip an entire sort later on
             if dic["currently_playing"]:

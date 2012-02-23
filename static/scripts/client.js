@@ -24,7 +24,7 @@ var msfm = {
 		$("#diagText", '#diagNotification').html(msg);
 		$("#diagConfirm span", '#diagNotification').first().html(btnText);
 		msfm.spinnerStop();
-		$.mobile.changePage('#diagNotification', {transition: 'pop', reverse: false, changeHash: false});
+		$.mobile.changePage('#diagNotification', {transition: 'slidedown', reverse: false, changeHash: false});
 	},
 	doAddTrack: function (provider_id) {
 		"use strict";
@@ -45,20 +45,15 @@ var msfm = {
 	buildTrackDetails: function (track, selector) {
 		"use strict";
 		$(selector).empty();
-		$(selector).append("<li>Artist: " + track.artist + '</li>');
-		$(selector).append("<li>Song Title: " + track.title + '</li>');
-		$(selector).append("<li>Album: " + track.album + "</li>");
-		$(selector).append("<li>Length: " + track.length_friendly + "</li>");
-	},
-	LoadHeaders: function () {
-		"use strict";
-		var header = '<div style="text-align:center;"><a href="#homePage"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /> </a><div>You\'re the DJ at this location</div></div>';
-		$(".header").html(header);
+		$(selector).append("<li><img src='" + track.art_url + "'/>"
+							+ "<h2>" + track.artist + "</h2>"
+							+ "<h2>" + track.title + "</h2>"
+							+ "<p class='ui-li-aside'>" + track.length_friendly + "</p>"
+							+ "</li>"
+							);
 	},
 	bindPlaylist: function () {
 		"use strict";
-
-			
 		var listing = [],
 			cur_list = [],
 			playing_icon = "",
@@ -211,9 +206,8 @@ var msfm = {
 
 $(document).ready(function () {
 	"use strict";
-	msfm.LoadHeaders();
-	
-	$.getJSON("/playlist/" + msfm.locationId(), function (data) {
+
+	$.getJSON("/playlist/" + msfm.locationId(), 		function (data) {
 		msfm.playlist = data;
 		msfm.bindPlaylist();
 	});
@@ -221,7 +215,6 @@ $(document).ready(function () {
 	$.mobile.loadingMessage = "Workin' hard!";
 	$.mobile.defaultPageTransition = "fade";
 	
-	$("#search").off("click.msfm", "#btnSubmitSearch");
 	$("#search").on("click.msfm", "#btnSubmitSearch", msfm.trackSearch);
 	
 	$(document).on('pagebeforechange', function (event, data) {
@@ -272,15 +265,16 @@ $(document).ready(function () {
 		
 		msfm.buildTrackDetails(data, selector);
 		
-		$(selector).append("<li style='padding-left: 75px;'>Picked by "
-							+ data.first_name + " "	+ data.last_name.substr(0,1)
-							+ ". <img style='margin-left: 15px; margin-top: .7em;' src='"
-							+ data.photo_url + "'></li>");
+		$(selector).append("<li>"
+							+ "<a href='http://facebook.com/" + data.facebook_id + "'>"
+							+ "<img style='margin-left: 15px; margin-top: .7em;' src='"
+							+ data.photo_url + "'><h1>Picked by <strong>"
+							+ data.first_name + " "	+ data.last_name
+							+ "</strong></h3></a>");
 		
 		$.mobile.changePage('#playlistItemDetails');
 	});
 	
-	$("#addTrack").off('click.msfm', "#btnAddTrack");
 	$("#addTrack").on('click.msfm', "#btnAddTrack", function () {
 		var provider_id = $('#addTrack').jqmData('provider-id');
 		FB.getLoginStatus(function (response) {
@@ -295,7 +289,10 @@ $(document).ready(function () {
 		});
 	});
 	
-	$("#pleaseLogin").off('click.msfm', '#lnkFBLogin');
+	$("#homePage").on('click.msfm', "#venueInfo", function() {
+		msfm.renderDialog("test", "Drink specials!", "Got it!");
+	});
+		
 	$("#pleaseLogin").on('click.msfm', '#lnkFBLogin', function () {
 		msfm.doLogin(function () {
 			$('#pleaseLogin').dialog('close');
@@ -303,13 +300,11 @@ $(document).ready(function () {
 		});
 	});
 	
-	$("#playlistItemDetails").off('click.msfm', "#btnUpVote");
 	$("#playlistItemDetails").on('click.msfm', "#btnUpVote", function () {
 		msfm.disableVotingButtons();
 		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), 1);
 	});
 	
-	$("#playlistItemDetails").off('click.msfm', "#btnDownVote");
 	$("#playlistItemDetails").on('click.msfm', "#btnDownVote", function () {
 		msfm.disableVotingButtons();
 		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), -1);
@@ -327,8 +322,10 @@ $(document).ready(function () {
 	var jug = new Juggernaut;
 	var vote_chan = "msfm:playlist:" + msfm.locationId();
 	jug.subscribe(vote_chan, function(data){
-		msfm.playlist = JSON.parse(data);
-		msfm.bindPlaylist();
+		if ($.mobile.activePage.prop("id") == "homePage") {
+			msfm.playlist = JSON.parse(data);
+			msfm.bindPlaylist();
+		}
 	});
 	
 });

@@ -16,8 +16,9 @@ class Track(Base):
     length_friendly = Column(String(16))
     url = Column(String(1024))
     album = Column(String(1024))
+    art_url = Column(String(1024))
     
-    def __init__(self, id=None, provider_id=None, artist=None, title=None, length_seconds=None, length_friendly=None, url=None, album=None):
+    def __init__(self, id=None, provider_id=None, artist=None, title=None, length_seconds=None, length_friendly=None, url=None, album=None, art_url=None):
         self.id = id
         self.provider_id = provider_id
         self.artist = artist
@@ -26,6 +27,7 @@ class Track(Base):
         self.length_friendly = length_friendly
         self.url = url
         self.album = album
+        self.art_url = art_url
 
     def to_json(self):
         return json.dumps(common.strip_private(self.__dict__))

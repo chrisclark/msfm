@@ -57,10 +57,16 @@
 	   	  
 	</script>
 	
-	<a id="lnkShowLoginDialog" href="#pleaseLogin" data-rel="dialog" data-role="button" style="display: none;"></a>
+	<a id="lnkShowLoginDialog" href="#pleaseLogin" data-rel="dialog" data-transition="slidedown" data-role="button" style="display: none;"></a>
 	
 	<div data-role="page" id="homePage"> 
-		<div data-role="header" class="header"></div>
+		<div data-role="header">
+			<a id="venueInfo" href="#" data-icon="info" data-role="button" data-iconpos="notext"></a>
+			<div style="text-align:center;">
+				<img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" />
+				<div>You're the DJ at this location</div>
+			</div>
+		</div>
 		<div data-role="content">
 			<div class="content-primary">
 				<ul data-role="listview" id="venuePlaylist">
@@ -72,8 +78,14 @@
 		</div>
 	</div>
 	
-	<div data-role="page" id="search" data-add-back-btn="true">
-		<div data-role="header" class="header"></div>
+	<div data-role="page" id="search">
+		<div data-role="header">
+			<a href="#" data-rel="back" data-icon="arrow-l" data-role="button" data-iconpos="notext"></a>
+			<div style="text-align:center;">
+				<a href="#" data-rel="back"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
+				<div>You're the DJ at this location</div>
+			</div>
+		</div>
 		<div data-role="content">
 			<label for="search-basic">Search for a song or artist:</label>
 			<input type="search" name="search" id="trackSearch" value="" />
@@ -85,13 +97,38 @@
 		</div>
 	</div>
  
- 	<div data-role="page" id="addTrack" data-add-back-btn="true">
- 		<div data-role="header" class="header"></div>
+ 	<div data-role="page" id="addTrack">
+		<div data-role="header">
+			<a href="#" data-rel="back" data-icon="arrow-l" data-role="button" data-iconpos="notext"></a>
+			<div style="text-align:center;">
+				<a href="#" data-rel="back"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
+				<div>You're the DJ at this location</div>
+			</div>
+		</div>
 		<div data-role="content">
 			<ul data-role="listview" id="addTrackDetails">
 			</ul>
 		</div>
 		<button id="btnAddTrack" name="Add">Add Track</button>
+ 	</div>
+ 	
+ 	 <div data-role="page" id="playlistItemDetails">
+		<div data-role="header">
+			<a href="#" data-rel="back" data-icon="arrow-l" data-role="button" data-iconpos="notext"></a>
+			<div style="text-align:center;">
+				<a href="#" data-rel="back"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
+				<div>You're the DJ at this location</div>
+			</div>
+		</div>
+		<div data-role="content">
+			<ul data-role="listview" id="playlistItemDetailsTrackDetails">
+			</ul>
+		</div>
+		<div id="voteBtns">
+			<button id="btnUpVote" name="Thumbs Up">Vote Up</button>
+			<button id="btnDownVote" name="Thumbs Down">Vote Down</button>
+		</div>
+		<div style="text-align: center; font-size: 14px; font-weight: bold; padding-top: 3px;" id="alreadyVoted">Thanks for voting on this song!</div>
  	</div>
  	
  	<div data-role="dialog" id="diagNotification">
@@ -115,19 +152,6 @@
 			<a href="javascript:void(0);" data-role="button" id="lnkFBLogin">Log in</a>           
 		</div>
 	</div>
- 	
- 	<div data-role="page" id="playlistItemDetails" data-add-back-btn="true">
- 		<div data-role="header" class="header"></div>
-		<div data-role="content">
-			<ul data-role="listview" id="playlistItemDetailsTrackDetails">
-			</ul>
-		</div>
-		<div id="voteBtns">
-			<button id="btnUpVote" name="Thumbs Up">Vote Up</button>
-			<button id="btnDownVote" name="Thumbs Down">Vote Down</button>
-		</div>
-		<div style="text-align: center; font-size: 14px; font-weight: bold; padding-top: 3px;" id="alreadyVoted">Thanks for voting on this song!</div>
- 	</div>
  	
 </body>
 </html>

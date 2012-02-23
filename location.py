@@ -11,6 +11,7 @@ class Location(Base):
     id = Column(Integer, Sequence('location_id_seq'), primary_key=True)
     name = Column(String(128))
     description = Column(String(1024))
+    marketing_message = Column(String(1024))
     #need the use_alter here because otherwise we get a circular reference b/t this and playlist_items
     #use_alter defers the creation of this primary key
     currently_playing = Column(Integer, ForeignKey('playlist_items.id', use_alter=True, name="fk_locations_currently_playing_pli_id"))
