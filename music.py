@@ -146,7 +146,6 @@ def favicon():
     return ''
 
 @app.route('/initdb')
-@admin_required
 def initdb():
     try:
         init_db()
