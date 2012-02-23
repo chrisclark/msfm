@@ -50,7 +50,6 @@ def index(location_id):
     if not l:
         l = Location(name="whatever")
         l.save()
-    
     return render_template('client.html')
 
 @app.route('/venue_message', methods=["POST"])

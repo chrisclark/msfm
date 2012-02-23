@@ -7,6 +7,12 @@ var msfm = {
 		"use strict";
 		$.mobile.hidePageLoadingMsg();
 	},
+	refreshPlaylist: function() {
+		$.getJSON("/playlist/" + msfm.locationId(), function (data) {
+			msfm.playlist = data;
+			msfm.bindPlaylist();
+		});
+	},
 	locationId: function () {
 		"use strict";
 		if (!this.location_id) {
@@ -151,7 +157,7 @@ var msfm = {
 			}
 		});
 	},
-	isAdmin: null,
+	isAdmin: false,
 	bindTrackSearchResults: function (tracklist) {
 		"use strict";
 		var listing = [];
@@ -181,6 +187,7 @@ var msfm = {
 		}
 	},
 	requireLogin: function(callbackFn) {
+		"use strict";
 		msfm.spinnerStart();
 		FB.getLoginStatus(function (response) {
 			if (response.status === 'connected') {
@@ -232,10 +239,8 @@ var msfm = {
 $(document).ready(function () {
 	"use strict";
 
-	$.getJSON("/playlist/" + msfm.locationId(), 		function (data) {
-		msfm.playlist = data;
-		msfm.bindPlaylist();
-	});
+	msfm.refreshPlaylist();
+	if(msfm.isAdmin) { $("#adminPanel").show(); }
 	
 	$.mobile.loadingMessage = "Workin' hard!";
 	$.mobile.defaultPageTransition = "fade";
@@ -247,6 +252,7 @@ $(document).ready(function () {
 	});
 	
 	$('#homePage').on('pageshow', function () {
+		if(msfm.isAdmin) { $("#adminPanel").show(); }
 		$.getJSON("/playlist/" + msfm.locationId(), function (data) {
 			msfm.playlist = data;
 			msfm.bindPlaylist();

@@ -62,7 +62,7 @@ class User(Base):
     @staticmethod
     def is_admin():
         try:
-            User.from_id(User.current_id()).admin
+            return User.from_id(User.current_id()).admin
         except:
             return False
     

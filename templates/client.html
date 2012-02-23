@@ -14,6 +14,7 @@
 	<script type="text/javascript" src="/static/scripts/jsuri-1.1.0.min.js"></script>
 	<script type="text/javascript" src="/static/scripts/json2.js"></script>
 	<script type="text/javascript" src="/static/scripts/client.js"></script>
+	<script type="text/javascript" src="/static/scripts/admin.js"></script>
 	<script type="text/javascript" src="/static/scripts/application.js" charset="utf-8"></script>
 	
 	<!-- Apple -->
@@ -72,6 +73,23 @@
 		</div>
 		<div>
 			<a href="#search" id="addSongBtn" data-role="button">Add Song</a>
+		</div>
+		<div id="adminPanel" style="display:none;">
+			<div class="ui-grid-a">
+				<div class="ui-block-a">
+					<a href="javascript:void(0);" id="btnMarkPlaying" data-role="button">Mark Top Song as Playing</a>
+				</div>					
+				<div class="ui-block-b">
+					<a href="javascript:void(0);" id="btnMarkTopPlayed" data-role="button">Bump Top Song</a>
+				</div>
+				<div class="ui-block-a">
+					<div style="padding-top: 1px; padding-right: 7px; text-align: right;"><p>ID:</p></div>
+				</div>
+				<div class="ui-block-b">
+					<input type="text" name="pli_id" id="pli_id" value="" data-mini="true" />
+				</div>
+			</div>
+							<a href="javascript:void(0);" id="btnMarkPlayed" data-role="button">Bump specific song</a>
 		</div>
 	</div>
 	
