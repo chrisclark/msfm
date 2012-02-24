@@ -14,6 +14,14 @@ var msfmAdmin = {
 			url: "/mark_playing",
 			data: "playlist_item_id=" + pli_id + '&location_id=' + msfm.locationId(),
 		});
+	},
+	publishFlash: function(message) {
+		"use strict";
+		$.ajax({
+			type: "POST",
+			url: "/venue_flash",
+			data: "message=" + message + '&location_id=' + msfm.locationId(),
+		});
 	}
 };
 
@@ -26,6 +34,10 @@ $(document).ready(function(){
 	
 	$("#homePage").on('click.msfm', "#btnMarkPlayed", function(){
 		msfmAdmin.markPlayed($("#pli_id").val());
+	});
+	
+	$("#homePage").on('click.msfm', "#btnFlash", function(){
+		msfmAdmin.publishFlash($("#txtFlash").val());
 	});
 	
 	$("#homePage").on('click.msfm', "#btnMarkPlaying", function(){

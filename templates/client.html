@@ -59,7 +59,7 @@
 	
 	<div data-role="page" id="homePage"> 
 		<div data-role="header">
-			<a id="venueInfo" href="#" data-icon="info" data-role="button" data-iconpos="notext"></a>
+			<a id="flash" href="#" data-icon="info" data-role="button" data-iconpos="notext" style="display:none;"></a>
 			<div style="text-align:center;">
 				<img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" />
 				<div>You're the DJ at this location</div>
@@ -77,19 +77,23 @@
 		<div id="adminPanel" style="display:none;">
 			<div class="ui-grid-a">
 				<div class="ui-block-a">
-					<a href="javascript:void(0);" id="btnMarkPlaying" data-role="button">Mark Top Song as Playing</a>
+					<a href="javascript:void(0);" id="btnMarkPlaying" data-role="button">Mark Playing</a>
 				</div>					
 				<div class="ui-block-b">
-					<a href="javascript:void(0);" id="btnMarkTopPlayed" data-role="button">Bump Top Song</a>
+					<a href="javascript:void(0);" id="btnMarkTopPlayed" data-role="button">Bump Top</a>
 				</div>
 				<div class="ui-block-a">
-					<div style="padding-top: 1px; padding-right: 7px; text-align: right;"><p>ID:</p></div>
+					<input style="margin: .6em .1em .8em 5px; padding: .6em 0em .4em 0;" type="text" name="pli_id" id="pli_id" value="" />
 				</div>
 				<div class="ui-block-b">
-					<input type="text" name="pli_id" id="pli_id" value="" data-mini="true" />
+					<a href="javascript:void(0);" id="btnMarkPlayed" data-role="button">Bump</a>
 				</div>
 			</div>
-							<a href="javascript:void(0);" id="btnMarkPlayed" data-role="button">Bump specific song</a>
+			<input type="checkbox" name="explicit" id="chkExplicit" class="custom" />
+			<label for="chkExplicit">Filter Explicit</label>
+			<label for="txtFlash">Textarea:</label>
+			<textarea name="txtFlash" id="txtFlash"></textarea>
+			<a href="javascript:void(0);" id="btnFlash" data-role="button">Flash</a>
 		</div>
 	</div>
 	

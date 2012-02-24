@@ -52,9 +52,9 @@ def index(location_id):
         l.save()
     return render_template('client.html')
 
-@app.route('/venue_message', methods=["POST"])
+@app.route('/venue_flash', methods=["POST"])
 @admin_required
-def venue_message():
+def venue_flash():
     l = Location.from_id(request.form["location_id"])
     msg = request.form["message"]
     l.marketing_message = msg
@@ -76,6 +76,11 @@ def vote():
 def getPlaylist(location_id):
     l = Location.from_id(location_id)
     return l.playlist().to_json()
+
+@app.route('/flash/<int:location_id>')
+def getFlash(location_id):
+    l = Location.from_id(location_id)
+    return json.dumps(l.marketing_message)
 
 @app.route('/search/<query>')
 def getSearch(query):

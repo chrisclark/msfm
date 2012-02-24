@@ -1,4 +1,6 @@
 var msfm = {
+	flashMessage: "Prepare for awesomeness when I blink.",
+	isNewFlash: false,
 	spinnerStart: function () {
 		"use strict";
 		$.mobile.showPageLoadingMsg();
@@ -6,12 +8,6 @@ var msfm = {
 	spinnerStop: function () {
 		"use strict";
 		$.mobile.hidePageLoadingMsg();
-	},
-	refreshPlaylist: function() {
-		$.getJSON("/playlist/" + msfm.locationId(), function (data) {
-			msfm.playlist = data;
-			msfm.bindPlaylist();
-		});
 	},
 	locationId: function () {
 		"use strict";
@@ -126,8 +122,15 @@ var msfm = {
 		$(".changed_new", '#venuePlaylist').effect("highlight", {color: "#e5e89b"}, 2500);
 		$(".changed_up", '#venuePlaylist').effect("highlight", {color: "#a0e89b"}, 2500);
 		$(".changed_down", '#venuePlaylist').effect("highlight", {color: "#e89b9b"}, 2500);
-		$(".playing a", '#venuePlaylist').css("color", "green").css("padding", ".7em 32px 0");	
+		$(".playing a", '#venuePlaylist').css("color", "green").css("padding", ".7em 32px 0");
 	},
+	doFlash: function() {
+		$("#flash").show();
+		if(msfm.isNewFlash){
+			$("#flash").effect("highlight", {color: "#e5e89b"}, 4000);
+			setTimeout("msfm.doFlash();", 4000);
+		}
+	},	
 	disableVotingButtons: function () {
 		$('#btnUpVote').attr("disabled", "disabled");
 		$('#btnDownVote').attr("disabled", "disabled");
@@ -239,7 +242,19 @@ var msfm = {
 $(document).ready(function () {
 	"use strict";
 
-	msfm.refreshPlaylist();
+	$.getJSON("/playlist/" + msfm.locationId(), function (data) {
+		msfm.playlist = data;
+		msfm.bindPlaylist();
+	});
+	
+	$.getJSON("/flash/" + msfm.locationId(), function (data) {
+		if (data && data != "") {
+			if (msfm.isNewFlash == false){ msfm.isNewFlash = true; }
+			msfm.flashMessage = data;
+			msfm.doFlash();
+		}
+	});
+	
 	if(msfm.isAdmin) { $("#adminPanel").show(); }
 	
 	$.mobile.loadingMessage = "Workin' hard!";
@@ -318,8 +333,9 @@ $(document).ready(function () {
 		});
 	});
 	
-	$("#homePage").on('click.msfm', "#venueInfo", function() {
-		msfm.renderDialog("test", "Drink specials!", "Got it!");
+	$("#homePage").on('click.msfm', "#flash", function() {
+		msfm.renderDialog("Looky here!", msfm.flashMessage, "Got it!");
+		msfm.isNewFlash = false;
 	});
 	
 	$("#playlistItemDetails").on('click.msfm', "#btnUpVote", function () {
@@ -341,6 +357,10 @@ $(document).ready(function () {
 		$('#addTrackDetails').listview("refresh");
 	});
 	
+	$("#chkExplicit").click( function(){
+		//if( $(this).is(':checked') ) alert("checked")
+	});
+	
 	var jug = new Juggernaut;
 	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data){
 		if ($.mobile.activePage.prop("id") == "homePage") {
@@ -350,8 +370,14 @@ $(document).ready(function () {
 	});
 	
 	jug.subscribe("msfm:marketing:" + msfm.locationId(), function(data){
-		if ($.mobile.activePage.prop("id") == "homePage") {
-			$("#venueInfo").effect("highlight", {color: "#e5e89b"}, 2500);
-		}
+		msfm.flashMessage = data;
+		if (msfm.flashMessage != ""){
+			if (msfm.isNewFlash == false) { //if we're already flashing, doing it again will cause setTimeout issues
+				msfm.isNewFlash = true;
+				if ($.mobile.activePage.prop("id") == "homePage") {
+					msfm.doFlash();
+				}
+			}
+	} else {msfm.isNewFlash = false;}
 	});
 });
