@@ -44,6 +44,7 @@ var msfm = {
 				msfm.renderDialog("Sweet!", "Added your track", "OK!");
 			}
 		});
+		mpq.track("Added track", {"location_id": msfm.locationId(), "provider_id": provider_id});
 	},
 	buildTrackDetails: function (track, selector) {
 		"use strict";
@@ -52,7 +53,7 @@ var msfm = {
 							+ "<h2>" + track.artist + "</h2>"
 							+ "<p><strong>" + track.title + "</strong></p>"
 							+ "<p>Album: " + track.album + "</p>"
-							+ "<p class='ui-li-aside'>" + track.length_friendly + "</p>"
+							+ "<p class='ui-li-aside' style='width: 15%;'>" + track.length_friendly + "</p>"
 							+ "</li>"
 							);
 	},
@@ -130,7 +131,7 @@ var msfm = {
 			$("#flash").effect("highlight", {color: "#e5e89b"}, 4000);
 			setTimeout("msfm.doFlash();", 4000);
 		}
-	},	
+	},
 	disableVotingButtons: function () {
 		$('#btnUpVote').attr("disabled", "disabled");
 		$('#btnDownVote').attr("disabled", "disabled");
@@ -159,6 +160,7 @@ var msfm = {
 				window.localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
 			}
 		});
+		mpq.track("Voted", {"location_id": msfm.locationId(), "pli_id": pli_id, "direction": dir});
 	},
 	isAdmin: false,
 	bindTrackSearchResults: function (tracklist) {
@@ -177,9 +179,8 @@ var msfm = {
 		
 		$('#searchListing').empty().append(listing.join('')).listview("refresh");
 	},
-	trackSearch: function () {
+	trackSearch: function (query) {
 		"use strict";
-		var query = $("#trackSearch").val();
 		if (query.length > 0) {
 			msfm.spinnerStart();
 			$.getJSON("/search/" + query, function (data) {
@@ -188,6 +189,7 @@ var msfm = {
 				msfm.spinnerStop();
 			});
 		}
+		mpq.track("Searched", {"location_id": msfm.locationId(), "query": query});
 	},
 	requireLogin: function(callbackFn) {
 		"use strict";
@@ -199,6 +201,7 @@ var msfm = {
 				msfm.loginAction = callbackFn; //this is kind of ghetto. Stash away the callback so the login screen can get it later
 				$("#btnFBLogin").removeAttr("disabled");
 				$.mobile.changePage('#pleaseLogin', {transition: 'slidedown', reverse: false, changeHash: false});
+				mpq.track("Showed login", {"location_id": msfm.locationId()});
 			}
 		});
 	},
@@ -217,11 +220,14 @@ var msfm = {
 				+ '&method=facebook',
 			complete: function (xhr) {
 				if (xhr.status != 200) {
-					msfm.renderDialog("Whoops!", jQuery.parseJSON(xhr.responseText).msg, "Home");
+					msg = jQuery.parseJSON(xhr.responseText).msg;
+					msfm.renderDialog("Whoops!", msg, "Home");
+					mpq.track("Login error", {"location_id": msfm.locationId(), "Error": msg});
 				}
 			},
 			success: function(data) { 
 				msfm.isAdmin = JSON.parse(data).admin;
+				mpq.track("Did login", {"location_id": msfm.locationId()});
 				callbackFn();
 			}
 		});
@@ -260,7 +266,10 @@ $(document).ready(function () {
 	$.mobile.loadingMessage = "Workin' hard!";
 	$.mobile.defaultPageTransition = "fade";
 	
-	$("#search").on("click.msfm", "#btnSubmitSearch", msfm.trackSearch);
+	$("#search").on("click.msfm", "#btnSubmitSearch", function() {
+		var query = $("#trackSearch").val();
+		msfm.trackSearch(query);
+	});
 	
 	$(document).on('pagebeforechange', function (event, data) {
 		msfm.spinnerStop();
@@ -378,6 +387,8 @@ $(document).ready(function () {
 					msfm.doFlash();
 				}
 			}
-	} else {msfm.isNewFlash = false;}
+		} else { 
+			msfm.isNewFlash = false;
+		}
 	});
 });
