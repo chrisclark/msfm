@@ -30,6 +30,7 @@ $(document).ready(function(){
 	
 	$("#playlistItemDetails").on('click.msfm', "#btnMarkPlayed", function(){
 		msfmAdmin.markPlayed($('#playlistItemDetails').jqmData('playlist_item_id'));
+		$.mobile.changePage("#homePage");
 	});
 	
 	$("#homePage").on('click.msfm', "#btnFlash", function(){
