@@ -28,12 +28,8 @@ var msfmAdmin = {
 $(document).ready(function(){
 	"use strict";
 	
-	$("#homePage").on('click.msfm', "#btnMarkTopPlayed", function(){
-		msfmAdmin.markPlayed($(".playlistItemButton").first().jqmData("playlist_item_id"));
-	});
-	
-	$("#homePage").on('click.msfm', "#btnMarkPlayed", function(){
-		msfmAdmin.markPlayed($("#pli_id").val());
+	$("#playlistItemDetails").on('click.msfm', "#btnMarkPlayed", function(){
+		msfmAdmin.markPlayed($('#playlistItemDetails').jqmData('playlist_item_id'));
 	});
 	
 	$("#homePage").on('click.msfm', "#btnFlash", function(){

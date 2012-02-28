@@ -10,7 +10,7 @@ from playlistitem import PlaylistItem
 from user import User
 from vote import Vote
 import config
-from juggernaut import Juggernaut
+from juggernaut import Juggernaut, RedisRoster
 
 from functools import wraps
 

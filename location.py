@@ -4,6 +4,7 @@ from datetime import datetime
 import common
 from musicLibrary import MusicLibrary
 from flask import session
+from user import User
 
 class Location(Base):
     __tablename__ = 'locations'
@@ -49,7 +50,7 @@ class Location(Base):
         #make sure it's in the DB
         t = MusicLibrary.get_track(provider_id=prov_id)
         
-        if self._numTracksFromUser(user_id) > 2:
+        if not User.is_admin() and self._numTracksFromUser(user_id) > 2:
             return common.buildDialogResponse("You can only have 3 songs on the playlist at once :(", 409)
 
         if self.playlist().contains_track(t.id):

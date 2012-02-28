@@ -73,6 +73,9 @@
 		</div>
 		<div data-role="content">
 			<div class="content-primary">
+				<div class="adminPanel" style="display: none; margin-top: -1em; margin-bottom: 1.4em;">
+					<a href="javascript:void(0);" id="btnMarkPlaying" data-role="button">Mark Playing</a>
+				</div>
 				<ul data-role="listview" id="venuePlaylist">
 				</ul>
 			</div>
@@ -80,23 +83,9 @@
 		<div>
 			<a href="#search" id="addSongBtn" data-role="button">Add Song</a>
 		</div>
-		<div id="adminPanel" style="display:none;">
-			<div class="ui-grid-a">
-				<div class="ui-block-a">
-					<a href="javascript:void(0);" id="btnMarkPlaying" data-role="button">Mark Playing</a>
-				</div>					
-				<div class="ui-block-b">
-					<a href="javascript:void(0);" id="btnMarkTopPlayed" data-role="button">Bump Top</a>
-				</div>
-				<div class="ui-block-a">
-					<input style="margin: .6em .1em .8em 5px; padding: .6em 0em .4em 0;" type="text" name="pli_id" id="pli_id" value="" />
-				</div>
-				<div class="ui-block-b">
-					<a href="javascript:void(0);" id="btnMarkPlayed" data-role="button">Bump</a>
-				</div>
-			</div>
-			<input type="checkbox" name="explicit" id="chkExplicit" class="custom" />
-			<label for="chkExplicit">Filter Explicit</label>
+		<div class="adminPanel" style="display:none;">
+			<!-- <input type="checkbox" name="explicit" id="chkExplicit" class="custom" /> -->
+			<!-- <label for="chkExplicit">Filter Explicit</label> -->
 			<label for="txtFlash">Textarea:</label>
 			<textarea name="txtFlash" id="txtFlash"></textarea>
 			<a href="javascript:void(0);" id="btnFlash" data-role="button">Flash</a>
@@ -154,6 +143,9 @@
 			<button id="btnDownVote" name="Thumbs Down">Vote Down</button>
 		</div>
 		<div style="text-align: center; font-size: 14px; font-weight: bold; padding-top: 3px;" id="alreadyVoted">Thanks for voting on this song!</div>
+		<div class="adminPanel" style="display: none;">
+			<a href="javascript:void(0);" id="btnMarkPlayed" data-role="button">Bump</a>
+		</div>
  	</div>
  	
  	<div data-role="dialog" id="diagNotification">
@@ -174,7 +166,7 @@
 		<div data-role="content">
 			<h1>Please log in</h1>
 			<p>Log in with Facebook to continue. Don't worry - we won't post to your wall or do anything weird.</p>
-			<button id="btnFBLogin">Log in</button>           
+			<img style="cursor: pointer;" src='/static/images/facebook_connect.png' id="btnFBLogin" />           
 		</div>
 	</div>
  	

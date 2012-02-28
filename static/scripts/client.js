@@ -273,10 +273,10 @@ $(document).ready(function () {
 	
 	$(document).on('pagebeforechange', function (event, data) {
 		msfm.spinnerStop();
+		if(msfm.isAdmin) { $(".adminPanel").show(); }
 	});
 	
 	$('#homePage').on('pageshow', function () {
-		if(msfm.isAdmin) { $("#adminPanel").show(); }
 		$.getJSON("/playlist/" + msfm.locationId(), function (data) {
 			msfm.playlist = data;
 			msfm.bindPlaylist();
@@ -320,7 +320,7 @@ $(document).ready(function () {
 		msfm.buildTrackDetails(data, selector);
 		
 		$(selector).append("<li>"
-							+ "<a target='_blank' href='http://facebook.com/" + data.facebook_id + "'>"
+							+ "<a id='fbLink' target='_blank' href='http://facebook.com/" + data.facebook_id + "'>"
 							+ "<img style='margin-left: 15px; margin-top: .7em;' src='"
 							+ data.photo_url + "'><h1>Picked by <strong>"
 							+ data.first_name + " "	+ data.last_name
@@ -334,6 +334,10 @@ $(document).ready(function () {
 		msfm.requireLogin( function() { msfm.doAddTrack(provider_id); } );
 	});
 	
+	$("#playlistItemDetails").on("click.msfm", "#fbLink", function() {
+		mpq.track("Viewed FB Profile", {"location_id": msfm.locationId()});
+	});
+	
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function () {
 		$("#btnFBLogin").attr("disabled", "disabled");
 		msfm.doFBLogin(function() {
@@ -345,6 +349,7 @@ $(document).ready(function () {
 	$("#homePage").on('click.msfm', "#flash", function() {
 		msfm.renderDialog("Looky here!", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = false;
+		mpq.track("Viewed Flash", {"location_id": msfm.locationId(), "Flash": msfm.flashMessage});
 	});
 	
 	$("#playlistItemDetails").on('click.msfm', "#btnUpVote", function () {
@@ -366,9 +371,9 @@ $(document).ready(function () {
 		$('#addTrackDetails').listview("refresh");
 	});
 	
-	$("#chkExplicit").click( function(){
+	//$("#chkExplicit").click( function(){
 		//if( $(this).is(':checked') ) alert("checked")
-	});
+	//});
 	
 	var jug = new Juggernaut;
 	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data){
@@ -380,12 +385,10 @@ $(document).ready(function () {
 	
 	jug.subscribe("msfm:marketing:" + msfm.locationId(), function(data){
 		msfm.flashMessage = data;
-		if (msfm.flashMessage != ""){
-			if (msfm.isNewFlash == false) { //if we're already flashing, doing it again will cause setTimeout issues
-				msfm.isNewFlash = true;
-				if ($.mobile.activePage.prop("id") == "homePage") {
-					msfm.doFlash();
-				}
+		if (msfm.flashMessage != "" && msfm.isNewFlash == false) { //if we're already flashing, doing it again will cause setTimeout issues
+			msfm.isNewFlash = true;
+			if ($.mobile.activePage.prop("id") == "homePage") {
+				msfm.doFlash();
 			}
 		} else { 
 			msfm.isNewFlash = false;
