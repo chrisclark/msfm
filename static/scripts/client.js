@@ -44,7 +44,7 @@ var msfm = {
 				msfm.renderDialog("Sweet!", "Added your track", "OK!");
 			}
 		});
-		mpq.track("Added track", {"location_id": msfm.locationId(), "provider_id": provider_id});
+		mpq.track("Added track", {"location_id": msfm.locationId(), "provider_id": provider_id, "mp_note": provider_id});
 	},
 	buildTrackDetails: function (track, selector) {
 		"use strict";
@@ -160,7 +160,7 @@ var msfm = {
 				window.localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
 			}
 		});
-		mpq.track("Voted", {"location_id": msfm.locationId(), "pli_id": pli_id, "direction": dir});
+		mpq.track("Voted", {"location_id": msfm.locationId(), "pli_id": pli_id, "direction": dir, "mp_note": dir});
 	},
 	isAdmin: false,
 	bindTrackSearchResults: function (tracklist) {
@@ -189,7 +189,7 @@ var msfm = {
 				msfm.spinnerStop();
 			});
 		}
-		mpq.track("Searched", {"location_id": msfm.locationId(), "query": query});
+		mpq.track("Searched", {"location_id": msfm.locationId(), "query": query, "mp_note": query});
 	},
 	requireLogin: function(callbackFn) {
 		"use strict";
