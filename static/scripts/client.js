@@ -42,9 +42,9 @@ var msfm = {
 			},
 			success: function (data, textStatus, xhr) {
 				msfm.renderDialog("Sweet!", "Added your track", "OK!");
+				mpq.track("Added track", {"location_id": msfm.locationId(), "provider_id": provider_id, "mp_note": provider_id});
 			}
 		});
-		mpq.track("Added track", {"location_id": msfm.locationId(), "provider_id": provider_id, "mp_note": provider_id});
 	},
 	buildTrackDetails: function (track, selector) {
 		"use strict";
@@ -94,7 +94,7 @@ var msfm = {
 					changed_class = " changed_down";
 				}
 			} else {
-				changed_class = " changed_new"; //it's a new track
+				changed_class = " changed_new";
 			}
 			
 			listing.push(
@@ -126,6 +126,7 @@ var msfm = {
 		$(".playing a", '#venuePlaylist').css("color", "green").css("padding", ".7em 32px 0");
 	},
 	doFlash: function() {
+		"use strict";
 		$("#flash").show();
 		if(msfm.isNewFlash){
 			$("#flash").effect("highlight", {color: "#e5e89b"}, 4000);
@@ -133,10 +134,12 @@ var msfm = {
 		}
 	},
 	disableVotingButtons: function () {
+		"use strict";
 		$('#btnUpVote').attr("disabled", "disabled");
 		$('#btnDownVote').attr("disabled", "disabled");
 	},
 	enableVotingButtons: function () {
+		"use strict";
 		$('#btnUpVote').removeAttr("disabled");
 		$('#btnDownVote').removeAttr("disabled");
 	},
@@ -149,7 +152,6 @@ var msfm = {
 				+ '&direction='	+ dir
 				+ "&location_id=" + msfm.locationId(),
 			success: function (data) {
-				msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!");
 				var voted = window.localStorage.getItem(msfm.votedKeyName);
 				if (! voted) {
 					voted = [];
@@ -160,6 +162,7 @@ var msfm = {
 				window.localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
 			}
 		});
+		msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!"); //just assume the vote went through and show the dialog. No need to wait on the server.
 		mpq.track("Voted", {"location_id": msfm.locationId(), "pli_id": pli_id, "direction": dir, "mp_note": dir});
 	},
 	isAdmin: false,
@@ -168,7 +171,7 @@ var msfm = {
 		var listing = [];
 		$.each(tracklist, function (index, track) {
 			listing.push(	
-				'<li class="trackButton"'+
+				'<li class="trackButton"' +
 				+ ' data-provider-id="'	+ track.provider_id
 				+ '" data-index="' + index + '">'
 				+ '<a href="javascript:void(0);" style="padding: .7em 15px 0 15px;"">'
@@ -206,8 +209,11 @@ var msfm = {
 		});
 	},
 	doLogin: function(resp, callbackFn) {
+		"use strict";
 		var fbid = resp.authResponse.userID,
-					fbat = resp.authResponse.accessToken;
+			fbat = resp.authResponse.accessToken,
+			msg = "";
+			
 		$.ajax({
 			type: "POST",
 			url: "/login",
@@ -237,7 +243,7 @@ var msfm = {
 		FB.login(function (response) {
 			msfm.spinnerStart();
 			if (response.authResponse) {
-				msfm.doLogin(response, callbackFn)
+				msfm.doLogin(response, callbackFn);
 			} else {
 				msfm.renderDialog("Hrm...", "You gotta log in buddy.", "Home");
 			}
@@ -255,7 +261,7 @@ $(document).ready(function () {
 	
 	$.getJSON("/flash/" + msfm.locationId(), function (data) {
 		if (data && data != "") {
-			if (msfm.isNewFlash == false){ msfm.isNewFlash = true; }
+			msfm.isNewFlash = true;
 			msfm.flashMessage = data;
 			msfm.doFlash();
 		}
@@ -321,10 +327,8 @@ $(document).ready(function () {
 		
 		$(selector).append("<li>"
 							+ "<a id='fbLink' target='_blank' href='http://facebook.com/" + data.facebook_id + "'>"
-							+ "<img style='margin-left: 15px; margin-top: .7em;' src='"
-							+ data.photo_url + "'><h1>Picked by <strong>"
-							+ data.first_name + " "	+ data.last_name
-							+ "</strong></h3></a>");
+							+ "<img src='" + data.photo_url + "'><h1>Picked by <strong>"
+							+ data.first_name + " "	+ data.last_name + "</strong></h3></a>");
 		
 		$.mobile.changePage('#playlistItemDetails');
 	});
@@ -385,13 +389,11 @@ $(document).ready(function () {
 	
 	jug.subscribe("msfm:marketing:" + msfm.locationId(), function(data){
 		msfm.flashMessage = data;
-		if (msfm.flashMessage != "" && msfm.isNewFlash == false) { //if we're already flashing, doing it again will cause setTimeout issues
-			msfm.isNewFlash = true;
-			if ($.mobile.activePage.prop("id") == "homePage") {
-				msfm.doFlash();
-			}
-		} else { 
-			msfm.isNewFlash = false;
+		
+		//if we're already flashing, doing it again will cause setTimeout issues
+		msfm.isNewFlash = (msfm.flashMessage != "" && !msfm.isNewFlash);
+		if ($.mobile.activePage.prop("id") == "homePage") { //otherwise this will be handled in the playlist bind
+			msfm.doFlash();
 		}
 	});
 });

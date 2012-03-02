@@ -91,22 +91,23 @@ class User(Base):
     def facebook_login(fbid, fbat):
         u = User.from_fbid(fbid) #has this person logged in before?
         
-        if not u: #if not, register them and log them in
-            profile_info = common.get_json('http://graph.facebook.com/' + fbid)
+        if not u: #if not create a new user
             u = User(facebook_id=fbid,\
-                     facebook_access_token=fbat,\
-                     first_name=profile_info["first_name"],\
-                     last_name=profile_info["last_name"],\
-                     photo_url="http://graph.facebook.com/"+fbid+"/picture",\
+                     photo_url="http://graph.facebook.com/"+fbid+"/picture?type=normal",\
                      admin=False)
         
-        else: #known user. make sure it's really them
-            val = common.get_json("https://graph.facebook.com/me?fields=id&access_token=" + fbat)
-            if not "error" in val:
+        if User.current_id() != u.id: #don't bother with all this if they are already logged in
+            #update their data. Also validates their auth token
+            profile_info = common.get_json('https://graph.facebook.com/me?fields=email,first_name,last_name&access_token=' + fbat)
+            if not "error" in profile_info:
                 u.facebook_access_token = fbat
+                u.first_name = profile_info["first_name"]
+                u.last_name = profile_info["last_name"]
+                u.email = profile_info["email"]
             else:
                 return None
-        u.login() #this will also save the user so we get an updated fbat
+            
+            u.login() #also does a save
         return u
         
     def __repr__(self):
