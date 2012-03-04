@@ -1,10 +1,10 @@
 from sqlalchemy import Column, Integer, String, Sequence, ForeignKey
-from db import db_session, Base
+from db import db_session, Base, jug
 from datetime import datetime
 import common
 from musicLibrary import MusicLibrary
-from flask import session
 from user import User
+from vote import Vote
 
 class Location(Base):
     __tablename__ = 'locations'
@@ -34,7 +34,24 @@ class Location(Base):
     def mark_playing(self, playlist_item_id):
         self.currently_playing = playlist_item_id
         self.save()
-    
+        self.update_subscribers()
+        
+    def mark_played(self, playlist_item_id):
+        pli = db_session.query(PlaylistItem).filter(PlaylistItem.id == playlist_item_id).first()
+        pli.done_playing = True
+        pli.save()
+        self.update_subscribers()
+        
+    def flash(self, msg):
+        self.marketing_message = msg
+        self.save()
+        jug.publish('msfm:marketing:%s' % self.id, msg)
+        
+    def vote(self, pli_id, direc):
+        v = Vote(playlist_item_id=pli_id, user_id=User.current_id(), direction=direc)
+        v.save()
+        self.update_subscribers()
+
     @staticmethod
     def from_name(location_name):
         l = db_session.query(Location).filter_by(name=location_name).first()
@@ -44,6 +61,9 @@ class Location(Base):
     def from_id(location_id):
         l = db_session.query(Location).filter_by(id=location_id).first()
         return l
+    
+    def update_subscribers(self):
+        jug.publish('msfm:playlist:%s' % self.id, self.playlist().to_json())
     
     def add_track(self, prov_id, user_id):
         
@@ -57,6 +77,7 @@ class Location(Base):
             return common.buildDialogResponse("Someone already added that one (but you can go vote it up).", 409)
         
         PlaylistItem(track_id=t.id, location_id=self.id, user_id=user_id, date_added=str(datetime.now())).save()
+        self.update_subscribers()
         return common.buildDialogResponse("Song added!", 200)
         
     def _numTracksFromUser(self, uid):

@@ -1,5 +1,5 @@
 var msfm = {
-	flashMessage: "Prepare for awesomeness when I blink.",
+	flashMessage: "",
 	isNewFlash: false,
 	spinnerStart: function () {
 		"use strict";
@@ -156,7 +156,7 @@ var msfm = {
 				if (! voted) {
 					voted = [];
 				} else {
-					voted = JSON.parse(voted); //gotta break this out from the retrieval from localstorage or else android chokes
+					voted = JSON.parse(voted);
 				}
 				voted.push(pli_id);
 				window.localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));

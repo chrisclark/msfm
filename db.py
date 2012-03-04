@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 import config
+from juggernaut import Juggernaut
 
 msfmEngine = create_engine(config.connection_string, convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
@@ -9,6 +10,7 @@ db_session = scoped_session(sessionmaker(autocommit=False,
                                          bind=msfmEngine))
 Base = declarative_base()
 Base.query = db_session.query_property()
+jug = Juggernaut()
 
 def init_db():
     # import all modules here that might define models so that

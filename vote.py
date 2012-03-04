@@ -24,6 +24,7 @@ class Vote(Base):
         
     def save(self):
         self.timestamp = str(datetime.now())
+        self.direction = Vote.parseVote(self.direction)
         db_session.add(self)
         db_session.commit()
         

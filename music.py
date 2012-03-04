@@ -3,6 +3,9 @@ from db import db_session, init_db
 from flask import json
 import common
 import sys
+import logging
+from logging import FileHandler
+from functools import wraps
 
 from location import Location
 from musicLibrary import MusicLibrary
@@ -10,18 +13,14 @@ from playlistitem import PlaylistItem
 from user import User
 from vote import Vote
 import config
-from juggernaut import Juggernaut, RedisRoster
-
-from functools import wraps
 
 app = Flask(__name__)
 app.debug = config.debugMode
-jug = Juggernaut()
 
-import logging
-from logging import FileHandler
+fmt = logging.Formatter(fmt='%(asctime)s%(levelname)s: %(message)s',datefmt='%Y-%m-%d %H:%M:%S')
 file_handler = FileHandler('log.txt', mode='a', encoding=None, delay=False)
 file_handler.setLevel(logging.WARNING)
+file_handler.setFormatter(fmt)
 app.logger.addHandler(file_handler)
 
 app.secret_key = config.secret_key
@@ -56,20 +55,13 @@ def index(location_id):
 @admin_required
 def venue_flash():
     l = Location.from_id(request.form["location_id"])
-    msg = request.form["message"]
-    l.marketing_message = msg
-    l.save()
-    jug.publish('msfm:marketing:' + str(l.id), msg)
+    l.flash(request.form["message"])
     return ""
 
 @app.route('/vote', methods=['POST'])
 def vote():
-    v = Vote(playlist_item_id=request.form["playlist_item_id"],\
-             user_id=User.current_id(),\
-             direction=Vote.parseVote(request.form["direction"]))    
-    v.save()
     l = Location.from_id(request.form["location_id"])
-    jug.publish('msfm:playlist:' + str(l.id), l.playlist().to_json())
+    l.vote(request.form["playlist_item_id"], request.form["direction"])
     return ""
 
 @app.route('/playlist/<int:location_id>')
@@ -93,23 +85,15 @@ def getTrack(track_id):
 @app.route('/add_track', methods=['POST'])
 @login_required
 def addTrack():
-    provider_id = request.form["provider_id"]
-    location_id = request.form["location_id"]
-    l = Location.from_id(location_id)
-    ret = l.add_track(provider_id, User.current_id())
-    if ret.status_code == 200:
-        jug.publish('msfm:playlist:' + str(l.id), l.playlist().to_json())
+    l = Location.from_id(request.form["location_id"])
+    ret = l.add_track(request.form["provider_id"], User.current_id())
     return ret
 
 @app.route('/mark_played', methods=['POST'])
 @admin_required
 def markPlayed():
-    pli = db_session.query(PlaylistItem).filter(PlaylistItem.id == request.form["id"]).first()
-    pli.done_playing = True
-    pli.save()
-    location_id = request.form["location_id"]
-    l = Location.from_id(location_id)
-    jug.publish('msfm:playlist:' + str(l.id), l.playlist().to_json())
+    l = Location.from_id(request.form["location_id"])
+    l.mark_played(request.form["id"])
     return ""
 
 #this seems weird because the client is driving which track is getting played next, but that is in fact
@@ -119,17 +103,13 @@ def markPlayed():
 @admin_required
 def markPlaying():
     l = Location.from_id(request.form["location_id"])
-    l.currently_playing = request.form["playlist_item_id"]
-    l.save()
-    jug.publish('msfm:playlist:' + str(l.id), l.playlist().to_json())
+    l.mark_playing(request.form["playlist_item_id"])
     return ""
     
 @app.route('/login', methods=['POST'])
 def login():
     if request.form["method"] == "facebook":
-        fbid = request.form["fbid"]
-        fbat = request.form["fbat"]
-        usr = User.facebook_login(fbid, fbat)
+        usr = User.facebook_login(request.form["fbid"], request.form["fbat"])
         if usr:
             return usr.to_json()
         else:
