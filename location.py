@@ -5,6 +5,7 @@ import common
 from musicLibrary import MusicLibrary
 from user import User
 from vote import Vote
+from flask import session
 
 class Location(Base):
     __tablename__ = 'locations'
@@ -48,9 +49,17 @@ class Location(Base):
         jug.publish('msfm:marketing:%s' % self.id, msg)
         
     def vote(self, pli_id, direc):
-        v = Vote(playlist_item_id=pli_id, user_id=User.current_id(), direction=direc)
-        v.save()
-        self.update_subscribers()
+        if not "voted_arr" in session: session["voted_arr"] = []
+        voted = session["voted_arr"]
+        if not pli_id in voted:
+            v = Vote(playlist_item_id=pli_id, user_id=User.current_id(), direction=direc)
+            v.save()
+            voted.append(pli_id)
+            session["voted_arr"] = voted  
+            self.update_subscribers()
+            return common.buildDialogResponse("Thanks for the input!", 200)
+        else:
+            return common.buildDialogResponse("Nice try sucka! You already voted", 409)
 
     @staticmethod
     def from_name(location_name):

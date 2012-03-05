@@ -61,8 +61,7 @@ def venue_flash():
 @app.route('/vote', methods=['POST'])
 def vote():
     l = Location.from_id(request.form["location_id"])
-    l.vote(request.form["playlist_item_id"], request.form["direction"])
-    return ""
+    return l.vote(request.form["playlist_item_id"], request.form["direction"])
 
 @app.route('/playlist/<int:location_id>')
 def getPlaylist(location_id):
