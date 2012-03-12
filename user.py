@@ -107,7 +107,7 @@ class User(Base):
             else:
                 return None
             
-            u.login() #also does a save
+        u.login() #also does a save
         return u
         
     def __repr__(self):
