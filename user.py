@@ -92,10 +92,14 @@ class User(Base):
         u = User.from_fbid(fbid) #has this person logged in before?
         
         if not u: #if not create a new user
-            u = User(facebook_id=fbid,\
+            profile_info = common.get_json('https://graph.facebook.com/me?fields=email,first_name,last_name&access_token=' + fbat)
+            u = User(email=profile_info["email"],\
+                     facebook_id=fbid,\
+                     first_name=profile_info["first_name"],\
+                     last_name=profile_info["last_name"],\
                      photo_url="http://graph.facebook.com/"+fbid+"/picture?type=normal",\
                      admin=False)
-        
+            
         if User.current_id() != u.id: #don't bother with all this if they are already logged in
             #update their data. Also validates their auth token
             profile_info = common.get_json('https://graph.facebook.com/me?fields=email,first_name,last_name&access_token=' + fbat)
