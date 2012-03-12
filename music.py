@@ -66,7 +66,10 @@ def vote():
 @app.route('/playlist/<int:location_id>')
 def getPlaylist(location_id):
     l = Location.from_id(location_id)
-    return l.playlist().to_json()
+    try:
+        return l.playlist().to_json()
+    except:
+        return sys.exc_info()[0]
 
 @app.route('/flash/<int:location_id>')
 def getFlash(location_id):
