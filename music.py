@@ -69,7 +69,8 @@ def getPlaylist(location_id):
     try:
         return l.playlist().to_json()
     except:
-        return sys.exc_info()[0] + traceback.format_exc()
+        etype, value, tb = sys.exc_info()
+        return ''.join(format_exception(etype, value, tb, limit))
 
 @app.route('/flash/<int:location_id>')
 def getFlash(location_id):
