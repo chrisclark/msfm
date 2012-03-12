@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from db import db_session, init_db
 from flask import json
 import common
-import sys
+import sys, traceback
 import logging
 from logging import FileHandler
 from functools import wraps
@@ -69,7 +69,7 @@ def getPlaylist(location_id):
     try:
         return l.playlist().to_json()
     except:
-        return sys.exc_info()[0]
+        return sys.exc_info()[0] + traceback.format_exc()
 
 @app.route('/flash/<int:location_id>')
 def getFlash(location_id):
