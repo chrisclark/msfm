@@ -351,7 +351,7 @@ $(document).ready(function () {
 	});
 	
 	$("#homePage").on('click.msfm', "#flash", function() {
-		msfm.renderDialog("Looky here!", msfm.flashMessage, "Got it!");
+		msfm.renderDialog("Burger Babies", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = false;
 		mpq.track("Viewed Flash", {"location_id": msfm.locationId(), "Flash": msfm.flashMessage});
 	});
