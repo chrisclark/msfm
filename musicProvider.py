@@ -12,7 +12,7 @@ class MusicProvider:
         for key in kwargs:
             qs_append = urllib.urlencode({key: kwargs[key]})
         reqUrl = 'http://ie-api.mndigital.com?method=Search.GetTracks&format=json&'\
-                 + qs_append + '&page=1&pageSize=10&apiKey=%s' % MusicProvider._mnDigitalIntegrationAPIKey
+                 + qs_append + '&includeExplicit=false&page=1&pageSize=10&apiKey=%s' % MusicProvider._mnDigitalIntegrationAPIKey
 
         r = common.get_json(reqUrl)
 
