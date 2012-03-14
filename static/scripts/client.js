@@ -19,7 +19,7 @@ var msfm = {
 	},
 	location_id: null,
 	playlist: null,
-	votedKeyName: "msfm.votedArr",
+	votedKeyName: "msfm.votedArr2",
 	renderDialog: function (title, msg, btnText) {
 		"use strict";
 		$("#diagTitle", '#diagNotification').html(title);
@@ -61,10 +61,11 @@ var msfm = {
 		"use strict";
 		var listing = [],
 			cur_list = [],
-			playing_icon = "",
+			icon = "",
 			playing_class = "",
 			changed_class = "",
-			admin_info = "";
+			admin_info = "",
+			dir = 0;
 		
 		$.each( $(".playlistItemButton"), function (index, plib) {
 			cur_list[ $(plib).jqmData("playlist_item_id") ] = $(plib).jqmData("score");				
@@ -72,10 +73,17 @@ var msfm = {
 		
 		$.each(msfm.playlist, function (index, playlistitem) {
 							
-			playing_icon = playing_class = "";				
+			icon = playing_class = "";				
 			if (playlistitem.currently_playing==1) {
-				 playing_icon = "<img width='16px' src='/static/images/sound_icon.png' class='ui-li-icon' />";
+				 icon = "<img width='16px' src='/static/images/sound_icon.png' class='ui-li-icon' />";
 				 playing_class = " playing";
+			} else if(msfm.getVoted()[playlistitem.playlist_item_id]) {
+				dir = msfm.getVoted()[playlistitem.playlist_item_id];
+				if (dir > 0){
+					icon = "<img width='16px' src='/static/images/thumbup.png' class='ui-li-icon' />";
+				} else {
+					icon = "<img width='16px' src='/static/images/thumbdown.png' class='ui-li-icon' />";
+				}
 			}
 			
 			admin_info = "";
@@ -105,8 +113,8 @@ var msfm = {
 				+ '" data-score="' + playlistitem.score
 				+ '" data-time_sort="' + playlistitem.time_sort
 				+ '" data-playlist_index="'	+ index	+ '">'
-				+ playing_icon
-				+ '<a style="padding: .7em 15px 0 15px;" href="javascript:void(0);">'
+				+ icon
+				+ '<a style="padding: .7em 15px 0 35px;" href="javascript:void(0);">'
 				+ '<span class="ui-li-count">' + playlistitem.score + '</span>'
 				+ '<p><strong>'	+ playlistitem.artist + '</strong></p>'
 				+ '<p>'	+ admin_info + playlistitem.title + '</p>'
@@ -152,13 +160,8 @@ var msfm = {
 				+ '&direction='	+ dir
 				+ "&location_id=" + msfm.locationId(),
 			success: function (data) {
-				var voted = window.localStorage.getItem(msfm.votedKeyName);
-				if (! voted) {
-					voted = [];
-				} else {
-					voted = JSON.parse(voted);
-				}
-				voted.push(pli_id);
+				var voted = msfm.getVoted();
+				voted[pli_id] = dir;
 				window.localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
 			}
 		});
@@ -166,6 +169,16 @@ var msfm = {
 		mpq.track("Voted", {"location_id": msfm.locationId(), "pli_id": pli_id, "direction": dir, "mp_note": dir});
 	},
 	isAdmin: false,
+	getVoted: function() {
+		"use strict";
+		var ret = window.localStorage.getItem(msfm.votedKeyName);
+		if (! ret) {
+			ret = [];
+		} else {
+			ret = JSON.parse(ret);
+		}
+		return ret;
+	},
 	bindTrackSearchResults: function (tracklist) {
 		"use strict";
 		var listing = [];
@@ -305,12 +318,10 @@ $(document).ready(function () {
 			pli_id = $(this).jqmData('playlist_item_id'),
 			playlist_index = $(this).jqmData('playlist_index'),
 			arr = window.localStorage.getItem(msfm.votedKeyName),
-			noVote = -1;
+			vote = false;
 			
-		if (arr) {
-			noVote = JSON.parse(arr).indexOf(pli_id);
-		}
-		if (noVote>=0) {
+		if (arr) { vote = JSON.parse(arr)[pli_id]; }
+		if (vote) {
 			$("#alreadyVoted").show();
 			$("#voteBtns").hide();
 		} else {

@@ -9,9 +9,7 @@ from functools import wraps
 
 from location import Location
 from musicLibrary import MusicLibrary
-from playlistitem import PlaylistItem
 from user import User
-from vote import Vote
 import config
 
 app = Flask(__name__)
@@ -79,7 +77,7 @@ def getFlash(location_id):
 
 @app.route('/search/<query>')
 def getSearch(query):
-    return json.dumps(MusicLibrary.search(**{"keyword":query}))
+    return json.dumps(MusicLibrary.search(**{"keyword":query,"includeExplicit":True}))
 
 @app.route('/track/<track_id>')
 def getTrack(track_id):
