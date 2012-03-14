@@ -31,20 +31,24 @@ var msfm = {
 	loginAction: null,
 	doAddTrack: function (provider_id) {
 		"use strict";
-		$.ajax({
-			type: "POST",
-			url: "/add_track",
-			data: "provider_id=" + provider_id + '&location_id=' + msfm.locationId(),
-			complete: function (xhr) {
-				if (xhr.status != 200) {
-					msfm.renderDialog("Whoops!", jQuery.parseJSON(xhr.responseText).msg, "Home");
+		if(provider_id){
+			$.ajax({
+				type: "POST",
+				url: "/add_track",
+				data: "provider_id=" + provider_id + '&location_id=' + msfm.locationId(),
+				complete: function (xhr) {
+					if (xhr.status != 200) {
+						msfm.renderDialog("Whoops!", jQuery.parseJSON(xhr.responseText).msg, "Home");
+					}
+				},
+				success: function (data, textStatus, xhr) {
+					msfm.renderDialog("Sweet!", "Added your track", "OK!");
+					mpq.track("Added track", {"location_id": msfm.locationId(), "provider_id": provider_id, "mp_note": provider_id});
 				}
-			},
-			success: function (data, textStatus, xhr) {
-				msfm.renderDialog("Sweet!", "Added your track", "OK!");
-				mpq.track("Added track", {"location_id": msfm.locationId(), "provider_id": provider_id, "mp_note": provider_id});
-			}
-		});
+			});
+		} else {
+			msfm.renderDialog("Hrm...", "Somthin' weird happened. Let's try that again.", "Home");
+		}
 	},
 	buildTrackDetails: function (track, selector) {
 		"use strict";
