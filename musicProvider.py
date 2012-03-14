@@ -9,8 +9,9 @@ class MusicProvider:
     @staticmethod
     def search(**kwargs):
         ######MediaNet######
+        qs_append=""
         for key in kwargs:
-            qs_append = "&" + urllib.urlencode({key: kwargs[key]})
+            qs_append = qs_append + "&" + urllib.urlencode({key: kwargs[key]})
         reqUrl = 'http://ie-api.mndigital.com?method=Search.GetTracks&format=json'\
                  + qs_append + '&page=1&pageSize=10&apiKey=%s' % MusicProvider._mnDigitalIntegrationAPIKey
 

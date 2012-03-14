@@ -77,7 +77,7 @@ def getFlash(location_id):
 
 @app.route('/search/<query>')
 def getSearch(query):
-    return json.dumps(MusicLibrary.search(**{"keyword":query,"includeExplicit":True}))
+    return json.dumps(MusicLibrary.search(**{"keyword":query,"includeExplicit":"true"}))
 
 @app.route('/track/<track_id>')
 def getTrack(track_id):

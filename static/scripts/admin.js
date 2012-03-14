@@ -37,8 +37,8 @@ $(document).ready(function(){
 		msfmAdmin.publishFlash($("#txtFlash").val());
 	});
 	
-	$("#homePage").on('click.msfm', "#btnMarkPlaying", function(){
-		var pli_id = $(".playlistItemButton").first().jqmData("playlist_item_id");
-		msfmAdmin.markPlaying(pli_id);
+	$("#playlistItemDetails").on('click.msfm', "#btnMarkPlaying", function(){
+		msfmAdmin.markPlaying($('#playlistItemDetails').jqmData('playlist_item_id'));
+		$.mobile.changePage("#homePage");
 	});
 });
