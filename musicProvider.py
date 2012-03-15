@@ -20,17 +20,19 @@ class MusicProvider:
         serialize_me = []
         
         for t in r["Tracks"]:
-            dic = dict()
-            dic["provider_id"] = t["MnetId"]
-            dic["artist"] = t["Artist"]["Name"]
-            dic["title"] = t["Title"]
-            dic["length_seconds"] = 0
-            dic["length_friendly"] = t["Duration"]
-            dic["url"] = ""
-            dic["album"] = t["Album"]["Title"]
-            dic["art_url"] = t["Album"]["Images"]["Album150x150"]
-            serialize_me.append(dic)
-            
+            try:
+                dic = dict()
+                dic["provider_id"] = t["MnetId"]
+                dic["artist"] = t["Artist"]["Name"]
+                dic["title"] = t["Title"]
+                dic["length_seconds"] = 0
+                dic["length_friendly"] = t["Duration"]
+                dic["url"] = ""
+                dic["album"] = t["Album"]["Title"]
+                dic["art_url"] = t["Album"]["Images"]["Album150x150"]
+                serialize_me.append(dic)
+            except:
+                pass
         return serialize_me
     
     @staticmethod
