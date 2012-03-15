@@ -7,7 +7,8 @@
 		
 	<title>Milkshake.fm - We, the DJ</title>
 	
-	<link rel="stylesheet" href="/static/scripts/jquery.mobile-1.0.1.min.css" type="text/css" /> 
+	<link rel="stylesheet" href="/static/scripts/jquery.mobile-1.0.1.min.css" type="text/css" />
+	<link rel="stylesheet" href="/static/scripts/joyride-1.0.2.css" type="text/css" />  
 	<script type="text/javascript" src="/static/scripts/jquery-1.7.1.min.js"></script> 
 	<script type="text/javascript" src="/static/scripts/jquery.mobile-1.0.1.min.js"></script>
 	<script type="text/javascript" src="/static/scripts/jquery-ui-1.8.17.custom.min.js"></script>
@@ -15,7 +16,9 @@
 	<script type="text/javascript" src="/static/scripts/json2.js"></script>
 	<script type="text/javascript" src="/static/scripts/client.js"></script>
 	<script type="text/javascript" src="/static/scripts/admin.js"></script>
+	<!-- juggernaut -->
 	<script type="text/javascript" src="/static/scripts/application.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/static/scripts/jquery.joyride-1.0.2.js" charset="utf-8"></script>
 	
 	<!-- Apple -->
 	<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -68,7 +71,7 @@
 			<a id="flash" href="#" data-icon="star" data-role="button" data-iconpos="notext" style="display:none;"></a>
 			<div style="text-align:center;">
 				<img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" />
-				<div>You're the DJ at this location</div>
+				<div id="test">You're the DJ at this location</div>
 			</div>
 		</div>
 		<div class="adminPanel" style="display:none;">
@@ -172,6 +175,24 @@
 			<img style="cursor: pointer;" width="250px" src='/static/images/facebook_connect.png' id="btnFBLogin" />           
 		</div>
 	</div>
+	
+	<ol id="joyRideTipContent">
+		<li data-id="playing_pli" data-text="Next" class="custom">
+			<h4>Welcome!</h4>
+			<p>This groovy jam is what's currently playing. Click on other songs to vote on them and decide what plays next!</p>
+		</li>
+		<li data-id="addSongBtn" data-text="Done" class="custom">
+			<h4>Inflict your taste on others!</h4>
+			<p>Add your own songs to the playlist here, and rally your friends to vote it to the top!</p>
+		</li>
+	</ol>
+
+  	<!-- Run the plugin -->
+	<script type="text/javascript">
+		$(window).load(function() {
+			$(this).joyride();
+		});
+	</script>
  	
 </body>
 </html>
