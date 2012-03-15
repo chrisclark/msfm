@@ -1,10 +1,11 @@
 var msfmAdmin = {
-	markPlayed: function(pli_id){
+	markPlayed: function(pli_id, callback){
 		"use strict";
 		$.ajax({
 			type: "POST",
 			url: "/mark_played",
 			data: "id=" + pli_id + '&location_id=' + msfm.locationId(),
+			success: function() { if(callback){callback();} }
 		});
 	},
 	markPlaying: function(pli_id) {
@@ -35,6 +36,14 @@ $(document).ready(function(){
 	
 	$("#homePage").on('click.msfm', "#btnFlash", function(){
 		msfmAdmin.publishFlash($("#txtFlash").val());
+	});
+	
+	$("#homePage").on('click.msfm', '#btnBumpGrind', function(){
+		var pli_id = $(".playlistItemButton").first().jqmData("playlist_item_id"),
+			next_pli_id = $(".playlistItemButton").first().next().jqmData("playlist_item_id")
+		msfmAdmin.markPlayed(pli_id, function(){
+			msfmAdmin.markPlaying(next_pli_id);
+		});
 	});
 	
 	$("#playlistItemDetails").on('click.msfm', "#btnMarkPlaying", function(){
