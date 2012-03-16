@@ -132,10 +132,16 @@
           //   Tip Location
           // ++++++++++++++++++
 
-          if (settings.tipLocation == "bottom") {
+		  var loc;
+		  if ( $(tipContent[count]).data('location') ){
+		  	loc = $(tipContent[count]).data('location');
+		  } else {
+		  	loc = settings.tipLocation;
+		  }
+          if (loc == "bottom") {
             currentTip.offset({top: (currentTipPosition.top + currentParentHeight + nubHeight), left: (currentTipPosition.left - bodyOffset.left)});
             currentTip.children('.joyride-nub').addClass('top').removeClass('bottom');
-          } else if (settings.tipLocation == "top") {
+          } else if (loc == "top") {
             if (currentTipHeight >= currentTipPosition.top) {
               currentTip.offset({top: ((currentTipPosition.top + currentParentHeight + nubHeight) - bodyOffset.top), left: (currentTipPosition.left - bodyOffset.left)});
               currentTip.children('.joyride-nub').addClass('top').removeClass('bottom');
