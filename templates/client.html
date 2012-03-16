@@ -190,7 +190,24 @@
   	<!-- Run the plugin -->
 	<script type="text/javascript">
 		$(window).load(function() {
-			$(this).joyride();
+			if($.mobile.activePage.prop("id") == "homePage"){
+				$(this).joyride({
+					'tipLocation': 'bottom', // 'top' or 'bottom' in relation to parent
+					'scrollSpeed': 300, // Page scrolling speed in milliseconds
+					'timer': 0, // 0 = no timer, all other numbers = timer in milliseconds
+					'startTimerOnClick': false, // true or false - true requires clicking the first button start the timer
+					'nextButton': true, // true or false to control whether a next button is used
+					'tipAnimation': 'pop', // 'pop' or 'fade' in each tip
+					'tipAnimationFadeSpeed': 300, // when tipAnimation = 'fade' this is speed in milliseconds for the transition
+					'cookieMonster': false, // true or false to control whether cookies are used
+					'cookieName': 'JoyRide', // Name the cookie you'll use
+					'cookieDomain': false, // Will this cookie be attached to a domain, ie. '.notableapp.com'
+					'tipContainer': 'body', // Where will the tip be attached if not inline
+					'inline': false, // true or false, if true the tip will be attached after the element
+					'tipContent': '#joyRideTipContent', // What is the ID of the <ol> you put the content in
+					'postRideCallback': function(){window.scrollTo(0, 0);} // A possible method to call once the tour closes (canceled or complete)
+				});
+			}
 		});
 	</script>
  	
