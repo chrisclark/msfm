@@ -69,9 +69,12 @@ class Location(Base):
         else:
             return common.buildDialogResponse("Nice try sucka! You already voted", 409)
     
-    def leaderboard(self):
+    def leaderboard(self, hrs=12):
         conn = db_session.connection()
-        leaders = conn.execute("select u.id as user_id, u.first_name, u.last_name, u.photo_url, u.facebook_id, sum(direction) as score from votes v inner join playlist_items pi on v.playlist_item_id = pi.id inner join users u on pi.user_id = u.id where pi.location_id = %s and pi.date_added > DATE_SUB(NOW(), INTERVAL 12 HOUR) group by pi.user_id order by score desc limit 10;" % self.id)
+        #TODO: Better sql here. This is pretty weak sauce
+        if hrs == 0: query = "select u.id as user_id, u.first_name, u.last_name, u.photo_url, u.facebook_id, sum(direction) as score from votes v inner join playlist_items pi on v.playlist_item_id = pi.id inner join users u on pi.user_id = u.id where pi.location_id = %s group by pi.user_id order by score desc limit 10;" % (self.id)
+        else: query = "select u.id as user_id, u.first_name, u.last_name, u.photo_url, u.facebook_id, sum(direction) as score from votes v inner join playlist_items pi on v.playlist_item_id = pi.id inner join users u on pi.user_id = u.id where pi.location_id = %s and pi.date_added > DATE_SUB(NOW(), INTERVAL %s HOUR) group by pi.user_id order by score desc limit 10;" % (self.id, str(hrs))  
+        leaders = conn.execute(query)
         ret = []
         for row in leaders:
             newrow = dict() #necessary because the SQLALCHEMY row doesn't support value updates

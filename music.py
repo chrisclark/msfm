@@ -85,8 +85,9 @@ def getTrack(track_id):
 
 @app.route('/leaderboard/<int:location_id>')
 def leaderboard(location_id):
+    hrs = request.args.get('hours', 12, type=int)
     l = Location.from_id(location_id)
-    return json.dumps(l.leaderboard())
+    return json.dumps(l.leaderboard(hrs))
 
 @app.route('/add_track', methods=['POST'])
 @login_required
