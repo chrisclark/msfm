@@ -6,6 +6,7 @@ from musicLibrary import MusicLibrary
 from user import User
 from vote import Vote
 from flask import session
+import decimal
 
 class Location(Base):
     __tablename__ = 'locations'
@@ -67,6 +68,18 @@ class Location(Base):
             return common.buildDialogResponse("Thanks for the input!", 200)
         else:
             return common.buildDialogResponse("Nice try sucka! You already voted", 409)
+    
+    def leaderboard(self):
+        conn = db_session.connection()
+        leaders = conn.execute("select u.id as user_id, u.first_name, u.last_name, u.photo_url, u.facebook_id, sum(direction) as score from votes v inner join playlist_items pi on v.playlist_item_id = pi.id inner join users u on pi.user_id = u.id where pi.location_id = %s and pi.date_added > DATE_SUB(NOW(), INTERVAL 12 HOUR) group by pi.user_id order by score desc limit 10;" % self.id)
+        ret = []
+        for row in leaders:
+            newrow = dict() #necessary because the SQLALCHEMY row doesn't support value updates
+            for k in row.keys():
+                if isinstance(row[k], decimal.Decimal): newrow[k] = int(row[k])
+                else: newrow[k] = row[k]
+            ret.append(newrow)
+        return ret
 
     @staticmethod
     def from_name(location_name):

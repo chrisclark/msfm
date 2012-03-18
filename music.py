@@ -79,9 +79,14 @@ def getFlash(location_id):
 def getSearch(query):
     return json.dumps(MusicLibrary.search(**{"keyword":query,"includeExplicit":"true"}))
 
-@app.route('/track/<track_id>')
+@app.route('/track/<int:track_id>')
 def getTrack(track_id):
     return MusicLibrary.get_track(id=track_id).to_json()
+
+@app.route('/leaderboard/<int:location_id>')
+def leaderboard(location_id):
+    l = Location.from_id(location_id)
+    return json.dumps(l.leaderboard())
 
 @app.route('/add_track', methods=['POST'])
 @login_required
