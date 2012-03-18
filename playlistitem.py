@@ -14,22 +14,21 @@ class PlaylistItem(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     done_playing = Column(Boolean)
     date_added = Column(DateTime)
+    bumped = Column(Boolean)
+    date_played = Column(DateTime)
     
     location = relationship("Location", primaryjoin=(location_id==Location.id), backref=backref('playlist_items', order_by=id))
     votes = relationship("Vote")
     
-    def __init__(self, id=None, location_id=None, track_id=None, user_id=None, date_added=None):
+    def __init__(self, id=None, location_id=None, track_id=None, user_id=None, date_added=None, date_played=None):
         self.id = id
         self.location_id = location_id
         self.track_id = track_id
         self.user_id = user_id
         self.date_added = date_added
         self.done_playing = False
-        
-    def score(self):
-        total = db_session.query(func.sum(Vote.direction)).filter(Vote.playlist_item_id == self.id).scalar()
-        if not total: return 0 
-        return int(total)
+        self.bumped = False
+        self.date_played = date_played
     
     def save(self):
         db_session.add(self)

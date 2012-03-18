@@ -94,7 +94,14 @@ def addTrack():
 @admin_required
 def markPlayed():
     l = Location.from_id(request.form["location_id"])
-    l.mark_played(request.form["id"])
+    l.mark_played(request.form["playlist_item_id"])
+    return ""
+
+@app.route('/bump', methods=['POST'])
+@admin_required
+def bump():
+    l = Location.from_id(request.form["location_id"])
+    l.bump(request.form["playlist_item_id"])
     return ""
 
 #this seems weird because the client is driving which track is getting played next, but that is in fact

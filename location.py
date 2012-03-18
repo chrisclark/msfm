@@ -36,10 +36,17 @@ class Location(Base):
         self.currently_playing = playlist_item_id
         self.save()
         self.update_subscribers()
-        
+    
+    def bump(self, playlist_item_id):
+        pli = db_session.query(PlaylistItem).filter(PlaylistItem.id == playlist_item_id).first()
+        pli.bumped = True
+        pli.save()
+        self.update_subscribers()
+    
     def mark_played(self, playlist_item_id):
         pli = db_session.query(PlaylistItem).filter(PlaylistItem.id == playlist_item_id).first()
         pli.done_playing = True
+        pli.date_played = str(datetime.now())
         pli.save()
         self.update_subscribers()
         
@@ -90,7 +97,11 @@ class Location(Base):
         return common.buildDialogResponse("Song added!", 200)
         
     def _numTracksFromUser(self, uid):
-        return db_session.query(PlaylistItem).filter_by(user_id=uid).filter_by(done_playing=False).filter_by(location_id=self.id).count()
+        return db_session.query(PlaylistItem).\
+            filter_by(user_id=uid).\
+            filter_by(done_playing=False).\
+            filter_by(bumped=False).\
+            filter_by(location_id=self.id).count()
     
     def __repr__(self):
         return "<Location('%s','%s')>" % (self.name, str(self.id))

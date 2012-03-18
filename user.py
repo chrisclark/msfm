@@ -87,6 +87,10 @@ class User(Base):
         dic["admin"] = self.admin
         return json.dumps(dic)
     
+    def score(self):
+        upvotes=1
+        return upvotes
+    
     @staticmethod
     def facebook_login(fbid, fbat):
         u = User.from_fbid(fbid) #has this person logged in before?

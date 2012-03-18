@@ -1,12 +1,9 @@
-from sqlalchemy import func
 from playlistitem import PlaylistItem
-from location import Location
 from user import User
 from db import db_session
 from track import Track
 from flask import json
 from operator import itemgetter
-from vote import Vote
 import time
 import common
 
@@ -24,7 +21,8 @@ class Playlist:
                                 filter(PlaylistItem.location_id == l.id).\
                                 filter(Track.id == PlaylistItem.track_id).\
                                 filter(PlaylistItem.user_id == User.id).\
-                                filter(PlaylistItem.done_playing == False):             
+                                filter(PlaylistItem.done_playing == False).\
+                                filter(PlaylistItem.bumped == False):             
             pl.queue.append((t, pli, u))
         return pl
             
@@ -33,7 +31,7 @@ class Playlist:
     
     def _get_scores(self):
         conn = db_session.connection()
-        votes = conn.execute("select pi.id AS pli_id, sum(v.direction) AS score from votes v join playlist_items pi on v.playlist_item_id = pi.id join locations l on pi.location_id = l.id where pi.done_playing=False and l.id=%s group by pi.id" % self.loc_id)
+        votes = conn.execute("select pi.id AS pli_id, sum(v.direction) AS score from votes v join playlist_items pi on v.playlist_item_id = pi.id join locations l on pi.location_id = l.id where pi.done_playing=0 and pi.bumped=0 and l.id=%s group by pi.id" % self.loc_id)
         dic = dict()
         for row in votes:
             dic[row["pli_id"]] = int(row["score"])
@@ -61,7 +59,10 @@ class Playlist:
             dic["time_sort"] = time.mktime(pli.date_added.timetuple())
             
             dic["first_name"] = u.first_name
-            dic["last_name"] = u.last_name[0]
+            if User.is_admin():
+                dic["last_name"] = u.last_name
+            else:
+                dic["last_name"] = u.last_name[0]
             dic["photo_url"] = u.photo_url
             dic["facebook_id"] = u.facebook_id
             
@@ -78,5 +79,3 @@ class Playlist:
             serialize_me.insert(0, cur_playing_pli)
 
         return json.dumps(serialize_me)
-    
-from musicLibrary import MusicLibrary
