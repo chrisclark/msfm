@@ -86,6 +86,9 @@
 		<div>
 			<a href="#search" id="addSongBtn" data-role="button">Add Song</a>
 		</div>
+		<div>
+			<button id="leaderboardBtn" name="leaderboardBtn">Leaderboard</a>
+		</div>
 		<div class="adminPanel" style="display:none;">
 			<!-- <input type="checkbox" name="explicit" id="chkExplicit" class="custom" /> -->
 			<!-- <label for="chkExplicit">Filter Explicit</label> -->
@@ -151,6 +154,20 @@
 				<div class="ui-block-a"><a href="javascript:void(0);" id="btnBump" data-role="button">Bump</a></div>
 				<div class="ui-block-b"><a href="javascript:void(0);" id="btnMarkPlaying" data-role="button">Grind</a></div>	   
 			</fieldset>
+		</div>
+ 	</div>
+ 	
+ 	<div data-role="page" id="leaderboard">
+ 		<div data-role="header">
+			<a href="#" data-rel="back" data-icon="arrow-l" data-role="button" data-iconpos="notext"></a>
+			<div style="text-align:center;">
+				<a href="#" data-rel="back"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
+				<div>You're the DJ at this location</div>
+			</div>
+		</div>
+		<div data-role="content">
+			<ul data-role="listview" id="leaderboardDetails">
+			</ul>
 		</div>
  	</div>
  	

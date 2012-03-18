@@ -299,7 +299,11 @@ $(document).ready(function() {"use strict";
 	});
 
 	$('#homePage').on('click.msfm', ".playlistItemButton", function() {
-		var track_id = $(this).jqmData('id'), pli_id = $(this).jqmData('playlist_item_id'), playlist_index = $(this).jqmData('playlist_index'), arr = window.localStorage.getItem(msfm.votedKeyName), vote = false;
+		var track_id = $(this).jqmData('id'),
+			pli_id = $(this).jqmData('playlist_item_id'), 
+			playlist_index = $(this).jqmData('playlist_index'),
+			arr = window.localStorage.getItem(msfm.votedKeyName),
+			vote = false;
 
 		if(arr) {
 			vote = JSON.parse(arr)[pli_id];
@@ -321,6 +325,21 @@ $(document).ready(function() {"use strict";
 		$(selector).append("<li>" + "<a id='fbLink' target='_blank' href='http://facebook.com/" + data.facebook_id + "'>" + "<img src='" + data.photo_url + "'><h1>Picked by <strong>" + data.first_name + " " + data.last_name + "</strong></h3></a>");
 
 		$.mobile.changePage('#playlistItemDetails');
+	});
+	
+	$('#homePage').on('click.msfm', "#leaderboardBtn", function() {
+		msfm.spinnerStart();
+		var listing = [];
+		$.getJSON("/leaderboard/" + msfm.locationId(), function(data){
+			$.each(data, function(index, user) {
+				listing.push('<li>' + user.score + ' - ' + user.first_name + '</li>');	
+			});
+			var listing_joined = listing.join(""),
+				final_items = $(listing_joined).detach();
+			$('#leaderboardDetails').empty().append(final_items);
+			msfm.spinnerStop();
+			$.mobile.changePage('#leaderboard');	
+		});
 	});
 
 	$("#addTrack").on('click.msfm', "#btnAddTrack", function() {
@@ -371,6 +390,11 @@ $(document).ready(function() {"use strict";
 	$(document).on('pagebeforeshow', "#addTrack", function() {
 		$('#addTrackDetails').listview("refresh");
 	});
+	
+	$(document).on('pagebeforeshow', "#leaderboard", function() {
+		$('#leaderboardDetails').listview("refresh");
+	});
+		
 	//$("#chkExplicit").click( function(){
 	//if( $(this).is(':checked') ) alert("checked")
 	//});
