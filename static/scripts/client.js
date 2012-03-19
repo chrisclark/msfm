@@ -322,7 +322,7 @@ $(document).ready(function() {"use strict";
 
 		msfm.buildTrackDetails(data, selector);
 
-		$(selector).append("<li>" + "<a id='fbLink' target='_blank' href='http://facebook.com/" + data.facebook_id + "'>" + "<img src='" + data.photo_url + "'><h1>Picked by <strong>" + data.first_name + " " + data.last_name + "</strong></h3></a>");
+		$(selector).append("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + data.facebook_id + "'>" + "<img src='" + data.photo_url + "'><h1>Picked by <strong>" + data.first_name + " " + data.last_name + "</strong></h1></a></li>");
 
 		$.mobile.changePage('#playlistItemDetails');
 	});
@@ -332,7 +332,7 @@ $(document).ready(function() {"use strict";
 		var listing = [];
 		$.getJSON("/leaderboard/" + msfm.locationId(), function(data){
 			$.each(data, function(index, user) {
-				listing.push('<li>' + user.score + ' - ' + user.first_name + '</li>');	
+				listing.push("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + user.facebook_id + "'>" + "<img src='" + user.photo_url + "'><h1>Score:" + user.score + "</h1><h1>" + user.first_name + " " + user.last_name + "</h1></a></li>");	
 			});
 			var listing_joined = listing.join(""),
 				final_items = $(listing_joined).detach();
