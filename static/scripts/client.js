@@ -267,6 +267,7 @@ $(document).ready(function() {"use strict";
 		if(data && data != "") {
 			msfm.isNewFlash = true;
 			msfm.flashMessage = data;
+			$("#txtFlash").val(msfm.flashMessage);
 			msfm.doFlash();
 		}
 	});
@@ -406,6 +407,7 @@ $(document).ready(function() {"use strict";
 
 	jug.subscribe("msfm:marketing:" + msfm.locationId(), function(data) {
 		msfm.flashMessage = data;
+		$("#txtFlash").val(msfm.flashMessage);
 
 		//if we're already flashing, doing it again will cause setTimeout issues
 		msfm.isNewFlash = (msfm.flashMessage != "" && !msfm.isNewFlash);
