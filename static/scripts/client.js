@@ -139,12 +139,10 @@ var msfm = {
 			type : "POST",
 			url : "/vote",
 			data : "playlist_item_id=" + pli_id + '&direction=' + dir + "&location_id=" + msfm.locationId(),
-			success : function(data) {
-				var voted = msfm.getVoted();
-				voted[pli_id] = dir;
-				window.localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
-			}
 		});
+		var voted = msfm.getVoted();
+			voted[pli_id] = dir;
+			window.localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
 		msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!");
 		//just assume the vote went through and show the dialog. No need to wait on the server.
 		mpq.track("Voted", {
@@ -253,9 +251,8 @@ var msfm = {
 		var listing = []
 			,ct = 1;
 		$.getJSON("/leaderboard/" + msfm.locationId() + "?hours=" + hrs, function(data){
-			
 			$.each(data, function(index, user) {
-				listing.push("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + user.facebook_id + "'>" + "<img src='" + user.photo_url + "'><h3>" + ct + ". "  + user.first_name + " " + user.last_name.substring(0,1) + ".</h3><p>" + user.score +  " points</p></a></li>");
+				listing.push("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + user.facebook_id + "'>" + "<img src='" + user.photo_url + "'><h3>" + ct + ". "  + user.first_name + " " + user.last_name + ".</h3><p>" + user.score +  " points</p></a></li>");
 				ct = ct + 1;	
 			});
 			var listing_joined = listing.join(""),
@@ -328,7 +325,7 @@ $(document).ready(function() {"use strict";
 		if(arr) {
 			vote = JSON.parse(arr)[pli_id];
 		}
-		if(vote) {
+		if(vote && !msfm.isAdmin) {
 			$("#alreadyVoted").show();
 			$("#voteBtns").hide();
 		} else {

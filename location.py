@@ -59,7 +59,7 @@ class Location(Base):
     def vote(self, pli_id, direc):
         if not "voted_arr" in session: session["voted_arr"] = []
         voted = session["voted_arr"]
-        if not pli_id in voted:
+        if User.is_admin() or not pli_id in voted:
             v = Vote(playlist_item_id=pli_id, user_id=User.current_id(), direction=direc)
             v.save()
             voted.append(pli_id)
@@ -72,6 +72,7 @@ class Location(Base):
     def leaderboard(self, hrs=0):
         conn = db_session.connection()
         #TODO: Better sql here. This is pretty weak sauce
+        #this is a special case to handle the "all time" leaderboard (hrs=0)
         if hrs == 0: query = "select u.id as user_id, u.first_name, u.last_name, u.photo_url, u.facebook_id, sum(direction) as score from votes v inner join playlist_items pi on v.playlist_item_id = pi.id inner join users u on pi.user_id = u.id where pi.location_id = %s group by pi.user_id order by score desc limit 10;" % (self.id)
         else: query = "select u.id as user_id, u.first_name, u.last_name, u.photo_url, u.facebook_id, sum(direction) as score from votes v inner join playlist_items pi on v.playlist_item_id = pi.id inner join users u on pi.user_id = u.id where pi.location_id = %s and pi.date_added > DATE_SUB(NOW(), INTERVAL %s HOUR) group by pi.user_id order by score desc limit 10;" % (self.id, str(hrs))  
         leaders = conn.execute(query)
@@ -80,6 +81,7 @@ class Location(Base):
             newrow = dict() #necessary because the SQLALCHEMY row doesn't support value updates
             for k in row.keys():
                 if isinstance(row[k], decimal.Decimal): newrow[k] = int(row[k])
+                elif k == "last_name" and not User.is_admin(): newrow[k] = row[k][0] #only get first letter of last name if its not an admin 
                 else: newrow[k] = row[k]
             ret.append(newrow)
         return ret
