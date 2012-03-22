@@ -34,12 +34,6 @@
 	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/images/apple-touch-icon-72x72-precomposed.png">
 	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
 	<link rel="apple-touch-icon-precomposed" href="/static/images/apple-touch-icon-precomposed.png">
-  
-  
-  	<!-- start Mixpanel -->
-  	<script type="text/javascript">var mpq=[];mpq.push(["init","832526af6bb40a727f8bde9c40a5489f"]);(function(){var b,a,e,d,c;b=document.createElement("script");b.type="text/javascript";b.async=true;b.src=(document.location.protocol==="https:"?"https:":"http:")+"//api.mixpanel.com/site_media/js/api/mixpanel.js";a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(b,a);e=function(f){return function(){mpq.push([f].concat(Array.prototype.slice.call(arguments,0)))}};d=["init","track","track_links","track_forms","register","register_once","identify","name_tag","set_config"];for(c=0;c<d.length;c++){mpq[d[c]]=e(d[c])}})();
-	</script>
-	<!-- end Mixpanel -->
 
 </head>
 <body>  
@@ -90,15 +84,14 @@
 		<div>
 			<button id="leaderboardBtn" name="leaderboardBtn" data-icon="grid">Leaderboard</a>
 		</div>
-		<div style="text-align: center;">
-			<a href="mailto:team@milkshake.fm">Get in touch</a> with Milkshake.fm
-		</div>
 		<div class="adminPanel" style="display:none;">
 			<!-- <input type="checkbox" name="explicit" id="chkExplicit" class="custom" /> -->
 			<!-- <label for="chkExplicit">Filter Explicit</label> -->
-			<label for="txtFlash">Textarea:</label>
 			<textarea name="txtFlash" id="txtFlash"></textarea>
 			<a href="javascript:void(0);" id="btnFlash" data-role="button">Flash</a>
+		</div>
+		<div style="text-align: center; padding-bottom: 5px">
+			<a href="mailto:team@milkshake.fm">Get in touch</a> with Milkshake.fm
 		</div>
 	</div>
 	
@@ -106,7 +99,7 @@
 		<div data-role="header">
 			<a href="#" data-rel="back" data-icon="arrow-l" data-role="button" data-iconpos="notext"></a>
 			<div style="text-align:center;">
-				<a href="#" data-rel="back"><img border=0 src="/static/images/logo.png" width="190px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
+				<a href="#homePage"><img border=0 src="/static/images/logo.png" width="190px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
 				<div>You're the DJ at this location</div>
 			</div>
 		</div>
@@ -125,7 +118,7 @@
 		<div data-role="header">
 			<a href="#" data-rel="back" data-icon="arrow-l" data-role="button" data-iconpos="notext"></a>
 			<div style="text-align:center;">
-				<a href="#" data-rel="back"><img border=0 src="/static/images/logo.png" width="190px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
+				<a href="#homePage"><img border=0 src="/static/images/logo.png" width="190px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
 				<div>You're the DJ at this location</div>
 			</div>
 		</div>
@@ -140,7 +133,7 @@
 		<div data-role="header">
 			<a href="#" data-rel="back" data-icon="arrow-l" data-role="button" data-iconpos="notext"></a>
 			<div style="text-align:center;">
-				<a href="#" data-rel="back"><img border=0 src="/static/images/logo.png" width="190px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
+				<a href="#homePage"><img border=0 src="/static/images/logo.png" width="190px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
 				<div>You're the DJ at this location</div>
 			</div>
 		</div>
@@ -165,7 +158,7 @@
  		<div data-role="header">
 			<a href="#" data-rel="back" data-icon="arrow-l" data-role="button" data-iconpos="notext"></a>
 			<div style="text-align:center;">
-				<a href="#" data-rel="back"><img border=0 src="/static/images/logo.png" width="190px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
+				<a href="#homePage"><img border=0 src="/static/images/logo.png" width="190px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
 				<div>You're the DJ at this location</div>
 			</div>
 		</div>
@@ -183,7 +176,7 @@
  	</div>
  	
  	<div data-role="dialog" id="diagNotification">
- 		<div data-role="header">
+ 		<div data-role="header" data-theme="d">
 			<h1>MS.fm</h1>
 		</div>
 		<div data-role="content">
@@ -194,7 +187,7 @@
 	</div>
 	
  	<div data-role="dialog" id="pleaseLogin">
- 		<div data-role="header">
+ 		<div data-role="header" data-theme="d">
 			<h1>MS.fm</h1>
 		</div>
 		<div data-role="content">
@@ -207,37 +200,13 @@
 	<ol id="joyRideTipContent">
 		<li data-id="playing_pli" data-text="Next" class="custom">
 			<h4>Welcome!</h4>
-			<p>This groovy jam is what's currently playing. Click on other songs to vote on them and decide what plays next!</p>
+			<p>This is what you're rockin to right now. Click other songs to vote on them and decide what plays next!</p>
 		</li>
 		<li data-id="addSongBtn" data-text="Done" data-location="top" class="custom" >
-			<h4>Inflict your taste on others!</h4>
-			<p>Add your own songs to the playlist here, and rally your friends to vote it to the top!</p>
+			<h4>Add your own song!</h4>
+			<p>What do you want to hear? Rally your friends to vote it to the top!</p>
 		</li>
 	</ol>
 
-  	<!-- Run the plugin -->
-	<script type="text/javascript">
-		$(window).load(function() {
-			if($.mobile.activePage.prop("id") == "homePage"){
-				$(this).joyride({
-					'tipLocation': 'bottom', // 'top' or 'bottom' in relation to parent
-					'scrollSpeed': 300, // Page scrolling speed in milliseconds
-					'timer': 0, // 0 = no timer, all other numbers = timer in milliseconds
-					'startTimerOnClick': false, // true or false - true requires clicking the first button start the timer
-					'nextButton': true, // true or false to control whether a next button is used
-					'tipAnimation': 'pop', // 'pop' or 'fade' in each tip
-					'tipAnimationFadeSpeed': 300, // when tipAnimation = 'fade' this is speed in milliseconds for the transition
-					'cookieMonster': false, // true or false to control whether cookies are used
-					'cookieName': 'JoyRide', // Name the cookie you'll use
-					'cookieDomain': false, // Will this cookie be attached to a domain, ie. '.notableapp.com'
-					'tipContainer': 'body', // Where will the tip be attached if not inline
-					'inline': false, // true or false, if true the tip will be attached after the element
-					'tipContent': '#joyRideTipContent', // What is the ID of the <ol> you put the content in
-					'postRideCallback': function(){window.scrollTo(0, 0);} // A possible method to call once the tour closes (canceled or complete)
-				});
-			}
-		});
-	</script>
- 	
 </body>
 </html>

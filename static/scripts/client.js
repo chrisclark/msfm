@@ -25,7 +25,7 @@ var msfm = {
 		$.mobile.changePage('#diagNotification', {
 			transition : 'slidedown',
 			reverse : false,
-			changeHash : false
+			changeHash : true
 		});
 	},
 	loginAction : null,
@@ -42,11 +42,6 @@ var msfm = {
 				},
 				success : function(data, textStatus, xhr) {
 					msfm.renderDialog("Sweet!", "Added your track", "OK!");
-					mpq.track("Added track", {
-						"location_id" : msfm.locationId(),
-						"provider_id" : provider_id,
-						"mp_note" : provider_id
-					});
 				}
 			});
 		} else {
@@ -140,17 +135,11 @@ var msfm = {
 			url : "/vote",
 			data : "playlist_item_id=" + pli_id + '&direction=' + dir + "&location_id=" + msfm.locationId(),
 		});
+		//just assume the vote went through and show the dialog. No need to wait on the server.
 		var voted = msfm.getVoted();
 			voted[pli_id] = dir;
 			window.localStorage.setItem(msfm.votedKeyName, JSON.stringify(voted));
 		msfm.renderDialog("Voted!", "Thanks for the input!", "Ok!");
-		//just assume the vote went through and show the dialog. No need to wait on the server.
-		mpq.track("Voted", {
-			"location_id" : msfm.locationId(),
-			"pli_id" : pli_id,
-			"direction" : dir,
-			"mp_note" : dir
-		});
 	},
 	isAdmin : false,
 	getVoted : function() {"use strict";
@@ -179,11 +168,6 @@ var msfm = {
 				msfm.spinnerStop();
 			});
 		}
-		mpq.track("Searched", {
-			"location_id" : msfm.locationId(),
-			"query" : query,
-			"mp_note" : query
-		});
 	},
 	requireLogin : function(callbackFn) {"use strict";
 		msfm.spinnerStart();
@@ -198,9 +182,6 @@ var msfm = {
 					transition : 'slidedown',
 					reverse : false,
 					changeHash : false
-				});
-				mpq.track("Showed login", {
-					"location_id" : msfm.locationId()
 				});
 			}
 		});
@@ -217,17 +198,10 @@ var msfm = {
 				if(xhr.status != 200) {
 					msg = jQuery.parseJSON(xhr.responseText).msg;
 					msfm.renderDialog("Whoops!", msg, "Home");
-					mpq.track("Login error", {
-						"location_id" : msfm.locationId(),
-						"Error" : msg
-					});
 				}
 			},
 			success : function(data) {
 				msfm.isAdmin = JSON.parse(data).admin;
-				mpq.track("Did login", {
-					"location_id" : msfm.locationId()
-				});
 				callbackFn();
 			}
 		});
@@ -269,6 +243,24 @@ $(document).ready(function() {"use strict";
 	$.getJSON("/playlist/" + msfm.locationId(), function(data) {
 		msfm.playlist = data;
 		msfm.bindPlaylist();
+		if($.mobile.activePage.prop("id") == "homePage"){
+			$(window).joyride({
+				'tipLocation': 'bottom', // 'top' or 'bottom' in relation to parent
+				'scrollSpeed': 300, // Page scrolling speed in milliseconds
+				'timer': 0, // 0 = no timer, all other numbers = timer in milliseconds
+				'startTimerOnClick': false, // true or false - true requires clicking the first button start the timer
+				'nextButton': true, // true or false to control whether a next button is used
+				'tipAnimation': 'pop', // 'pop' or 'fade' in each tip
+				'tipAnimationFadeSpeed': 300, // when tipAnimation = 'fade' this is speed in milliseconds for the transition
+				'cookieMonster': false, // true or false to control whether cookies are used
+				'cookieName': 'JoyRide', // Name the cookie you'll use
+				'cookieDomain': false, // Will this cookie be attached to a domain, ie. '.notableapp.com'
+				'tipContainer': 'body', // Where will the tip be attached if not inline
+				'inline': false, // true or false, if true the tip will be attached after the element
+				'tipContent': '#joyRideTipContent', // What is the ID of the <ol> you put the content in
+				'postRideCallback': function(){window.scrollTo(0, 0);} // A possible method to call once the tour closes (canceled or complete)
+			});
+		}
 	});
 
 	$.getJSON("/flash/" + msfm.locationId(), function(data) {
@@ -278,11 +270,11 @@ $(document).ready(function() {"use strict";
 			msfm.doFlash();
 		}
 	});
+	
 	if(msfm.isAdmin) {
 		$("#adminPanel").show();
 	}
 
-	$.mobile.loadingMessage = "Workin' hard!";
 	$.mobile.defaultPageTransition = "fade";
 
 	$("#search").on("click.msfm", "#btnSubmitSearch", function() {
@@ -292,6 +284,7 @@ $(document).ready(function() {"use strict";
 
 	$(document).on('pagebeforechange', function(event, data) {
 		msfm.spinnerStop();
+		$(".joyride-tip-guide").hide();
 		if(msfm.isAdmin) {
 			$(".adminPanel").show();
 		}
@@ -363,12 +356,6 @@ $(document).ready(function() {"use strict";
 		});
 	});
 
-	$("#playlistItemDetails").on("click.msfm", "#fbLink", function() {
-		mpq.track("Viewed FB Profile", {
-			"location_id" : msfm.locationId()
-		});
-	});
-
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
 		$("#btnFBLogin").attr("disabled", "disabled");
 		msfm.doFBLogin(function() {
@@ -380,10 +367,6 @@ $(document).ready(function() {"use strict";
 	$("#homePage").on('click.msfm', "#flash", function() {
 		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = false;
-		mpq.track("Viewed Flash", {
-			"location_id" : msfm.locationId(),
-			"Flash" : msfm.flashMessage
-		});
 	});
 
 	$("#playlistItemDetails").on('click.msfm', "#btnUpVote", function() {
