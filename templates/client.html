@@ -7,10 +7,12 @@
 		
 	<title>Milkshake.fm - We, the DJ</title>
 	
-	<link rel="stylesheet" href="/static/scripts/jquery.mobile-1.0.1.min.css" type="text/css" />
-	<link rel="stylesheet" href="/static/scripts/joyride-1.0.2.css" type="text/css" />  
-	<script type="text/javascript" src="/static/scripts/jquery-1.7.1.min.js"></script> 
-	<script type="text/javascript" src="/static/scripts/jquery.mobile-1.0.1.min.js"></script>
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.js"></script>
+	
+	<link rel="stylesheet" href="/static/scripts/joyride-1.0.2.css" type="text/css" />
+	<script type="text/javascript" src="/static/scripts/jquery.joyride-1.0.2.js" charset="utf-8"></script>
 	<script type="text/javascript" src="/static/scripts/jquery-ui-1.8.17.custom.min.js"></script>
 	<script type="text/javascript" src="/static/scripts/jsuri-1.1.0.min.js"></script>
 	<script type="text/javascript" src="/static/scripts/json2.js"></script>
@@ -18,7 +20,6 @@
 	<script type="text/javascript" src="/static/scripts/admin.js"></script>
 	<!-- juggernaut -->
 	<script type="text/javascript" src="/static/scripts/application.js" charset="utf-8"></script>
-	<script type="text/javascript" src="/static/scripts/jquery.joyride-1.0.2.js" charset="utf-8"></script>
 	
 	<!-- Apple -->
 	<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -84,10 +85,10 @@
 			</div>
 		</div>
 		<div>
-			<a href="#search" id="addSongBtn" data-role="button">Add Song</a>
+			<a href="#search" id="addSongBtn" data-role="button" data-icon="plus">Add Song</a>
 		</div>
 		<div>
-			<button id="leaderboardBtn" name="leaderboardBtn">Leaderboard</a>
+			<button id="leaderboardBtn" name="leaderboardBtn" data-icon="grid">Leaderboard</a>
 		</div>
 		<div class="adminPanel" style="display:none;">
 			<!-- <input type="checkbox" name="explicit" id="chkExplicit" class="custom" /> -->
@@ -164,6 +165,13 @@
 				<a href="#" data-rel="back"><img border=0 src="/static/images/logo.png" width="300px" alt="logo" style="padding-top: 10px; padding-bottom: 3px;" /></a>
 				<div>You're the DJ at this location</div>
 			</div>
+		</div>
+		<div data-role="fieldcontain">
+			<select name="leaderboard-select" id="leaderboard-select" data-native-menu="false">
+				<option value="0">All Time</option>
+				<option value="12">Tonight</option>
+				<option value="1">Last Hour</option>
+			</select>
 		</div>
 		<div data-role="content">
 			<ul data-role="listview" id="leaderboardDetails">

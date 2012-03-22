@@ -207,7 +207,8 @@ var msfm = {
 			}
 		});
 	},
-	doLogin : function(resp, callbackFn) {"use strict";
+	doLogin : function(resp, callbackFn) {
+		"use strict";
 		var fbid = resp.authResponse.userID, fbat = resp.authResponse.accessToken, msg = "";
 
 		$.ajax({
@@ -233,7 +234,8 @@ var msfm = {
 			}
 		});
 	},
-	doFBLogin : function(callbackFn) {"use strict";
+	doFBLogin : function(callbackFn) {
+		"use strict";
 		FB.login(function(response) {
 			msfm.spinnerStart();
 			if(response.authResponse) {
@@ -243,6 +245,24 @@ var msfm = {
 			}
 		}, {
 			scope : 'email'
+		});
+	},
+	drawLeaderboard : function(hrs, callback) {
+		"use strict";
+		msfm.spinnerStart();
+		var listing = []
+			,ct = 1;
+		$.getJSON("/leaderboard/" + msfm.locationId() + "?hours=" + hrs, function(data){
+			
+			$.each(data, function(index, user) {
+				listing.push("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + user.facebook_id + "'>" + "<img src='" + user.photo_url + "'><h3>" + ct + ". "  + user.first_name + " " + user.last_name.substring(0,1) + ".</h3><p>" + user.score +  " points</p></a></li>");
+				ct = ct + 1;	
+			});
+			var listing_joined = listing.join(""),
+				final_items = $(listing_joined).detach();
+			$('#leaderboardDetails').empty().append(final_items);
+			msfm.spinnerStop();
+			callback();	
 		});
 	}
 };
@@ -328,17 +348,14 @@ $(document).ready(function() {"use strict";
 	});
 	
 	$('#homePage').on('click.msfm', "#leaderboardBtn", function() {
-		msfm.spinnerStart();
-		var listing = [];
-		$.getJSON("/leaderboard/" + msfm.locationId(), function(data){
-			$.each(data, function(index, user) {
-				listing.push("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + user.facebook_id + "'>" + "<img src='" + user.photo_url + "'><h1>Score:" + user.score + "</h1><h1>" + user.first_name + " " + user.last_name + "</h1></a></li>");	
-			});
-			var listing_joined = listing.join(""),
-				final_items = $(listing_joined).detach();
-			$('#leaderboardDetails').empty().append(final_items);
-			msfm.spinnerStop();
-			$.mobile.changePage('#leaderboard');	
+		msfm.drawLeaderboard($("#leaderboard-select").val(), function(){
+			$.mobile.changePage('#leaderboard');
+		});
+	});
+	
+	$('#leaderboard').on('change.msfm', "#leaderboard-select", function() {
+		msfm.drawLeaderboard($("#leaderboard-select").val(), function(){
+			$('#leaderboardDetails').listview("refresh");
 		});
 	});
 
@@ -364,7 +381,7 @@ $(document).ready(function() {"use strict";
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
-		msfm.renderDialog("Fuel", msfm.flashMessage, "Got it!");
+		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = false;
 		mpq.track("Viewed Flash", {
 			"location_id" : msfm.locationId(),
