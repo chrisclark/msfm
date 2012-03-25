@@ -1,4 +1,5 @@
 import requests
+import sys, traceback
 from flask import json, make_response
 
 def get_json(url):
@@ -19,4 +20,10 @@ def copyObj(src, dest):
 def buildDialogResponse(msg, code):
     d = {"msg": msg}
     resp = make_response(json.dumps(d), code)
+    return resp
+
+def fail():
+    etype, value, tb = sys.exc_info()
+    msg = ''.join(traceback.format_exception(etype, value, tb))
+    resp = make_response(msg, 500)
     return resp

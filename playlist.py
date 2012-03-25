@@ -13,19 +13,7 @@ class Playlist:
         self.queue = []
         self.loc_id = loc_id
         self.currently_playing_pli_id = cur_pli_id
-            
-    @staticmethod
-    def from_location(l):
-        pl = Playlist(loc_id=l.id, cur_pli_id=l.currently_playing)
-        for pli, t, u in db_session.query(PlaylistItem, Track, User).\
-                                filter(PlaylistItem.location_id == l.id).\
-                                filter(Track.id == PlaylistItem.track_id).\
-                                filter(PlaylistItem.user_id == User.id).\
-                                filter(PlaylistItem.done_playing == False).\
-                                filter(PlaylistItem.bumped == False):             
-            pl.queue.append((t, pli, u))
-        return pl
-            
+        
     def contains_track(self, track_id):
         return str(track_id) in [str(x[0].id) for x in self.queue]
     
@@ -57,6 +45,7 @@ class Playlist:
             dic["score"] = scores[pli.id]
             dic["playlist_item_id"] = pli.id
             dic["time_sort"] = time.mktime(pli.date_added.timetuple())
+            dic["special"] = pli.special
             
             dic["first_name"] = u.first_name
             if User.is_admin():
@@ -74,6 +63,7 @@ class Playlist:
         
         serialize_me.sort(key=itemgetter("time_sort"))
         serialize_me.sort(key=itemgetter("score"), reverse=True)
+        serialize_me.sort(key=itemgetter("special"), reverse=True)
         
         if cur_playing_pli:
             serialize_me.insert(0, cur_playing_pli)

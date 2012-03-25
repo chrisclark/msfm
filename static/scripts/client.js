@@ -29,12 +29,12 @@ var msfm = {
 		});
 	},
 	loginAction : null,
-	doAddTrack : function(provider_id) {"use strict";
+	doAddTrack : function(provider_id, special) {"use strict";
 		if(provider_id) {
 			$.ajax({
 				type : "POST",
 				url : "/add_track",
-				data : "provider_id=" + provider_id + '&location_id=' + msfm.locationId(),
+				data : "provider_id=" + provider_id + '&location_id=' + msfm.locationId() + '&special=' + special,
 				complete : function(xhr) {
 					if(xhr.status != 200) {
 						msfm.renderDialog("Whoops!", jQuery.parseJSON(xhr.responseText).msg, "Home");
@@ -53,7 +53,7 @@ var msfm = {
 		$(selector).append("<li><img src='" + track.art_url + "' style='padding-top: 3px' />" + "<h2>" + track.artist + "</h2>" + "<p><strong>" + track.title + "</strong></p>" + "<p>Album: " + track.album + "</p>" + "<p class='ui-li-aside' style='width: 15%;'>" + track.length_friendly + "</p>" + "</li>");
 	},
 	bindPlaylist : function() {"use strict";
-		var listing = [], cur_list = [], icon = "", playing_class = "", changed_class = "", admin_info = "", dir = 0, li_id = "";
+		var listing = [], cur_list = [], icon = "", except_class = "", changed_class = "", admin_info = "", dir = 0, li_id = "";
 		//will be used to indicate currently playing song, so joyride can hook in
 
 		$.each($(".playlistItemButton"), function(index, plib) {
@@ -62,11 +62,14 @@ var msfm = {
 
 		$.each(msfm.playlist, function(index, playlistitem) {
 			li_id = 'pli_' + playlistitem.playlist_item_id;
-			icon = playing_class = "";
-			if(playlistitem.currently_playing == 1) {
+			icon = except_class = "";
+			if(playlistitem.currently_playing) {
 				icon = "<img width='16px' src='/static/images/sound_icon.png' class='ui-li-icon' />";
-				playing_class = " playing";
+				except_class = " playing";
 				li_id = "playing_pli";
+			} else if (playlistitem.special) {
+				icon = "<img width='16px' src='/static/images/lock.png' class='ui-li-icon' />";
+				except_class = " special"
 			} else if(msfm.getVoted()[playlistitem.playlist_item_id]) {
 				dir = msfm.getVoted()[playlistitem.playlist_item_id];
 				if(dir > 0) {
@@ -94,7 +97,7 @@ var msfm = {
 				changed_class = " changed_new";
 			}
 
-			listing.push('<li id="' + li_id + '" class="playlistItemButton' + playing_class + changed_class + '" data-id="' + playlistitem.id + '" data-playlist_item_id="' + playlistitem.playlist_item_id + '" data-score="' + playlistitem.score + '" data-time_sort="' + playlistitem.time_sort + '" data-playlist_index="' + index + '">' + icon + '<a style="padding: .7em 15px 0 35px;" href="javascript:void(0);">' + '<span class="ui-li-count">' + playlistitem.score + '</span>' + '<p><strong>' + playlistitem.artist + '</strong></p>' + '<p>' + admin_info + playlistitem.title + '</p>' + '</a></li>');
+			listing.push('<li id="' + li_id + '" class="playlistItemButton' + except_class + changed_class + '" data-id="' + playlistitem.id + '" data-playlist_item_id="' + playlistitem.playlist_item_id + '" data-score="' + playlistitem.score + '" data-time_sort="' + playlistitem.time_sort + '" data-playlist_index="' + index + '">' + icon + '<a style="padding: .7em 15px 0 35px;" href="javascript:void(0);">' + '<span class="ui-li-count">' + playlistitem.score + '</span>' + '<p><strong>' + playlistitem.artist + '</strong></p>' + '<p>' + admin_info + playlistitem.title + '</p>' + '</a></li>');
 
 		});
 		var listing_joined = listing.join(""), final_items = $(listing_joined).detach();
@@ -353,7 +356,7 @@ $(document).ready(function() {"use strict";
 	$("#addTrack").on('click.msfm', "#btnAddTrack", function() {
 		var provider_id = $('#addTrack').jqmData('provider-id');
 		msfm.requireLogin(function() {
-			msfm.doAddTrack(provider_id);
+			msfm.doAddTrack(provider_id, false);
 		});
 	});
 

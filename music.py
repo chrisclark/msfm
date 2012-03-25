@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from db import db_session, init_db
 from flask import json
 import common
-import sys, traceback
+import sys
 import logging
 from logging import FileHandler
 from functools import wraps
@@ -67,9 +67,8 @@ def getPlaylist(location_id):
     try:
         return l.playlist().to_json()
     except:
-        etype, value, tb = sys.exc_info()
-        return ''.join(traceback.format_exception(etype, value, tb))
-
+        return common.fail()
+    
 @app.route('/flash/<int:location_id>')
 def getFlash(location_id):
     l = Location.from_id(location_id)
@@ -93,7 +92,8 @@ def leaderboard(location_id):
 @login_required
 def addTrack():
     l = Location.from_id(request.form["location_id"])
-    ret = l.add_track(request.form["provider_id"], User.current_id())
+    special = User.is_admin() and request.form["special"]
+    ret = l.add_track(request.form["provider_id"], User.current_id(), special)
     return ret
 
 @app.route('/mark_played', methods=['POST'])

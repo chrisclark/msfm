@@ -31,7 +31,15 @@ class Location(Base):
         db_session.commit() #this also refreshes self with the updated ID
     
     def playlist(self):
-        return Playlist.from_location(self)
+        pl = Playlist(loc_id=self.id, cur_pli_id=self.currently_playing)
+        for pli, t, u in db_session.query(PlaylistItem, Track, User).\
+                                filter(PlaylistItem.location_id == self.id).\
+                                filter(Track.id == PlaylistItem.track_id).\
+                                filter(PlaylistItem.user_id == User.id).\
+                                filter(PlaylistItem.done_playing == False).\
+                                filter(PlaylistItem.bumped == False):             
+            pl.queue.append((t, pli, u))
+        return pl
         
     def mark_playing(self, playlist_item_id):
         self.currently_playing = playlist_item_id
@@ -99,7 +107,7 @@ class Location(Base):
     def update_subscribers(self):
         jug.publish('msfm:playlist:%s' % self.id, self.playlist().to_json())
     
-    def add_track(self, prov_id, user_id):
+    def add_track(self, prov_id, user_id, special):
         
         #make sure it's in the DB
         t = MusicLibrary.get_track(provider_id=prov_id)
@@ -110,7 +118,7 @@ class Location(Base):
         if self.playlist().contains_track(t.id):
             return common.buildDialogResponse("Someone already added that one (but you can go vote it up).", 409)
         
-        PlaylistItem(track_id=t.id, location_id=self.id, user_id=user_id, date_added=str(datetime.now())).save()
+        PlaylistItem(track_id=t.id, location_id=self.id, user_id=user_id, date_added=str(datetime.now()), special=special).save()
         self.update_subscribers()
         return common.buildDialogResponse("Song added!", 200)
         
@@ -126,4 +134,5 @@ class Location(Base):
     
 from playlistitem import PlaylistItem
 from playlist import Playlist
+from track import Track
         
