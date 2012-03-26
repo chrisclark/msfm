@@ -92,7 +92,8 @@ def leaderboard(location_id):
 @login_required
 def addTrack():
     l = Location.from_id(request.form["location_id"])
-    special = User.is_admin() and request.form["special"]
+    if User.is_admin() and request.form["special"] == "1": special = 1
+    else: special = 0
     ret = l.add_track(request.form["provider_id"], User.current_id(), special)
     return ret
 

@@ -20,7 +20,7 @@ class PlaylistItem(Base):
     location = relationship("Location", primaryjoin=(location_id==Location.id), backref=backref('playlist_items', order_by=id))
     votes = relationship("Vote")
     
-    def __init__(self, id=None, location_id=None, track_id=None, user_id=None, date_added=None, date_played=None, special=None):
+    def __init__(self, id=None, location_id=None, track_id=None, user_id=None, date_added=None, date_played=None, special=False):
         self.id = id
         self.location_id = location_id
         self.track_id = track_id
