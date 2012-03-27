@@ -201,7 +201,7 @@ var msfm = {
 	doLogin : function(resp, callbackFn) {
 		"use strict";
 		var fbid = resp.authResponse.userID, fbat = resp.authResponse.accessToken, msg = "";
-
+		alert("ok again");
 		$.ajax({
 			type : "POST",
 			url : "/login",
@@ -211,9 +211,11 @@ var msfm = {
 					msg = jQuery.parseJSON(xhr.responseText).msg;
 					msfm.renderDialog("Whoops!", msg, "Home");
 				}
+				alert("another");
 			},
 			success : function(data) {
 				msfm.isAdmin = JSON.parse(data).admin;
+				alert("and final");
 				callbackFn();
 			}
 		});
