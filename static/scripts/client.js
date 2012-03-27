@@ -50,7 +50,7 @@ var msfm = {
 	},
 	buildTrackDetails : function(track, selector) {"use strict";
 		$(selector).empty();
-		$(selector).append("<li><img src='" + track.art_url + "' style='padding-top: 3px' />" + "<h2>" + track.artist + "</h2>" + "<p><strong>" + track.title + "</strong></p>" + "<p>Album: " + track.album + "</p>" + "</li>"); 
+		$(selector).append("<li><img src='" + track.art_url + "' style='padding-top: 3px; max-width: 95px;' />" + "<h2>" + track.artist + "</h2>" + "<p><strong>" + track.title + "</strong></p>" + "<p>Album: " + track.album + "</p>" + "</li>"); 
 		//+ "<p class='ui-li-aside' style='width: 15%;'>" + track.length_friendly + "</p>" 
 		
 	},
@@ -307,6 +307,7 @@ $(document).ready(function() {"use strict";
 		var data = msfm.playlist[$(this).jqmData('index')];
 		msfm.buildTrackDetails(data, '#addTrackDetails');
 		$('#addTrack').jqmData('provider-id', data.provider_id);
+		$("#chkSpecial").removeAttr("checked").checkboxradio("refresh");
 		$.mobile.changePage('#addTrack');
 	});
 
