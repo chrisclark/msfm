@@ -158,9 +158,13 @@ var msfm = {
 	},
 	bindTrackSearchResults : function(tracklist) {"use strict";
 		var listing = [];
-		$.each(tracklist, function(index, track) {
-			listing.push('<li class="trackButton"' + +' data-provider-id="' + track.provider_id + '" data-index="' + index + '">' + '<a href="javascript:void(0);" style="padding: .7em 15px 0 15px;"">' + '<p><strong>' + track.artist + '</strong></p>' + '<p>' + track.title + '</p></a></li>');
-		});
+		if (tracklist.length == 0) {
+			listing.push('<li><strong>No Results</strong></li>');
+		} else {
+			$.each(tracklist, function(index, track) {
+				listing.push('<li class="trackButton" data-provider-id="' + track.provider_id + '" data-index="' + index + '">' + '<a href="javascript:void(0);" style="padding: .7em 15px 0 15px;"">' + '<p><strong>' + track.artist + '</strong></p>' + '<p>' + track.title + '</p></a></li>');
+			});
+		}
 
 		$('#searchListing').empty().append(listing.join('')).listview("refresh");
 	},
