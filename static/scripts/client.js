@@ -202,7 +202,7 @@ var msfm = {
 		"use strict";
 		var fbid = resp.authResponse.userID, fbat = resp.authResponse.accessToken, msg = "";
 		alert("ok again");
-		$.ajax({
+		/*$.ajax({
 			type : "POST",
 			url : "/login",
 			data : "fbid=" + fbid + '&location_id=' + msfm.locationId() + '&fbat=' + fbat + '&method=facebook',
@@ -218,7 +218,7 @@ var msfm = {
 				alert("and final");
 				callbackFn();
 			}
-		});
+		});*/
 	},
 	doFBLogin : function(callbackFn) {
 		"use strict";
