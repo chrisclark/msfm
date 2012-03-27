@@ -1,10 +1,9 @@
 from track import Track
 import urllib
 import common
-from flask import json
 
 class MusicProvider:
-    _mnDigitalIntegrationAPIKey = 'H7KQUnTksrwQtsNKfWF2JBKgX'
+    _mnDigitalIntegrationAPIKey = 'NH4lCiCOJ6ZQCHl7MAgIcK4vr'
     
     @staticmethod
     def search(**kwargs):
@@ -12,24 +11,36 @@ class MusicProvider:
         qs_append=""
         for key in kwargs:
             qs_append = qs_append + "&" + urllib.urlencode({key: kwargs[key]})
-        reqUrl = 'http://ie-api.mndigital.com?method=Search.GetTracks&format=json'\
-                 + qs_append + '&page=1&pageSize=10&apiKey=%s' % MusicProvider._mnDigitalIntegrationAPIKey
+        #reqUrl = 'http://ie-api.mndigital.com?method=Search.GetTracks&format=json'\
+        #         + qs_append + '&page=1&pageSize=10&apiKey=%s' % MusicProvider._mnDigitalIntegrationAPIKey
+        reqUrl = 'http://itunes.apple.com/search?media=music&limit=10&entity=musicTrack%s' % qs_append
 
         r = common.get_json(reqUrl)
 
         serialize_me = []
         
-        for t in r["Tracks"]:
+        for t in r["results"]: #r["Tracks"]:
             try:
                 dic = dict()
-                dic["provider_id"] = t["MnetId"]
-                dic["artist"] = t["Artist"]["Name"]
-                dic["title"] = t["Title"]
+                #MNDIGITAL
+                #dic["provider_id"] = t["MnetId"]
+                #dic["artist"] = t["Artist"]["Name"]
+                #dic["title"] = t["Title"]
+                #dic["album"] = t["Album"]["Title"]
+                #dic["art_url"] = t["Album"]["Images"]["Album150x150"]
+                #dic["length_friendly"] = t["Duration"]
                 dic["length_seconds"] = 0
-                dic["length_friendly"] = t["Duration"]
                 dic["url"] = ""
-                dic["album"] = t["Album"]["Title"]
-                dic["art_url"] = t["Album"]["Images"]["Album150x150"]
+                
+                #itunes
+                dic["provider_id"] = t["trackId"]
+                dic["artist"] = t["artistName"]
+                dic["title"] = t["trackName"]
+                dic["album"] = t["collectionName"]
+                dic["art_url"] = t["artworkUrl100"]
+                dic["length_friendly"] = 0
+                
+                
                 serialize_me.append(dic)
             except:
                 pass

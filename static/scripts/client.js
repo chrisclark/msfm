@@ -50,7 +50,9 @@ var msfm = {
 	},
 	buildTrackDetails : function(track, selector) {"use strict";
 		$(selector).empty();
-		$(selector).append("<li><img src='" + track.art_url + "' style='padding-top: 3px' />" + "<h2>" + track.artist + "</h2>" + "<p><strong>" + track.title + "</strong></p>" + "<p>Album: " + track.album + "</p>" + "<p class='ui-li-aside' style='width: 15%;'>" + track.length_friendly + "</p>" + "</li>");
+		$(selector).append("<li><img src='" + track.art_url + "' style='padding-top: 3px' />" + "<h2>" + track.artist + "</h2>" + "<p><strong>" + track.title + "</strong></p>" + "<p>Album: " + track.album + "</p>" + "</li>"); 
+		//+ "<p class='ui-li-aside' style='width: 15%;'>" + track.length_friendly + "</p>" 
+		
 	},
 	bindPlaylist : function() {"use strict";
 		var listing = [], cur_list = [], icon = "", except_class = "", changed_class = "", admin_info = "", dir = 0, li_id = "";
