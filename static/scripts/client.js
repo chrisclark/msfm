@@ -230,6 +230,7 @@ var msfm = {
 				msfm.renderDialog("Hrm...", "You gotta log in buddy.", "Home");
 			}
 		}, {scope : 'email'});
+		alert("more");
 	},
 	drawLeaderboard : function(hrs, callback) {
 		"use strict";
@@ -377,6 +378,7 @@ $(document).ready(function() {"use strict";
 			msfm.loginAction();
 			$("#btnFBLogin").removeAttr("disabled");
 		});
+		alert("end");
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
