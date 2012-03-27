@@ -50,7 +50,7 @@ var msfm = {
 	},
 	buildTrackDetails : function(track, selector) {"use strict";
 		$(selector).empty();
-		$(selector).append("<li><img src='" + track.art_url + "' style='padding-top: 3px; max-width: 95px;' />" + "<h2>" + track.artist + "</h2>" + "<p><strong>" + track.title + "</strong></p>" + "<p>Album: " + track.album + "</p>" + "</li>"); 
+		$(selector).append("<li><img src='" + track.art_url + "' style='margin: 3px; max-width: 90px; max-height: 83px; ' />" + "<h2>" + track.artist + "</h2>" + "<p><strong>" + track.title + "</strong></p>" + "<p>Album: " + track.album + "</p>" + "</li>"); 
 		//+ "<p class='ui-li-aside' style='width: 15%;'>" + track.length_friendly + "</p>" 
 		
 	},
@@ -235,7 +235,7 @@ var msfm = {
 			,ct = 1;
 		$.getJSON("/leaderboard/" + msfm.locationId() + "?hours=" + hrs, function(data){
 			$.each(data, function(index, user) {
-				listing.push("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + user.facebook_id + "'>" + "<img src='" + user.photo_url + "'><h3>" + ct + ". "  + user.first_name + " " + user.last_name + ".</h3><p>" + user.score +  " points</p></a></li>");
+				listing.push("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + user.facebook_id + "'>" + "<img src='" + user.photo_url + "' style='margin: 3px; max-width: 90px; max-height: 83px;'><h3>" + ct + ". "  + user.first_name + " " + user.last_name + ".</h3><p>" + user.score +  " points</p></a></li>");
 				ct = ct + 1;	
 			});
 			var listing_joined = listing.join(""),
@@ -343,7 +343,7 @@ $(document).ready(function() {"use strict";
 
 		msfm.buildTrackDetails(data, selector);
 
-		$(selector).append("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + data.facebook_id + "'>" + "<img src='" + data.photo_url + "'><h1>Picked by <strong>" + data.first_name + " " + data.last_name + "</strong></h1></a></li>");
+		$(selector).append("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + data.facebook_id + "'>" + "<img src='" + data.photo_url + "' style='margin: 3px; max-width: 90px; max-height: 83px; '><h1>Picked by <strong>" + data.first_name + " " + data.last_name + "</strong></h1></a></li>");
 
 		$.mobile.changePage('#playlistItemDetails');
 	});
