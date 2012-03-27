@@ -43,6 +43,7 @@ def admin_required(f):
 
 @app.route('/<location_id>')
 def index(location_id):
+#    return "<h1><b>That's all for tonight folks</b></h1>Thanks for playing!<p><a href='mailto:team@milkshake.fm'>Contact the team</a> behind milkshake.fm</p>"
     l = Location.from_id(location_id)
     if not l:
         l = Location(name="whatever")
