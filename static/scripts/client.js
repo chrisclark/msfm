@@ -266,7 +266,7 @@ $(document).ready(function() {"use strict";
 				'nextButton': true, // true or false to control whether a next button is used
 				'tipAnimation': 'pop', // 'pop' or 'fade' in each tip
 				'tipAnimationFadeSpeed': 300, // when tipAnimation = 'fade' this is speed in milliseconds for the transition
-				'cookieMonster': true, // true or false to control whether cookies are used
+				'cookieMonster': false, // true or false to control whether cookies are used
 				'cookieName': 'JoyRide', // Name the cookie you'll use
 				'cookieDomain': false, // Will this cookie be attached to a domain, ie. '.notableapp.com'
 				'tipContainer': 'body', // Where will the tip be attached if not inline
