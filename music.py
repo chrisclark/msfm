@@ -96,7 +96,7 @@ def addTrack():
     uid = User.current_id()
     if User.is_admin() and request.form["special"] == "true":
         special = 1
-        #uid = 123 #MAGIC NUMBER!!!
+        uid = 29 #MAGIC NUMBER!!! This is the ID of the MSS user on the server
     else:
         special = 0
     ret = l.add_track(request.form["provider_id"], uid, special)
