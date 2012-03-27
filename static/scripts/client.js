@@ -1,6 +1,6 @@
 var msfm = {
 	flashMessage : "",
-	isNewFlash : false,
+	isNewFlash : 0,
 	spinnerStart : function() {"use strict";
 		$.mobile.showPageLoadingMsg();
 	},
@@ -55,7 +55,7 @@ var msfm = {
 		
 	},
 	bindPlaylist : function() {"use strict";
-		var listing = [], cur_list = [], icon = "", except_class = "", changed_class = "", admin_info = "", dir = 0, li_id = "";
+		var listing = [], cur_list = [], icon = "", except_class = "", changed_class = "", admin_info = "", dir = 0, li_id = "", except_theme = "";
 		//will be used to indicate currently playing song, so joyride can hook in
 
 		$.each($(".playlistItemButton"), function(index, plib) {
@@ -65,12 +65,15 @@ var msfm = {
 		$.each(msfm.playlist, function(index, playlistitem) {
 			li_id = 'pli_' + playlistitem.playlist_item_id;
 			icon = except_class = "";
+			except_theme = "";
 			if(playlistitem.currently_playing) {
 				icon = "<img width='16px' src='/static/images/sound_icon.png' class='ui-li-icon' />";
 				except_class = " playing";
 				li_id = "playing_pli";
+				except_theme = " data-theme='b'";
 			} else if (playlistitem.special) {
 				icon = "<img width='16px' src='/static/images/lock.png' class='ui-li-icon' />";
+				except_theme = " data-theme='b'";
 				except_class = " special"
 			} else if(msfm.getVoted()[playlistitem.playlist_item_id]) {
 				dir = msfm.getVoted()[playlistitem.playlist_item_id];
@@ -99,7 +102,7 @@ var msfm = {
 				changed_class = " changed_new";
 			}
 
-			listing.push('<li id="' + li_id + '" class="playlistItemButton' + except_class + changed_class + '" data-id="' + playlistitem.id + '" data-playlist_item_id="' + playlistitem.playlist_item_id + '" data-score="' + playlistitem.score + '" data-time_sort="' + playlistitem.time_sort + '" data-playlist_index="' + index + '">' + icon + '<a style="padding: .7em 15px 0 35px;" href="javascript:void(0);">' + '<span class="ui-li-count">' + playlistitem.score + '</span>' + '<p><strong>' + playlistitem.artist + '</strong></p>' + '<p>' + admin_info + playlistitem.title + '</p>' + '</a></li>');
+			listing.push('<li id="' + li_id + '" class="playlistItemButton' + except_class + changed_class + '" data-id="' + playlistitem.id + '"' + except_theme + ' data-playlist_item_id="' + playlistitem.playlist_item_id + '" data-score="' + playlistitem.score + '" data-time_sort="' + playlistitem.time_sort + '" data-playlist_index="' + index + '">' + icon + '<a style="padding: .7em 15px 0 35px;" href="javascript:void(0);">' + '<span class="ui-li-count">' + playlistitem.score + '</span>' + '<p><strong>' + playlistitem.artist + '</strong></p>' + '<p>' + admin_info + playlistitem.title + '</p>' + '</a></li>');
 
 		});
 		var listing_joined = listing.join(""), final_items = $(listing_joined).detach();
@@ -115,14 +118,15 @@ var msfm = {
 		$(".changed_down", '#venuePlaylist').effect("highlight", {
 			color : "#e89b9b"
 		}, 2500);
-		$(".playing a", '#venuePlaylist').css("color", "green").css("padding", ".7em 32px 0");
+		//$(".playing a", '#venuePlaylist').css("color", "green").css("padding", ".7em 32px 0");
 	},
 	doFlash : function() {"use strict";
 		$("#flash").show();
-		if(msfm.isNewFlash) {
+		if(msfm.isNewFlash > 0) {
 			$("#flash").effect("highlight", {
 				color : "#e5e89b"
 			}, 4000);
+			msfm.isNewFlash = msfm.isNewFlash - 1;
 			setTimeout("msfm.doFlash();", 4000);
 		}
 	},
@@ -255,14 +259,14 @@ $(document).ready(function() {"use strict";
 		msfm.spinnerStop();
 		if($.mobile.activePage.prop("id") == "homePage"){
 			$(window).joyride({
-				'tipLocation': 'bottom', // 'top' or 'bottom' in relation to parent
+				'tipLocation': 'top', // 'top' or 'bottom' in relation to parent
 				'scrollSpeed': 300, // Page scrolling speed in milliseconds
 				'timer': 0, // 0 = no timer, all other numbers = timer in milliseconds
 				'startTimerOnClick': false, // true or false - true requires clicking the first button start the timer
 				'nextButton': true, // true or false to control whether a next button is used
 				'tipAnimation': 'pop', // 'pop' or 'fade' in each tip
 				'tipAnimationFadeSpeed': 300, // when tipAnimation = 'fade' this is speed in milliseconds for the transition
-				'cookieMonster': false, // true or false to control whether cookies are used
+				'cookieMonster': true, // true or false to control whether cookies are used
 				'cookieName': 'JoyRide', // Name the cookie you'll use
 				'cookieDomain': false, // Will this cookie be attached to a domain, ie. '.notableapp.com'
 				'tipContainer': 'body', // Where will the tip be attached if not inline
@@ -275,7 +279,7 @@ $(document).ready(function() {"use strict";
 
 	$.getJSON("/flash/" + msfm.locationId(), function(data) {
 		if(data && data != "") {
-			msfm.isNewFlash = true;
+			msfm.isNewFlash = 4;
 			msfm.flashMessage = data;
 			$("#txtFlash").val(msfm.flashMessage);
 			msfm.doFlash();
@@ -378,7 +382,7 @@ $(document).ready(function() {"use strict";
 
 	$("#homePage").on('click.msfm', "#flash", function() {
 		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
-		msfm.isNewFlash = false;
+		msfm.isNewFlash = 0;
 	});
 
 	$("#playlistItemDetails").on('click.msfm', "#btnUpVote", function() {
@@ -422,7 +426,7 @@ $(document).ready(function() {"use strict";
 		$("#txtFlash").val(msfm.flashMessage);
 
 		//if we're already flashing, doing it again will cause setTimeout issues
-		msfm.isNewFlash = (msfm.flashMessage != "" && !msfm.isNewFlash);
+		if (msfm.flashMessage != "" && !msfm.isNewFlash) { msfm.isNewFlash = 4; }
 		if($.mobile.activePage.prop("id") == "homePage") {//otherwise this will be handled in the playlist bind
 			msfm.doFlash();
 		}
