@@ -38,8 +38,7 @@ class MusicProvider:
                 dic["title"] = t["trackName"]
                 dic["album"] = t["collectionName"]
                 dic["art_url"] = t["artworkUrl100"]
-                dic["length_friendly"] = 0
-                
+                dic["length_friendly"] = ""                
                 
                 serialize_me.append(dic)
             except:
@@ -51,20 +50,29 @@ class MusicProvider:
         t = Track()
         try:
             ######MediaNet######
-            reqUrl = 'http://ie-api.mndigital.com?method=track.get&format=json&'\
-                 + urllib.urlencode({'mnetid': provider_id})\
-                 + '&ApiKey=%s' % MusicProvider._mnDigitalIntegrationAPIKey
+            #reqUrl = 'http://ie-api.mndigital.com?method=track.get&format=json&'\
+            #     + urllib.urlencode({'mnetid': provider_id})\
+            #     + '&ApiKey=%s' % MusicProvider._mnDigitalIntegrationAPIKey
+            reqUrl = 'http://itunes.apple.com/lookup?' + urllib.urlencode({'id': provider_id}) 
                           
-            track_json = common.get_json(reqUrl)["Track"]
+            #track_json = common.get_json(reqUrl)["Track"]
+            track_json = common.get_json(reqUrl)["results"][0]
             
             t.provider_id = provider_id
-            t.artist = track_json["Artist"]["Name"]
-            t.title = track_json["Title"]
             t.length_seconds = 0
-            t.length_friendly = track_json["Duration"]
             t.url = ""
-            t.album = track_json["Album"]["Title"]
-            t.art_url = track_json["Album"]["Images"]["Album150x150"]
+            
+            #t.artist = track_json["Artist"]["Name"]
+            #t.title = track_json["Title"]
+            #t.length_friendly = track_json["Duration"]
+            #t.album = track_json["Album"]["Title"]
+            #t.art_url = track_json["Album"]["Images"]["Album150x150"]
+            
+            t.artist = track_json["artistName"]
+            t.title = track_json["trackName"]
+            t.length_friendly = ""
+            t.album = track_json["collectionName"]
+            t.art_url = track_json["artworkUrl100"]
             
         except Exception:
             pass

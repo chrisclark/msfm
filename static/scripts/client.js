@@ -358,7 +358,7 @@ $(document).ready(function() {"use strict";
 	$("#addTrack").on('click.msfm', "#btnAddTrack", function() {
 		var provider_id = $('#addTrack').jqmData('provider-id');
 		msfm.requireLogin(function() {
-			msfm.doAddTrack(provider_id, false);
+			msfm.doAddTrack(provider_id, $("#chkSpecial").is(':checked'));
 		});
 	});
 
