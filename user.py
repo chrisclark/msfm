@@ -95,13 +95,13 @@ class User(Base):
     def facebook_login(fbid, fbat):
         u = User.from_fbid(fbid) #has this person logged in before?
         
-        if u and User.current_id() != u.id: #skip if they are already logged in
+        if not u or User.current_id() != u.id: #skip if they are already logged in
             profile_info = common.get_json('https://graph.facebook.com/me?fields=email,first_name,last_name&access_token=' + fbat)
         
             if not "error" in profile_info:
                 if not u: #create a new user
                     u = User()
-                    u.fbid = fbid
+                    u.facebook_id = fbid
                     u.admin = False
                     u.photo_url = "http://graph.facebook.com/"+fbid+"/picture?type=normal"
                     u.created = str(datetime.now())
