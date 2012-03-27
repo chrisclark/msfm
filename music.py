@@ -92,9 +92,13 @@ def leaderboard(location_id):
 @login_required
 def addTrack():
     l = Location.from_id(request.form["location_id"])
-    if User.is_admin() and request.form["special"] == "true": special = 1
-    else: special = 0
-    ret = l.add_track(request.form["provider_id"], User.current_id(), special)
+    uid = User.current_id()
+    if User.is_admin() and request.form["special"] == "true":
+        special = 1
+        #uid = 123 #MAGIC NUMBER!!!
+    else:
+        special = 0
+    ret = l.add_track(request.form["provider_id"], uid, special)
     return ret
 
 @app.route('/mark_played', methods=['POST'])

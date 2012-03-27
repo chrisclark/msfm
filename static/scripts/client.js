@@ -307,7 +307,7 @@ $(document).ready(function() {"use strict";
 		var data = msfm.playlist[$(this).jqmData('index')];
 		msfm.buildTrackDetails(data, '#addTrackDetails');
 		$('#addTrack').jqmData('provider-id', data.provider_id);
-		$("#chkSpecial").removeAttr("checked").checkboxradio("refresh");
+		$("#chkSpecial").removeAttr("checked");
 		$.mobile.changePage('#addTrack');
 	});
 
@@ -393,6 +393,7 @@ $(document).ready(function() {"use strict";
 
 	$(document).on('pagebeforeshow', "#addTrack", function() {
 		$('#addTrackDetails').listview("refresh");
+		$("#chkSpecial").checkboxradio("refresh");
 	});
 	
 	$(document).on('pagebeforeshow', "#leaderboard", function() {
