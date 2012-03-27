@@ -248,10 +248,11 @@ var msfm = {
 };
 
 $(document).ready(function() {"use strict";
-
+	msfm.spinnerStart();
 	$.getJSON("/playlist/" + msfm.locationId(), function(data) {
 		msfm.playlist = data;
 		msfm.bindPlaylist();
+		msfm.spinnerStop();
 		if($.mobile.activePage.prop("id") == "homePage"){
 			$(window).joyride({
 				'tipLocation': 'bottom', // 'top' or 'bottom' in relation to parent
