@@ -413,7 +413,7 @@ $(document).ready(function() {"use strict";
 	//if( $(this).is(':checked') ) alert("checked")
 	//});
 
-/*
+
 	var jug = new Juggernaut;
 	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data) {
 		if($.mobile.activePage.prop("id") == "homePage") {
@@ -431,5 +431,5 @@ $(document).ready(function() {"use strict";
 		if($.mobile.activePage.prop("id") == "homePage") {//otherwise this will be handled in the playlist bind
 			msfm.doFlash();
 		}
-	});*/
+	});
 });
