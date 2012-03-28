@@ -371,23 +371,20 @@ $(document).ready(function() {"use strict";
 	});
 
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
-		try{
-			FB.login();
-		}catch(e){alert(e.message);}
-		/*$("#btnFBLogin").attr("disabled", "disabled");
+		$("#btnFBLogin").attr("disabled", "disabled");
 		msfm.doFBLogin(function() {
 			msfm.loginAction();
 			//THIS COMPLETELY BLOWS UP IOS. Incredible, but true.
 			//Documented by CC on 3-28-12 because it's so unbelievable.
 			//$("#btnFBLogin").removeAttr("disabled");
-		});*/
+		});
 	});
 
-	/*$("#homePage").on('click.msfm', "#flash", function() {
+	$("#homePage").on('click.msfm', "#flash", function() {
 		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = 0;
 	});
-
+/*
 	$("#playlistItemDetails").on('click.msfm', "#btnUpVote", function() {
 		msfm.disableVotingButtons();
 		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), 1);
