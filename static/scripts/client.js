@@ -373,12 +373,14 @@ $(document).ready(function() {"use strict";
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
 		$("#btnFBLogin").attr("disabled", "disabled");
 		jug.unsubscribe("msfm:playlist:" + msfm.locationId());
+		jug.subscribe("msfm:marketing:" + msfm.locationId());
 		msfm.doFBLogin(function() {
 			msfm.loginAction();
 		});
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
+		alert("0");
 		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = 0;
 	});
