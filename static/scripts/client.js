@@ -370,11 +370,11 @@ $(document).ready(function() {"use strict";
 		});
 	});
 	
-	alert("2");
+	//alert("3");
 
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
 		try{
-			msfm.doFBLogin(function(){});
+			FB.login();
 		}catch(e){alert(e.message);}
 		/*$("#btnFBLogin").attr("disabled", "disabled");
 		msfm.doFBLogin(function() {
