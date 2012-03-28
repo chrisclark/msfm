@@ -74,7 +74,7 @@ var msfm = {
 			} else if (playlistitem.special) {
 				icon = "<img width='16px' src='/static/images/lock.png' class='ui-li-icon' />";
 				except_theme = " data-theme='b'";
-				except_class = " special"
+				except_class = " special";
 			} else if(msfm.getVoted()[playlistitem.playlist_item_id]) {
 				dir = msfm.getVoted()[playlistitem.playlist_item_id];
 				if(dir > 0) {
@@ -141,7 +141,7 @@ var msfm = {
 		$.ajax({
 			type : "POST",
 			url : "/vote",
-			data : "playlist_item_id=" + pli_id + '&direction=' + dir + "&location_id=" + msfm.locationId(),
+			data : "playlist_item_id=" + pli_id + '&direction=' + dir + "&location_id=" + msfm.locationId()
 		});
 		//just assume the vote went through and show the dialog. No need to wait on the server.
 		var voted = msfm.getVoted();
@@ -161,7 +161,7 @@ var msfm = {
 	},
 	bindTrackSearchResults : function(tracklist) {"use strict";
 		var listing = [];
-		if (tracklist.length == 0) {
+		if (tracklist.length === 0) {
 			listing.push('<li><strong>No Results</strong></li>');
 		} else {
 			$.each(tracklist, function(index, track) {
@@ -230,8 +230,8 @@ var msfm = {
 	drawLeaderboard : function(hrs, callback) {
 		"use strict";
 		msfm.spinnerStart();
-		var listing = []
-			,ct = 1;
+		var listing = [],
+			ct = 1;
 		$.getJSON("/leaderboard/" + msfm.locationId() + "?hours=" + hrs, function(data){
 			$.each(data, function(index, user) {
 				listing.push("<li><a id='fbLink' target='_blank' href='http://facebook.com/" + user.facebook_id + "'>" + "<img src='" + user.photo_url + "' style='margin: 3px; max-width: 90px; max-height: 72px;'><h3>" + ct + ". "  + user.first_name + " " + user.last_name + ".</h3><p>" + user.score +  " points</p></a></li>");
@@ -292,13 +292,13 @@ $(document).ready(function() {"use strict";
 		msfm.trackSearch(query);
 	});
 
-	$(document).on('pagebeforechange', function(event, data) {
+	/*$(document).on('pagebeforechange', function(event, data) {
 		msfm.spinnerStop();
 		$(".joyride-tip-guide").hide();
 		if(msfm.isAdmin) {
 			$(".adminPanel").show();
 		}
-	});
+	});*/
 
 	$('#homePage').on('pageshow', function() {
 		$.getJSON("/playlist/" + msfm.locationId(), function(data) {
