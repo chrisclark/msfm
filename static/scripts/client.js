@@ -187,8 +187,9 @@ var msfm = {
 			if(response.status === 'connected') {
 				msfm.doLogin(response, callbackFn);
 			} else {
-				msfm.loginAction = callbackFn;
 				//this is kind of ghetto. Stash away the callback so the login screen can get it later
+				msfm.loginAction = callbackFn;
+				
 				$("#btnFBLogin").removeAttr("disabled");
 				$.mobile.changePage('#pleaseLogin', {
 					transition : 'slidedown',
@@ -371,6 +372,8 @@ $(document).ready(function() {"use strict";
 		$("#btnFBLogin").attr("disabled", "disabled");
 		msfm.doFBLogin(function() {
 			msfm.loginAction();
+			//THIS COMPLETELY BLOWS UP IOS. Incredible, but true.
+			//Documented by CC on 3-28-12 because it's so unbelievable.
 			//$("#btnFBLogin").removeAttr("disabled");
 		});
 	});
@@ -409,7 +412,6 @@ $(document).ready(function() {"use strict";
 	//$("#chkExplicit").click( function(){
 	//if( $(this).is(':checked') ) alert("checked")
 	//});
-
 
 	var jug = new Juggernaut;
 	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data) {
