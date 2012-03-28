@@ -292,7 +292,7 @@ $(document).ready(function() {"use strict";
 		msfm.trackSearch(query);
 	});
 
-	/*$(document).on('pagebeforechange', function(event, data) {
+	$(document).on('pagebeforechange', function(event, data) {
 		msfm.spinnerStop();
 		$(".joyride-tip-guide").hide();
 		if(msfm.isAdmin) {
@@ -306,7 +306,7 @@ $(document).ready(function() {"use strict";
 			msfm.bindPlaylist();
 		});
 	});
-*/
+
 	$("#search").on('click.msfm', '.trackButton', function() {
 		var data = msfm.playlist[$(this).jqmData('index')];
 		msfm.buildTrackDetails(data, '#addTrackDetails');
