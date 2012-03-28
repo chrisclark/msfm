@@ -225,9 +225,9 @@ var msfm = {
 		FB.login(function(response) {
 			if(response.authResponse) {
 				alert("ok");
-				msfm.doLogin(response, callbackFn);
-			} else {
-				msfm.renderDialog("Hrm...", "You gotta log in buddy.", "Home");
+				//msfm.doLogin(response, callbackFn);
+			//} else {
+			//	msfm.renderDialog("Hrm...", "You gotta log in buddy.", "Home");
 			}
 		}, {scope : 'email'});
 	},
