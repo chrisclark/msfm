@@ -371,13 +371,14 @@ $(document).ready(function() {"use strict";
 	});
 
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
-		$("#btnFBLogin").attr("disabled", "disabled");
+		msfm.doFBLogin(function(){});
+		/*$("#btnFBLogin").attr("disabled", "disabled");
 		msfm.doFBLogin(function() {
 			msfm.loginAction();
 			//THIS COMPLETELY BLOWS UP IOS. Incredible, but true.
 			//Documented by CC on 3-28-12 because it's so unbelievable.
 			//$("#btnFBLogin").removeAttr("disabled");
-		});
+		});*/
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
