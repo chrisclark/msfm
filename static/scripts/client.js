@@ -314,7 +314,7 @@ $(document).ready(function() {"use strict";
 		$("#chkSpecial").removeAttr("checked");
 		$.mobile.changePage('#addTrack');
 	});
-/*
+
 	$('#homePage').on('click.msfm', "#addSongBtn", function() {
 		$('#searchListing').empty();
 	});
@@ -359,7 +359,7 @@ $(document).ready(function() {"use strict";
 			$('#leaderboardDetails').listview("refresh");
 		});
 	});
-*/
+
 	$("#addTrack").on('click.msfm', "#btnAddTrack", function() {
 		var provider_id = $('#addTrack').jqmData('provider-id');
 		msfm.requireLogin(function() {
