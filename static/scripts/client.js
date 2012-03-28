@@ -381,10 +381,11 @@ $(document).ready(function() {"use strict";
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
+		alert("test");
 		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = 0;
 	});
-/*
+
 	$("#playlistItemDetails").on('click.msfm', "#btnUpVote", function() {
 		msfm.disableVotingButtons();
 		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), 1);
@@ -414,7 +415,7 @@ $(document).ready(function() {"use strict";
 	//$("#chkExplicit").click( function(){
 	//if( $(this).is(':checked') ) alert("checked")
 	//});
-
+/*
 	var jug = new Juggernaut;
 	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data) {
 		if($.mobile.activePage.prop("id") == "homePage") {
