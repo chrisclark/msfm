@@ -221,15 +221,13 @@ var msfm = {
 	},
 	doFBLogin : function(callbackFn) {
 		"use strict";
-		FB.login();
-		/*FB.login(function(response) {
+		FB.login(function(response) {
 			if(response.authResponse) {
-				alert("ok");
 				msfm.doLogin(response, callbackFn);
 			} else {
 				msfm.renderDialog("Hrm...", "You gotta log in buddy.", "Home");
 			}
-		}), {scope : 'email'});*/
+		}), {scope : 'email'});
 	},
 	drawLeaderboard : function(hrs, callback) {
 		"use strict";
@@ -400,8 +398,10 @@ $(document).ready(function() {"use strict";
 	});
 
 	$(document).on('pagebeforeshow', "#addTrack", function() {
-		$('#addTrackDetails').listview("refresh");
-		$("#chkSpecial").checkboxradio("refresh");
+		try {
+			$('#addTrackDetails').listview("refresh");
+			$("#chkSpecial").checkboxradio("refresh");
+		}catch(err){}
 	});
 	
 	$(document).on('pagebeforeshow', "#leaderboard", function() {
