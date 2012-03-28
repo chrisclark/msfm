@@ -247,7 +247,7 @@ var msfm = {
 };
 
 $(document).ready(function() {"use strict";
-	msfm.spinnerStart();
+	/*msfm.spinnerStart();
 	$.getJSON("/playlist/" + msfm.locationId(), function(data) {
 		msfm.playlist = data;
 		msfm.bindPlaylist();
@@ -286,7 +286,7 @@ $(document).ready(function() {"use strict";
 	}
 
 	$.mobile.defaultPageTransition = "fade";
-
+*/
 	$("#search").on("click.msfm", "#btnSubmitSearch", function() {
 		var query = $("#trackSearch").val();
 		msfm.trackSearch(query);
@@ -298,7 +298,7 @@ $(document).ready(function() {"use strict";
 		if(msfm.isAdmin) {
 			$(".adminPanel").show();
 		}
-	});*/
+	});
 
 	$('#homePage').on('pageshow', function() {
 		$.getJSON("/playlist/" + msfm.locationId(), function(data) {
@@ -306,7 +306,7 @@ $(document).ready(function() {"use strict";
 			msfm.bindPlaylist();
 		});
 	});
-
+*/
 	$("#search").on('click.msfm', '.trackButton', function() {
 		var data = msfm.playlist[$(this).jqmData('index')];
 		msfm.buildTrackDetails(data, '#addTrackDetails');
@@ -314,7 +314,7 @@ $(document).ready(function() {"use strict";
 		$("#chkSpecial").removeAttr("checked");
 		$.mobile.changePage('#addTrack');
 	});
-
+/*
 	$('#homePage').on('click.msfm', "#addSongBtn", function() {
 		$('#searchListing').empty();
 	});
@@ -359,7 +359,7 @@ $(document).ready(function() {"use strict";
 			$('#leaderboardDetails').listview("refresh");
 		});
 	});
-
+*/
 	$("#addTrack").on('click.msfm', "#btnAddTrack", function() {
 		var provider_id = $('#addTrack').jqmData('provider-id');
 		msfm.requireLogin(function() {
@@ -368,11 +368,14 @@ $(document).ready(function() {"use strict";
 	});
 
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
-		$("#btnFBLogin").attr("disabled", "disabled");
+		try{
+			msfm.doFBLogin(function(){alert("back");});
+		}catch(e){alert(e.message);}
+		/*$("#btnFBLogin").attr("disabled", "disabled");
 		msfm.doFBLogin(function() {
 			msfm.loginAction();
 			$("#btnFBLogin").removeAttr("disabled");
-		});
+		});*/
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
@@ -390,26 +393,27 @@ $(document).ready(function() {"use strict";
 		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), -1);
 	});
 
-	$(document).on('pagebeforeshow', "#playlistItemDetails", function() {
+	/*$(document).on('pagebeforeshow', "#playlistItemDetails", function() {
 		$('#playlistItemDetailsTrackDetails').listview("refresh");
 		msfm.enableVotingButtons();
-	});
+	});*/
 
-	$(document).on('pagebeforeshow', "#addTrack", function() {
+	/*$(document).on('pagebeforeshow', "#addTrack", function() {
 		try {
 			$('#addTrackDetails').listview("refresh");
 			$("#chkSpecial").checkboxradio("refresh");
 		}catch(err){}
-	});
+	});*/
 	
-	$(document).on('pagebeforeshow', "#leaderboard", function() {
+	/*$(document).on('pagebeforeshow', "#leaderboard", function() {
 		$('#leaderboardDetails').listview("refresh");
-	});
+	});*/
 		
 	//$("#chkExplicit").click( function(){
 	//if( $(this).is(':checked') ) alert("checked")
 	//});
 
+/*
 	var jug = new Juggernaut;
 	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data) {
 		if($.mobile.activePage.prop("id") == "homePage") {
@@ -427,5 +431,5 @@ $(document).ready(function() {"use strict";
 		if($.mobile.activePage.prop("id") == "homePage") {//otherwise this will be handled in the playlist bind
 			msfm.doFlash();
 		}
-	});
+	});*/
 });
