@@ -369,6 +369,8 @@ $(document).ready(function() {"use strict";
 			msfm.doAddTrack(provider_id, $("#chkSpecial").is(':checked'));
 		});
 	});
+	
+	alert("1");
 
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
 		msfm.doFBLogin(function(){});
