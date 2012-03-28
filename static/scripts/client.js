@@ -372,13 +372,13 @@ $(document).ready(function() {"use strict";
 
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
 		$("#btnFBLogin").attr("disabled", "disabled");
+		jug.unsubscribe("msfm:playlist:" + msfm.locationId());
 		msfm.doFBLogin(function() {
 			msfm.loginAction();
 		});
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
-		alert("ok");
 		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = 0;
 	});
@@ -415,12 +415,10 @@ $(document).ready(function() {"use strict";
 
 	var jug = new Juggernaut;
 	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data) {
-		try{
-			if($.mobile.activePage.prop("id") == "homePage") {
-				msfm.playlist = JSON.parse(data);
-				msfm.bindPlaylist();
-			}
-		} catch(e){ alert(e.message); }
+		if($.mobile.activePage.prop("id") == "homePage") {
+			msfm.playlist = JSON.parse(data);
+			msfm.bindPlaylist();
+		}
 	});
 
 	jug.subscribe("msfm:marketing:" + msfm.locationId(), function(data) {
