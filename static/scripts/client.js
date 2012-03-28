@@ -374,14 +374,10 @@ $(document).ready(function() {"use strict";
 		$("#btnFBLogin").attr("disabled", "disabled");
 		msfm.doFBLogin(function() {
 			msfm.loginAction();
-			//THIS COMPLETELY BLOWS UP IOS. Incredible, but true.
-			//Documented by CC on 3-28-12 because it's so unbelievable.
-			//$("#btnFBLogin").removeAttr("disabled");
 		});
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
-		alert("test");
 		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = 0;
 	});
@@ -415,7 +411,7 @@ $(document).ready(function() {"use strict";
 	//$("#chkExplicit").click( function(){
 	//if( $(this).is(':checked') ) alert("checked")
 	//});
-/*
+
 	var jug = new Juggernaut;
 	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data) {
 		if($.mobile.activePage.prop("id") == "homePage") {
@@ -433,5 +429,5 @@ $(document).ready(function() {"use strict";
 		if($.mobile.activePage.prop("id") == "homePage") {//otherwise this will be handled in the playlist bind
 			msfm.doFlash();
 		}
-	});*/
+	});
 });
