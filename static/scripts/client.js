@@ -369,8 +369,6 @@ $(document).ready(function() {"use strict";
 			msfm.doAddTrack(provider_id, $("#chkSpecial").is(':checked'));
 		});
 	});
-	
-	//alert("3");
 
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
 		try{
@@ -385,7 +383,7 @@ $(document).ready(function() {"use strict";
 		});*/
 	});
 
-	$("#homePage").on('click.msfm', "#flash", function() {
+	/*$("#homePage").on('click.msfm', "#flash", function() {
 		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = 0;
 	});
@@ -437,5 +435,5 @@ $(document).ready(function() {"use strict";
 		if($.mobile.activePage.prop("id") == "homePage") {//otherwise this will be handled in the playlist bind
 			msfm.doFlash();
 		}
-	});
+	});*/
 });
