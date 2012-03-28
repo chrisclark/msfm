@@ -211,7 +211,6 @@ var msfm = {
 					msg = jQuery.parseJSON(xhr.responseText).msg;
 					msfm.renderDialog("Whoops!", msg, "Home");
 				}
-				alert("another");
 			},
 			success : function(data) {
 				msfm.isAdmin = JSON.parse(data).admin;
@@ -222,14 +221,15 @@ var msfm = {
 	},
 	doFBLogin : function(callbackFn) {
 		"use strict";
-		FB.login(function(response) {
+		FB.login();
+		/*FB.login(function(response) {
 			if(response.authResponse) {
 				alert("ok");
-				//msfm.doLogin(response, callbackFn);
-			//} else {
-			//	msfm.renderDialog("Hrm...", "You gotta log in buddy.", "Home");
+				msfm.doLogin(response, callbackFn);
+			} else {
+				msfm.renderDialog("Hrm...", "You gotta log in buddy.", "Home");
 			}
-		}, {scope : 'email'});
+		}), {scope : 'email'});*/
 	},
 	drawLeaderboard : function(hrs, callback) {
 		"use strict";
