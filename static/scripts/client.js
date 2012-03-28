@@ -368,14 +368,14 @@ $(document).ready(function() {"use strict";
 	});
 
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
-		try{
+		/*try{
 			msfm.doFBLogin(function(){alert("back");});
-		}catch(e){alert(e.message);}
-		/*$("#btnFBLogin").attr("disabled", "disabled");
+		}catch(e){alert(e.message);}*/
+		$("#btnFBLogin").attr("disabled", "disabled");
 		msfm.doFBLogin(function() {
 			msfm.loginAction();
 			$("#btnFBLogin").removeAttr("disabled");
-		});*/
+		});
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
