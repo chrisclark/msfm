@@ -368,10 +368,7 @@ $(document).ready(function() {"use strict";
 	});
 
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
-		/*try{
-			msfm.doFBLogin(function(){alert("back");});
-		}catch(e){alert(e.message);}*/
-		//$("#btnFBLogin").attr("disabled", "disabled");
+		$("#btnFBLogin").attr("disabled", "disabled");
 		msfm.doFBLogin(function() {
 			msfm.loginAction();
 			//$("#btnFBLogin").removeAttr("disabled");
