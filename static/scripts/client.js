@@ -372,15 +372,13 @@ $(document).ready(function() {"use strict";
 
 	$("#pleaseLogin").on('click.msfm', '#btnFBLogin', function() {
 		$("#btnFBLogin").attr("disabled", "disabled");
-		jug.unsubscribe("msfm:playlist:" + msfm.locationId());
-		jug.subscribe("msfm:marketing:" + msfm.locationId());
 		msfm.doFBLogin(function() {
 			msfm.loginAction();
 		});
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
-		alert("0");
+		alert("1");
 		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = 0;
 	});
@@ -415,6 +413,7 @@ $(document).ready(function() {"use strict";
 	//if( $(this).is(':checked') ) alert("checked")
 	//});
 
+/*
 	var jug = new Juggernaut;
 	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data) {
 		if($.mobile.activePage.prop("id") == "homePage") {
@@ -433,4 +432,5 @@ $(document).ready(function() {"use strict";
 			msfm.doFlash();
 		}
 	});
+*/
 });
