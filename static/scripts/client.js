@@ -286,7 +286,7 @@ $(document).ready(function() {"use strict";
 	}
 
 	$.mobile.defaultPageTransition = "fade";
-/*
+
 	$("#search").on("click.msfm", "#btnSubmitSearch", function() {
 		var query = $("#trackSearch").val();
 		msfm.trackSearch(query);
