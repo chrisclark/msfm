@@ -393,21 +393,21 @@ $(document).ready(function() {"use strict";
 		msfm.doVote($('#playlistItemDetails').jqmData('playlist_item_id'), -1);
 	});
 
-	/*$(document).on('pagebeforeshow', "#playlistItemDetails", function() {
+	$(document).on('pagebeforeshow', "#playlistItemDetails", function() {
 		$('#playlistItemDetailsTrackDetails').listview("refresh");
 		msfm.enableVotingButtons();
-	});*/
+	});
 
-	/*$(document).on('pagebeforeshow', "#addTrack", function() {
+	$(document).on('pagebeforeshow', "#addTrack", function() {
 		try {
 			$('#addTrackDetails').listview("refresh");
 			$("#chkSpecial").checkboxradio("refresh");
 		}catch(err){}
-	});*/
+	});
 	
-	/*$(document).on('pagebeforeshow', "#leaderboard", function() {
+	$(document).on('pagebeforeshow', "#leaderboard", function() {
 		$('#leaderboardDetails').listview("refresh");
-	});*/
+	});
 		
 	//$("#chkExplicit").click( function(){
 	//if( $(this).is(':checked') ) alert("checked")
