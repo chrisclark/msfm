@@ -54,7 +54,7 @@ var msfm = {
 		//+ "<p class='ui-li-aside' style='width: 15%;'>" + track.length_friendly + "</p>" 
 		
 	},
-	bindPlaylist : function() {"use strict";
+	bindPlaylist : function(skipNew) {"use strict";
 		var listing = [], cur_list = [], icon = "", except_class = "", changed_class = "", admin_info = "", dir = 0, li_id = "", except_theme = "";
 		//will be used to indicate currently playing song, so joyride can hook in
 
@@ -108,10 +108,12 @@ var msfm = {
 		var listing_joined = listing.join(""), final_items = $(listing_joined).detach();
 
 		$('#venuePlaylist').empty().append(final_items).listview("refresh");
-
-		$(".changed_new", '#venuePlaylist').effect("highlight", {
-			color : "#e5e89b"
-		}, 2500);
+		
+		if(!skipNew){
+			$(".changed_new", '#venuePlaylist').effect("highlight", {
+				color : "#e5e89b"
+			}, 2500);
+		}
 		$(".changed_up", '#venuePlaylist').effect("highlight", {
 			color : "#a0e89b"
 		}, 2500);
@@ -251,7 +253,7 @@ $(document).ready(function() {"use strict";
 	msfm.spinnerStart();
 	$.getJSON("/playlist/" + msfm.locationId(), function(data) {
 		msfm.playlist = data;
-		msfm.bindPlaylist();
+		msfm.bindPlaylist(true);
 		msfm.spinnerStop();
 		if($.mobile.activePage.prop("id") == "homePage"){
 			$(window).joyride({
