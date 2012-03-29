@@ -258,7 +258,7 @@ var msfm = {
 		$("#txtFlash").val(msfm.flashMessage);
 
 		//if we're already flashing, doing it again will cause setTimeout issues
-		if (msfm.flashMessage != "" && !msfm.isNewFlash) { msfm.isNewFlash = 4; }
+		if (msfm.flashMessage != "" && msfm.isNewFlash == 0) { msfm.isNewFlash = 4; }
 		if($.mobile.activePage.prop("id") == "homePage") {//otherwise this will be handled in the playlist bind
 			msfm.doFlash();
 		}
