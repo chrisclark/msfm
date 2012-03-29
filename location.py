@@ -112,8 +112,8 @@ class Location(Base):
         #make sure it's in the DB
         t = MusicLibrary.get_track(provider_id=prov_id)
         
-        if not User.is_admin() and self._numTracksFromUser(user_id) > 2:
-            return common.buildDialogResponse("You can only have 3 songs on the playlist at once :(", 409)
+        if not User.is_admin() and self._numTracksFromUser(user_id) > 1:
+            return common.buildDialogResponse("You can only have 2 songs on the playlist at once :(", 409)
 
         if self.playlist().contains_track(t.id):
             return common.buildDialogResponse("Someone already added that one (but you can go vote it up).", 409)
