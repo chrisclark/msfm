@@ -378,7 +378,6 @@ $(document).ready(function() {"use strict";
 	});
 
 	$("#homePage").on('click.msfm', "#flash", function() {
-		alert("2");
 		msfm.renderDialog("Specials", msfm.flashMessage, "Got it!");
 		msfm.isNewFlash = 0;
 	});
@@ -410,8 +409,7 @@ $(document).ready(function() {"use strict";
 	});
 	
 	$(document).on('pagebeforehide', '#homePage', function() {
-		jug.unsubscribe("msfm:playlist:" + msfm.locationId());
-		jug.unsubscribe("msfm:marketing:" + msfm.locationId());
+		jug.io.socket.disconnect();
 	});
 		
 	//$("#chkExplicit").click( function(){
