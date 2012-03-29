@@ -164,7 +164,7 @@ var msfm = {
 	bindTrackSearchResults : function(tracklist) {"use strict";
 		var listing = [];
 		if (tracklist.length === 0) {
-			listing.push('<li><strong>No Results</strong></li>');
+			listing.push('<li><strong>Can you be more specific?</strong></li>');
 		} else {
 			$.each(tracklist, function(index, track) {
 				listing.push('<li class="trackButton" data-provider-id="' + track.provider_id + '" data-index="' + index + '">' + '<a href="javascript:void(0);" style="padding: .7em 15px 0 15px;"">' + '<p><strong>' + track.artist + '</strong></p>' + '<p>' + track.title + '</p></a></li>');
@@ -280,7 +280,7 @@ $(document).ready(function() {"use strict";
 				'nextButton': true, // true or false to control whether a next button is used
 				'tipAnimation': 'pop', // 'pop' or 'fade' in each tip
 				'tipAnimationFadeSpeed': 300, // when tipAnimation = 'fade' this is speed in milliseconds for the transition
-				'cookieMonster': false, // true or false to control whether cookies are used
+				'cookieMonster': true, // true or false to control whether cookies are used
 				'cookieName': 'JoyRide', // Name the cookie you'll use
 				'cookieDomain': false, // Will this cookie be attached to a domain, ie. '.notableapp.com'
 				'tipContainer': 'body', // Where will the tip be attached if not inline
