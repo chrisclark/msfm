@@ -246,6 +246,22 @@ var msfm = {
 			msfm.spinnerStop();
 			callback();	
 		});
+	},
+	jugBindPlaylist : function(data) {
+		if($.mobile.activePage.prop("id") == "homePage") {
+			msfm.playlist = JSON.parse(data);
+			msfm.bindPlaylist();
+		}
+	},
+	jugDoFlash : function(data) {
+		msfm.flashMessage = data;
+		$("#txtFlash").val(msfm.flashMessage);
+
+		//if we're already flashing, doing it again will cause setTimeout issues
+		if (msfm.flashMessage != "" && !msfm.isNewFlash) { msfm.isNewFlash = 4; }
+		if($.mobile.activePage.prop("id") == "homePage") {//otherwise this will be handled in the playlist bind
+			msfm.doFlash();
+		}
 	}
 };
 
@@ -289,6 +305,10 @@ $(document).ready(function() {"use strict";
 	}
 
 	$.mobile.defaultPageTransition = "fade";
+	
+	var jug = new Juggernaut;
+	jug.subscribe("msfm:playlist:" + msfm.locationId(), msfm.jugBindPlaylist);
+	jug.subscribe("msfm:marketing:" + msfm.locationId(), msfm.jugDoFlash);
 
 	$("#search").on("click.msfm", "#btnSubmitSearch", function() {
 		var query = $("#trackSearch").val();
@@ -308,6 +328,8 @@ $(document).ready(function() {"use strict";
 			msfm.playlist = data;
 			msfm.bindPlaylist();
 		});
+		jug.subscribe("msfm:playlist:" + msfm.locationId(), msfm.jugBindPlaylist);
+		jug.subscribe("msfm:marketing:" + msfm.locationId(), msfm.jugDoFlash);
 	});
 
 	$("#search").on('click.msfm', '.trackButton', function() {
@@ -409,31 +431,15 @@ $(document).ready(function() {"use strict";
 	});
 	
 	$(document).on('pagebeforehide', '#homePage', function() {
-		jug.io.socket.disconnect();
+		try{
+			jug.io.socket.disconnect();
+			jug.unsubscribe("msfm:playlist:" + msfm.locationId());
+			jug.unsubscribe("msfm:marketing:" + msfm.locationId());
+		} catch(e){}
 	});
 		
 	//$("#chkExplicit").click( function(){
 	//if( $(this).is(':checked') ) alert("checked")
 	//});
-
-
-	var jug = new Juggernaut;
-	jug.subscribe("msfm:playlist:" + msfm.locationId(), function(data) {
-		if($.mobile.activePage.prop("id") == "homePage") {
-			msfm.playlist = JSON.parse(data);
-			msfm.bindPlaylist();
-		}
-	});
-
-	jug.subscribe("msfm:marketing:" + msfm.locationId(), function(data) {
-		msfm.flashMessage = data;
-		$("#txtFlash").val(msfm.flashMessage);
-
-		//if we're already flashing, doing it again will cause setTimeout issues
-		if (msfm.flashMessage != "" && !msfm.isNewFlash) { msfm.isNewFlash = 4; }
-		if($.mobile.activePage.prop("id") == "homePage") {//otherwise this will be handled in the playlist bind
-			msfm.doFlash();
-		}
-	});
 
 });
