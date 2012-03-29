@@ -328,6 +328,7 @@ $(document).ready(function() {"use strict";
 			msfm.playlist = data;
 			msfm.bindPlaylist();
 		});
+		jug.io.socket.connect();
 		jug.subscribe("msfm:playlist:" + msfm.locationId(), msfm.jugBindPlaylist);
 		jug.subscribe("msfm:marketing:" + msfm.locationId(), msfm.jugDoFlash);
 	});
